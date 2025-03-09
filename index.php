@@ -2,6 +2,7 @@
 <body class="d-flex flex-column min-vh-100">
     <div class="container-fluid container-fluid flex-grow-1">
         <div class="row h-100">
+            <?php require_once( "./class/navigation.php" ); ?>
             <?php require_once( "./modules/navbar.php" ); ?>
             <?php require_once( "./modules/main.php" ); ?>
         </div>

@@ -6,12 +6,18 @@
         <div class="card col-2 m-2">
             <div class="card-body d-flex flex-column flex-wrap align-content-center">
                 <i class="fa-solid fa-place-of-worship fa-2x text-primary"></i>
+                6 missions
+            </div>
+        </div>
+        <div class="card col-2 m-2">
+            <div class="card-body d-flex flex-column flex-wrap align-content-center">
+                <i class="fa-solid fa-user-group fa-2x text-primary"></i>
                 7 total members
             </div>
         </div>
         <div class="card col-2 m-2">
             <div class="card-body d-flex flex-column flex-wrap align-content-center">
-                <i class="fa-solid fa-person fa-2x text-primary"></i>
+                <i class="fa-solid fa-user fa-2x text-primary"></i>
                 2 new members
             </div>
         </div>

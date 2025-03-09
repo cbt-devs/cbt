@@ -1,3 +1,7 @@
+<?php
+$nav = new Navigation();
+?>
+
 <nav class="col-md-2 p-3 d-flex flex-column shadow-sm">
     <h3 class="text-center">CBT</h5>
 
@@ -17,10 +21,10 @@
             <div class="collapse" id="managementDropdown">
                 <ul class="nav flex-column ms-3">
                     <li class="nav-item">
-                        <a href="#" class="nav-link">Members</a>
+                        <a href="<?= $nav->getLink( 'members' ) ?>" class="nav-link">Members</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link">Events</a>
+                        <a href="<?= $nav->getLink( 'events' ) ?>" class="nav-link">Events</a>
                     </li>
                 </ul>
             </div>
