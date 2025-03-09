@@ -2,3 +2,7 @@ html, body {
     height: 100%;
     margin: 0;
 }
+
+.fa-solid {
+    color: rgba(30, 80, 182, 0.958)
+}

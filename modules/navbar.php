@@ -4,7 +4,7 @@
     <ul class="nav flex-column flex-grow-1">
         <li class="nav-item bg-info-subtle rounded">
             <a href="#" class="nav-link hover-bg-light">
-                <i class="fa-solid fa-place-of-worship me-2"></i>Dashboard
+                <i class="fa-solid fa-chart-simple me-2"></i>Dashboard
             </a>
         </li>
 
