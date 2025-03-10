@@ -1,11 +1,7 @@
-<main class="col bg-light p-4">
-    <!-- <h1>Main Content</h1>
-    <p>This is the main content area.</p> -->
-
-    <div class="row">
-        <div class="card col-2 m-2">
-            <div class="card-body d-flex flex-column flex-wrap align-content-center">
-                <i class="fa-solid fa-place-of-worship fa-2x text-primary"></i>
+<div class="row">
+    <div class="card col-2 m-2">
+        <div class="card-body d-flex flex-column flex-wrap align-content-center">
+            <i class="fa-solid fa-place-of-worship fa-2x text-primary"></i>
                 6 missions
             </div>
         </div>
@@ -54,6 +50,4 @@
             </div>
         </div>
     </div>
-
-    
-</main>
+</div>

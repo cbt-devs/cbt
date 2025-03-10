@@ -4,7 +4,10 @@
         <div class="row h-100">
             <?php require_once( "./class/navigation.php" ); ?>
             <?php require_once( "./modules/navbar.php" ); ?>
-            <?php require_once( "./modules/main.php" ); ?>
+
+            <main class="col bg-light p-4 contents">
+                <?php require_once( "./modules/main.php" ); ?>
+            </main>
         </div>
 
         <?php require_once( "./modules/footer.php" ); ?>

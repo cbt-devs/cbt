@@ -1,4 +1,27 @@
-    const labels = ["Red", "Blue", "Yellow"];
+document.addEventListener("DOMContentLoaded", function() {
+    // Select all links with the 'load-content' class
+    document.querySelectorAll(".load-content").forEach(link => {
+        link.addEventListener("click", function(e) {
+            e.preventDefault(); // Prevent page reload
+
+            const page = this.getAttribute("data-page"); // Get the target page
+            const contentDiv = document.querySelector(".contents");
+
+            // Load content using fetch
+            fetch(page)
+                .then(response => response.text())
+                .then(data => {
+                    contentDiv.innerHTML = data; // Update content
+
+                    // Delay chart initialization to ensure DOM is updated
+                    setTimeout(() => chartjs.init(), 0);
+                })
+                .catch(error => console.error("Error loading content:", error));
+        });
+    });
+});
+
+const labels = ["Red", "Blue", "Yellow"];
 const data = [12, 19, 3];
 
 const chartjs = {
@@ -7,9 +30,10 @@ const chartjs = {
         chartjs.doughnut();
         chartjs.line();
     },
-    bar: (e) => {
-        const barChart = document.getElementById('barChart').getContext('2d');
-        new Chart(barChart, {
+    bar: () => {
+        const barChart = document.getElementById('barChart');
+        if (!barChart) return; // Check if element exists
+        new Chart(barChart.getContext('2d'), {
             type: 'bar',
             data: {
                 labels: labels,
@@ -17,36 +41,20 @@ const chartjs = {
                     label: 'Sample Data',
                     data: data,
                     backgroundColor: [
-                        'rgba(255, 99, 132, 0.7)', // Light red
-                        'rgba(54, 162, 235, 0.7)', // Light blue
-                        'rgba(255, 206, 86, 0.7)'  // Light yellow
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)'
                     ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',   // Dark red border
-                        'rgba(54, 162, 235, 1)',   // Dark blue border
-                        'rgba(255, 206, 86, 1)'    // Dark yellow border
-                    ],
-                    borderWidth: 2, // Border thickness
-                    hoverBackgroundColor: [
-                        'rgba(250, 66, 106, 0.7)',    // Hover red
-                        'rgba(0, 93, 155, 0.7)', // Light blue
-                        'rgba(239, 254, 24, 0.7)'  // Light yellow
-                    ],
-                    hoverBorderColor: [
-                        'rgba(200, 0, 0, 1)',      // Darker red on hover
-                        'rgba(0, 0, 200, 1)',      // Darker blue on hover
-                        'rgba(200, 200, 0, 1)'     // Darker yellow on hover
-                    ]
+                    borderWidth: 2
                 }]
             },
-            options: {
-                responsive: false // Keeps the chart at a fixed size
-            }
+            options: { responsive: false }
         });
     },
-    doughnut: (e) => {
-        const doughnutChart  = document.getElementById('doughnutChart').getContext('2d');
-        new Chart(doughnutChart , {
+    doughnut: () => {
+        const doughnutChart = document.getElementById('doughnutChart');
+        if (!doughnutChart) return; // Check if element exists
+        new Chart(doughnutChart.getContext('2d'), {
             type: 'doughnut',
             data: {
                 labels: labels,
@@ -54,95 +62,36 @@ const chartjs = {
                     label: 'Sample Data',
                     data: data,
                     backgroundColor: [
-                        'rgba(255, 99, 132, 0.7)', // Light red
-                        'rgba(54, 162, 235, 0.7)', // Light blue
-                        'rgba(255, 206, 86, 0.7)'  // Light yellow
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)'
                     ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',   // Dark red border
-                        'rgba(54, 162, 235, 1)',   // Dark blue border
-                        'rgba(255, 206, 86, 1)'    // Dark yellow border
-                    ],
-                    borderWidth: 2, // Border thickness
-                    hoverBackgroundColor: [
-                        'rgba(250, 66, 106, 0.7)',    // Hover red
-                        'rgba(0, 93, 155, 0.7)', // Light blue
-                        'rgba(239, 254, 24, 0.7)'  // Light yellow
-                    ],
-                    hoverBorderColor: [
-                        'rgba(200, 0, 0, 1)',      // Darker red on hover
-                        'rgba(0, 0, 200, 1)',      // Darker blue on hover
-                        'rgba(200, 200, 0, 1)'     // Darker yellow on hover
-                    ]
+                    borderWidth: 2
                 }]
             },
-            options: {
-                responsive: false, // Keeps chart fixed size
-                cutout: '60%', // Controls the thickness of the doughnut (smaller = thicker)
-                plugins: {
-                    legend: {
-                        labels: {
-                            color: '#27445D', // Legend text color
-                            font: {
-                                size: 14
-                            }
-                        }
-                    }
-                }
-            }
+            options: { responsive: false }
         });
     },
     line: () => {
-        const lineChart = document.getElementById('lineChart').getContext('2d');
-        new Chart(lineChart, {
+        const lineChart = document.getElementById('lineChart');
+        if (!lineChart) return; // Check if element exists
+        new Chart(lineChart.getContext('2d'), {
             type: 'line',
             data: {
-                labels: ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'],   
+                labels: ['Jan', 'Feb', 'Mar'],
                 datasets: [{
                     label: 'Sample Data',
                     data: data,
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)', // Light blue fill
-                    borderColor: 'rgba(54, 162, 235, 1)', // Blue line
-                    borderWidth: 2,
-                    pointBackgroundColor: [
-                        '#27445D', // Point 1
-                        '#497D74', // Point 2
-                        '#71BBB2'  // Point 3
-                    ],
-                    pointRadius: 5, // Make points visible
-                    fill: true // Fill area under line
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    fill: true
                 }]
             },
-            options: {
-                responsive: false,
-                plugins: {
-                    legend: {
-                        labels: {
-                            color: '#27445D', // Legend color
-                            font: { size: 14 }
-                        }
-                    }
-                },
-                elements: {
-                    line: {
-                        tension: 0.4 // Smooth curved line
-                    }
-                },
-                scales: {
-                    x: {
-                        ticks: {
-                            color: '#27445D' // X-axis label color
-                        }
-                    },
-                    y: {
-                        ticks: {
-                            color: '#27445D' // Y-axis label color
-                        }
-                    }
-                }
-            }
+            options: { responsive: false }
         });
     }
 };
 
-chartjs.init();
+
+document.addEventListener("DOMContentLoaded", function() {
+    chartjs.init();
+});

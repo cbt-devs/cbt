@@ -7,7 +7,7 @@ $nav = new Navigation();
 
     <ul class="nav flex-column flex-grow-1">
         <li class="nav-item bg-info-subtle rounded">
-            <a href="#" class="nav-link hover-bg-light">
+            <a href="#" class="nav-link load-content hover-bg-light" data-page="<?= $nav->getLink('main') ?>">
                 <i class="fa-solid fa-chart-simple me-2"></i>Dashboard
             </a>
         </li>
@@ -21,10 +21,10 @@ $nav = new Navigation();
             <div class="collapse" id="managementDropdown">
                 <ul class="nav flex-column ms-3">
                     <li class="nav-item">
-                        <a href="<?= $nav->getLink( 'members' ) ?>" class="nav-link">Members</a>
+                        <a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('members') ?>">Members</a>
                     </li>
                     <li class="nav-item">
-                        <a href="<?= $nav->getLink( 'events' ) ?>" class="nav-link">Events</a>
+                        <a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('events') ?>">Events</a>
                     </li>
                 </ul>
             </div>
