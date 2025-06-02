@@ -10,11 +10,10 @@
     <thead>
         <tr>
             <th>Name</th>
-            <th>Position</th>
-            <th>Office</th>
-            <th>Age</th>
-            <th>Start date</th>
-            <th>Salary</th>
+            <th>Email</th>
+            <th>Birthdate</th>
+            <th>Address</th>
+            <th>Baptism Date</th>
         </tr>
     </thead>
 </table>
@@ -99,6 +98,49 @@
 </div>
 
 <script>
+$(document).ready(function() {
+    $.ajax({
+        type: "POST",
+        url: "ajax/member.php",
+        data: {
+            action: "show"
+        },
+        success: function(response) {
+            const data = response.data;
+
+            console.log(data);
+
+            if ($.fn.dataTable.isDataTable('#example')) {
+                $('#example').DataTable().clear().destroy();
+            }
+
+            $('#example').DataTable({
+                data: data,
+                columns: [{
+                        data: 'name'
+                    },
+                    {
+                        data: 'email'
+                    },
+                    {
+                        data: 'bday'
+                    },
+                    {
+                        data: 'address'
+                    },
+                    {
+                        data: 'baptism_date'
+                    }
+                ]
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error("AJAX Error: " + status + ": " + error);
+        }
+    });
+});
+
+
 document.getElementById('addMemberForm').addEventListener('submit', async function(event) {
     event.preventDefault();
 
@@ -117,15 +159,14 @@ document.getElementById('addMemberForm').addEventListener('submit', async functi
 
         const result = await response.json();
 
-        console.log(result);
-
-        // if (result.status === 'success') {
-        //     // Close modal, reset form, show success message, etc.
-        //     console.log('Member added');
-        //     form.reset();
-        // } else {
-        //     console.error('Failed:', result.message);
-        // }
+        if (result.status === 'success') {
+            // Close modal, reset form, show success message, etc.
+            toastr.success('Member added successfully!')
+            form.reset();
+        } else {
+            toastr.error('Failed to add the member')
+            console.error('Failed:', result.message);
+        }
 
         // Remove focus to avoid ARIA warning
         if (document.activeElement instanceof HTMLElement) {
@@ -135,9 +176,6 @@ document.getElementById('addMemberForm').addEventListener('submit', async functi
         // Hide the modal
         const modal = bootstrap.Modal.getInstance(document.getElementById('addMemberModal'));
         modal.hide();
-
-        // Optionally display a success message to user
-        alert('Member added successfully!');
 
     } catch (error) {
         console.error('Error:', error);

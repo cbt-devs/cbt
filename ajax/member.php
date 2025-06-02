@@ -1,18 +1,25 @@
 <?php
-require_once '../class/database.php'; // or wherever your DB connection is
-
-$pdo = new Database();      // if Database is your DB class
-$conn = $pdo->getConnection(); // or whatever method returns the PDO instance
-
+require_once '../class/database.php';
 require_once '../class/member.php';
+
+$pdo = new Database();
+$conn = $pdo->getConnection();
+
 $member = new Member($conn);
 
 header('Content-Type: application/json');
 
 $action = $_POST['action'] ?? '';
 
-
 switch ($action) {
+    case 'show':
+            $result = $member->showMember();
+            echo json_encode([
+                'status' => $result ? 'success' : 'error',
+                'data' => $result
+            ]);
+            break;
+            
     case 'add':
         $result = $member->addMember($_POST);
         echo json_encode([
