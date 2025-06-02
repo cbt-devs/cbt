@@ -10,26 +10,24 @@ class Member {
     try {
         $this->conn->beginTransaction();
 
-        // Fetch accounts
-        $stmt = $this->conn->prepare("SELECT id, email, status FROM accounts");
+        $stmt = $this->conn->prepare("SELECT id, email, status FROM accounts WHERE status = 'active'");
         $stmt->execute();
         $acc_r = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Fetch addresses (must include account_id to join later)
-        $stmt = $this->conn->prepare("SELECT accounts_id, address_line, city, state, postal FROM accounts_address");
+        $ids = array_column($acc_r, 'id');
+        $acc_r_txt = implode(',', $ids);
+
+        $stmt = $this->conn->prepare("SELECT accounts_id, address_line, city, state, postal FROM accounts_address WHERE accounts_id IN ( $acc_r_txt )");
         $stmt->execute();
         $acc_address_r = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Fetch info (must include account_id to join later)
-        $stmt = $this->conn->prepare("SELECT accounts_id, first_name, last_name, bday, gender, baptist_date FROM accounts_info");
+        $stmt = $this->conn->prepare("SELECT accounts_id, first_name, last_name, bday, gender, baptist_date FROM accounts_info WHERE accounts_id IN ( $acc_r_txt )");
         $stmt->execute();
         $acc_info_r = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $this->conn->commit();
 
-        // Combine data by account ID
         $data_r = [];
-
         foreach ($acc_r as $acc) {
             $id = $acc['id'];
 
