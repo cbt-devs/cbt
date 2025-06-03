@@ -6,7 +6,7 @@
 <button type="button" class="btn btn-warning"><i class="fa-solid fa-pen"></i></button>
 <button type="button" class="btn btn-danger"><i class="fa-solid fa-trash"></i></button>
 
-<table id="example" class="table table-striped" style="width:100%">
+<table id="memberTable" class="table table-striped" style="width:100%">
     <thead>
         <tr>
             <th>Name</th>
@@ -14,6 +14,7 @@
             <th>Birthdate</th>
             <th>Address</th>
             <th>Baptism Date</th>
+            <th>action</th>
         </tr>
     </thead>
 </table>
@@ -108,13 +109,11 @@ $(document).ready(function() {
         success: function(response) {
             const data = response.data;
 
-            console.log(data);
-
-            if ($.fn.dataTable.isDataTable('#example')) {
-                $('#example').DataTable().clear().destroy();
+            if ($.fn.dataTable.isDataTable('#memberTable')) {
+                $('#memberTable').DataTable().clear().destroy();
             }
 
-            $('#example').DataTable({
+            $('#memberTable').DataTable({
                 data: data,
                 columns: [{
                         data: 'name'
@@ -130,12 +129,57 @@ $(document).ready(function() {
                     },
                     {
                         data: 'baptism_date'
+                    },
+                    {
+                        data: null,
+                        render: function(data, type, row, meta) {
+                            return `
+                                <button class="btn btn-warning btn-sm edit-btn" data-id="${row.id}"><i class="fa-solid fa-pen"></i></button>
+                                <button class="btn btn-danger btn-sm delete-btn" data-id="${row.id}"><i class="fa-solid fa-trash"></i></button>
+                            `;
+                        },
+                        orderable: false,
+                        searchable: false
                     }
                 ]
             });
         },
         error: function(xhr, status, error) {
             console.error("AJAX Error: " + status + ": " + error);
+        }
+    });
+});
+
+$('#memberTable').on('click', '.edit-btn', function() {
+    const acc_id = $(this).data('id');
+
+    Swal.fire({
+        title: `Do you want to update ${acc_id}?`,
+        showDenyButton: true,
+        confirmButtonText: "Yes",
+        denyButtonText: `No`
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire("Updated!", "", "success");
+        } else if (result.isDenied) {
+            Swal.fire("Changes are not saved", "", "info");
+        }
+    });
+});
+
+$('#memberTable').on('click', '.delete-btn', function() {
+    const acc_id = $(this).data('id');
+
+    Swal.fire({
+        title: `Do you want to delete ${acc_id}?`,
+        showDenyButton: true,
+        confirmButtonText: "Yes",
+        denyButtonText: `No`
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire("Deleted!", "", "success");
+        } else if (result.isDenied) {
+            Swal.fire("Changes are not saved", "", "info");
         }
     });
 });
@@ -161,7 +205,7 @@ document.getElementById('addMemberForm').addEventListener('submit', async functi
 
         if (result.status === 'success') {
             // Close modal, reset form, show success message, etc.
-            toastr.success('Member added successfully!')
+            Swal.fire("Member added", "", "success");
             form.reset();
         } else {
             toastr.error('Failed to add the member')

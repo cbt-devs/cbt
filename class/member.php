@@ -50,6 +50,7 @@ class Member {
             }
 
             $data_r[] = [
+                'id' => $id,
                 'email' => $acc['email'],
                 'status' => $acc['status'],
                 'name' => $name,
@@ -103,14 +104,15 @@ class Member {
     
             $stmt2 = $this->conn->prepare("
                 INSERT INTO accounts_info (
-                    accounts_id, first_name, last_name, bday, gender, baptist_date, inviter_id, updated_at
+                    accounts_id, first_name, middle_name, last_name, bday, gender, baptist_date, inviter_id, updated_at
                 ) VALUES (
-                    :accounts_id, :first_name, :last_name, :bday, :gender, :baptist_date, :inviter_id, :updated_at
+                    :accounts_id, :first_name, :middle_name, :last_name, :bday, :gender, :baptist_date, :inviter_id, :updated_at
                 )
             ");
             $stmt2->execute([
                 ':accounts_id' => $accountId,
                 ':first_name' => $data['firstName'],
+                ':middle_name' => $data['middleName'],
                 ':last_name' => $data['lastName'],
                 ':bday' => $data['birthdate'],
                 ':gender' => $data['gender'],
