@@ -99,131 +99,158 @@
 </div>
 
 <script>
-$(document).ready(function() {
-    $.ajax({
-        type: "POST",
-        url: "ajax/member.php",
-        data: {
-            action: "show"
-        },
-        success: function(response) {
-            const data = response.data;
+const memberTable = {
+    init: function() {
+        this.showMember();
+        this.bindEvents();
+    },
 
-            if ($.fn.dataTable.isDataTable('#memberTable')) {
-                $('#memberTable').DataTable().clear().destroy();
-            }
+    showMember: function() {
+        $.ajax({
+            type: "POST",
+            url: "ajax/member.php",
+            data: {
+                action: "show"
+            },
+            success: function(response) {
+                const data = response.data;
 
-            $('#memberTable').DataTable({
-                data: data,
-                columns: [{
-                        data: 'name'
-                    },
-                    {
-                        data: 'email'
-                    },
-                    {
-                        data: 'bday'
-                    },
-                    {
-                        data: 'address'
-                    },
-                    {
-                        data: 'baptism_date'
-                    },
-                    {
-                        data: null,
-                        render: function(data, type, row, meta) {
-                            return `
-                                <button class="btn btn-warning btn-sm edit-btn" data-id="${row.id}"><i class="fa-solid fa-pen"></i></button>
-                                <button class="btn btn-danger btn-sm delete-btn" data-id="${row.id}"><i class="fa-solid fa-trash"></i></button>
-                            `;
+                if ($.fn.dataTable.isDataTable('#memberTable')) {
+                    $('#memberTable').DataTable().clear().destroy();
+                }
+
+                $('#memberTable').DataTable({
+                    data: data,
+                    columns: [{
+                            data: 'name'
                         },
-                        orderable: false,
-                        searchable: false
-                    }
-                ]
-            });
-        },
-        error: function(xhr, status, error) {
-            console.error("AJAX Error: " + status + ": " + error);
-        }
-    });
-});
+                        {
+                            data: 'email'
+                        },
+                        {
+                            data: 'bday'
+                        },
+                        {
+                            data: 'address'
+                        },
+                        {
+                            data: 'baptism_date'
+                        },
+                        {
+                            data: null,
+                            render: function(data, type, row, meta) {
+                                return `
+                  <button class="btn btn-warning btn-sm edit-btn" data-id="${row.id}">
+                    <i class="fa-solid fa-pen"></i>
+                  </button>
+                  <button class="btn btn-danger btn-sm delete-btn" data-id="${row.id}">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                `;
+                            },
+                            orderable: false,
+                            searchable: false
+                        }
+                    ]
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX Error: " + status + ": " + error);
+            }
+        });
+    },
 
-$('#memberTable').on('click', '.edit-btn', function() {
-    const acc_id = $(this).data('id');
+    addMember: function(formElement) {
+        formElement.addEventListener('submit', async function(event) {
+            event.preventDefault();
 
-    Swal.fire({
-        title: `Do you want to update ${acc_id}?`,
-        showDenyButton: true,
-        confirmButtonText: "Yes",
-        denyButtonText: `No`
-    }).then((result) => {
-        if (result.isConfirmed) {
-            Swal.fire("Updated!", "", "success");
-        } else if (result.isDenied) {
-            Swal.fire("Changes are not saved", "", "info");
-        }
-    });
-});
+            const formData = new FormData(formElement);
+            formData.append('action', 'add');
 
-$('#memberTable').on('click', '.delete-btn', function() {
-    const acc_id = $(this).data('id');
+            try {
+                const response = await fetch('ajax/member.php', {
+                    method: 'POST',
+                    body: formData
+                });
 
-    Swal.fire({
-        title: `Do you want to delete ${acc_id}?`,
-        showDenyButton: true,
-        confirmButtonText: "Yes",
-        denyButtonText: `No`
-    }).then((result) => {
-        if (result.isConfirmed) {
-            Swal.fire("Deleted!", "", "success");
-        } else if (result.isDenied) {
-            Swal.fire("Changes are not saved", "", "info");
-        }
-    });
-});
+                const result = await response.json();
 
+                if (result.status === 'success') {
+                    Swal.fire("Member added", "", "success");
+                    formElement.reset();
+                    memberTable.showMember(); // Refresh the table
+                } else {
+                    toastr.error('Failed to add the member');
+                    console.error('Failed:', result.message);
+                }
 
-document.getElementById('addMemberForm').addEventListener('submit', async function(event) {
-    event.preventDefault();
+                if (document.activeElement instanceof HTMLElement) {
+                    document.activeElement.blur();
+                }
 
-    const form = event.target;
-    const formData = new FormData(form);
-    formData.append('action', 'add');
+                const modal = bootstrap.Modal.getInstance(document.getElementById(
+                    'addMemberModal'));
+                modal.hide();
 
-    for (const [key, value] of formData.entries()) {
-        console.log(`${key}: ${value}`);
-    }
-    try {
-        const response = await fetch('ajax/member.php', {
-            method: 'POST',
-            body: formData
+            } catch (error) {
+                console.error('Error:', error);
+                alert('There was a problem submitting the form.');
+            }
+        });
+    },
+
+    editMember: function(id) {
+        Swal.fire({
+            title: `Do you want to update ${id}?`,
+            showDenyButton: true,
+            confirmButtonText: "Yes",
+            denyButtonText: `No`
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire("Updated!", "", "success");
+                // Add actual update logic here
+            } else if (result.isDenied) {
+                Swal.fire("Changes are not saved", "", "info");
+            }
+        });
+    },
+
+    deleteMember: function(id) {
+        Swal.fire({
+            title: `Do you want to delete ${id}?`,
+            showDenyButton: true,
+            confirmButtonText: "Yes",
+            denyButtonText: `No`
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire("Deleted!", "", "success");
+                // Add actual delete logic here
+            } else if (result.isDenied) {
+                Swal.fire("Changes are not saved", "", "info");
+            }
+        });
+    },
+
+    bindEvents: function() {
+        $('#memberTable').on('click', '.edit-btn', function() {
+            const id = $(this).data('id');
+            memberTable.editMember(id);
         });
 
-        const result = await response.json();
+        $('#memberTable').on('click', '.delete-btn', function() {
+            const id = $(this).data('id');
+            memberTable.deleteMember(id);
+        });
 
-        if (result.status === 'success') {
-            // Close modal, reset form, show success message, etc.
-            Swal.fire("Member added", "", "success");
-            form.reset();
-        } else {
-            toastr.error('Failed to add the member')
-            console.error('Failed:', result.message);
+        const form = document.getElementById('addMemberForm');
+        if (form) {
+            memberTable.addMember(form);
         }
-
-        // Remove focus to avoid ARIA warning
-        if (document.activeElement instanceof HTMLElement) {
-            document.activeElement.blur();
-        }
-
-        // Hide the modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('addMemberModal'));
-        modal.hide();
-
-    } catch (error) {
-        console.error('Error:', error);
-        alert('There was a problem submitting the form.');
     }
+};
+
+// Initialize on document ready
+$(document).ready(function() {
+    memberTable.init();
 });
 </script>
