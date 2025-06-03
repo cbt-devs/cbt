@@ -23,6 +23,10 @@ $nav = new Navigation();
                     <ul class="nav flex-column ms-3">
                         <li class="nav-item">
                             <a href="#" class="nav-link load-content"
+                                data-page="<?= $nav->getLink('missions') ?>">Missions</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link load-content"
                                 data-page="<?= $nav->getLink('members') ?>">Members</a>
                         </li>
                         <li class="nav-item">

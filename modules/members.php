@@ -3,8 +3,6 @@
 
 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addMemberModal"><i
         class="fa-solid fa-plus"></i></button>
-<button type="button" class="btn btn-warning"><i class="fa-solid fa-pen"></i></button>
-<button type="button" class="btn btn-danger"><i class="fa-solid fa-trash"></i></button>
 
 <table id="memberTable" class="table table-striped" style="width:100%">
     <thead>
