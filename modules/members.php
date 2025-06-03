@@ -78,7 +78,7 @@
                         </div>
                         <div class="col-md-4">
                             <label for="postalCode" class="form-label">Postal Code</label>
-                            <input type="number" class="form-control" id="postalCode" name="postalCode" value="q"
+                            <input type="number" class="form-control" id="postalCode" name="postalCode" value="1100"
                                 required>
                         </div>
                     </div>
@@ -99,7 +99,7 @@
 </div>
 
 <script>
-const memberTable = {
+var memberTable = {
     init: function() {
         this.showMember();
         this.bindEvents();
