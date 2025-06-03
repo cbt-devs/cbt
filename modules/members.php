@@ -1,8 +1,9 @@
 <h2>Members Management</h2>
 <p>Here you can manage all your members.</p>
 
-<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addMemberModal"><i
-        class="fa-solid fa-plus"></i></button>
+<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addMemberModal">
+    <i class="fa-solid fa-plus"></i> Add Member
+</button>
 
 <table id="memberTable" class="table table-striped" style="width:100%">
     <thead>
