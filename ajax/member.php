@@ -28,8 +28,12 @@ switch ($action) {
         ]);
         break;
 
+    case 'update':
+        $member->updateMember($_POST['id']);
+        break;
+        
     case 'delete':
-        // $member->deleteMember($_POST['id']);
+        $member->deleteMember($_POST['id']);
         break;
 
     // add more cases like 'update', 'get', etc.

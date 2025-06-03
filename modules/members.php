@@ -207,8 +207,7 @@ const memberTable = {
             denyButtonText: `No`
         }).then((result) => {
             if (result.isConfirmed) {
-                Swal.fire("Updated!", "", "success");
-                // Add actual update logic here
+                memberTable.action('update', id);
             } else if (result.isDenied) {
                 Swal.fire("Changes are not saved", "", "info");
             }
@@ -223,8 +222,7 @@ const memberTable = {
             denyButtonText: `No`
         }).then((result) => {
             if (result.isConfirmed) {
-                Swal.fire("Deleted!", "", "success");
-                // Add actual delete logic here
+                memberTable.action('delete', id);
             } else if (result.isDenied) {
                 Swal.fire("Changes are not saved", "", "info");
             }
@@ -246,7 +244,63 @@ const memberTable = {
         if (form) {
             memberTable.addMember(form);
         }
+    },
+
+    action: function(type, id) {
+        switch (type) {
+            case "update":
+                $.ajax({
+                    type: "POST",
+                    url: "ajax/member.php",
+                    data: {
+                        action: "update",
+                        id: id
+                        // Include any other update data here
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            Swal.fire("Member updated", "", "success");
+                            memberTable.showMember(); // Refresh table
+                        } else {
+                            toastr.error("Failed to update member");
+                            console.error('Update failed:', response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("AJAX Error (update):", status, error);
+                    }
+                });
+                break;
+
+            case "delete":
+                $.ajax({
+                    type: "POST",
+                    url: "ajax/member.php",
+                    data: {
+                        action: "delete",
+                        id: id
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            Swal.fire("Member deleted", "", "success");
+                            memberTable.showMember(); // Refresh table
+                        } else {
+                            toastr.error("Failed to delete member");
+                            console.error('Delete failed:', response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("AJAX Error (delete):", status, error);
+                    }
+                });
+                break;
+
+            default:
+                console.warn("Unknown action type:", type);
+                break;
+        }
     }
+
 };
 
 // Initialize on document ready
