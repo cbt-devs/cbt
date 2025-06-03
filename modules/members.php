@@ -208,8 +208,6 @@ const memberTable = {
         }).then((result) => {
             if (result.isConfirmed) {
                 memberTable.action('update', id);
-            } else if (result.isDenied) {
-                Swal.fire("Changes are not saved", "", "info");
             }
         });
     },
@@ -223,8 +221,6 @@ const memberTable = {
         }).then((result) => {
             if (result.isConfirmed) {
                 memberTable.action('delete', id);
-            } else if (result.isDenied) {
-                Swal.fire("Changes are not saved", "", "info");
             }
         });
     },
