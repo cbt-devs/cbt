@@ -1,3 +1,8 @@
+<?php 
+require_once __DIR__ . '/../init.php';
+$ministryData = $ministry->show();
+?>
+
 <h2>Events Management</h2>
 <p>Here you can manage all your events.</p>
 
@@ -26,8 +31,20 @@
 
                         <div class="col-md-6">
                             <label for="ministry" class="form-label">Ministry</label>
-                            <input type="text" class="form-control" id="ministry" name="ministry">
+                            <select class="form-control" id="ministry" name="ministry">
+                                <option value="" selected>-- Select Ministry --</option>
+                                <?php
+                                if (!empty($ministryData)) {
+                                    foreach ($ministryData as $ministry) {
+                                        echo '<option value="' . htmlspecialchars($ministry['id']) . '">' . htmlspecialchars($ministry['name']) . '</option>';
+                                    }
+                                } else {
+                                    echo '<option value="">No ministries found</option>';
+                                }
+                                ?>
+                            </select>
                         </div>
+
 
                         <div class="col-md-6">
                             <label for="eventDate" class="form-label">Date <span class="text-danger">*</span></label>

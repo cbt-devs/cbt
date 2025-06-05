@@ -1,4 +1,5 @@
 <?php require_once( "./modules/header.php" ); ?>
+
 <body class="d-flex flex-column min-vh-100">
     <div class="container-fluid container-fluid flex-grow-1">
         <div class="row h-100">
@@ -12,6 +13,6 @@
 
         <?php require_once( "./modules/footer.php" ); ?>
     </div>
-    
+
 </body>
 </html>
