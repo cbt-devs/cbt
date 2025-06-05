@@ -107,9 +107,10 @@ var memberTable = {
     showMember: function() {
         $.ajax({
             type: "POST",
-            url: "ajax/member.php",
+            url: "controller/main.php",
             data: {
-                action: "show"
+                action: "show",
+                type: "members"
             },
             success: function(response) {
                 const data = response.data;
@@ -137,15 +138,15 @@ var memberTable = {
                         },
                         {
                             data: null,
-                            render: function(data, type, row, meta) {
+                            render: function(data, type, row) {
                                 return `
-                  <button class="btn btn-warning btn-sm edit-btn" data-id="${row.id}">
-                    <i class="fa-solid fa-pen"></i>
-                  </button>
-                  <button class="btn btn-danger btn-sm delete-btn" data-id="${row.id}">
-                    <i class="fa-solid fa-trash"></i>
-                  </button>
-                `;
+                                    <button class="btn btn-warning btn-sm edit-btn" data-id="${row.id}">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-sm delete-btn" data-id="${row.id}">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                `;
                             },
                             orderable: false,
                             searchable: false
@@ -154,7 +155,7 @@ var memberTable = {
                 });
             },
             error: function(xhr, status, error) {
-                console.error("AJAX Error: " + status + ": " + error);
+                console.error("AJAX Error (show):", status, error);
             }
         });
     },
@@ -165,9 +166,10 @@ var memberTable = {
 
             const formData = new FormData(formElement);
             formData.append('action', 'add');
+            formData.append('type', 'members');
 
             try {
-                const response = await fetch('ajax/member.php', {
+                const response = await fetch('controller/main.php', {
                     method: 'POST',
                     body: formData
                 });
@@ -177,7 +179,7 @@ var memberTable = {
                 if (result.status === 'success') {
                     Swal.fire("Member added", "", "success");
                     formElement.reset();
-                    memberTable.showMember(); // Refresh the table
+                    memberTable.showMember();
                 } else {
                     toastr.error('Failed to add the member');
                     console.error('Failed:', result.message);
@@ -192,7 +194,7 @@ var memberTable = {
                 modal.hide();
 
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Error (add):', error);
                 alert('There was a problem submitting the form.');
             }
         });
@@ -200,7 +202,7 @@ var memberTable = {
 
     editMember: function(id) {
         Swal.fire({
-            title: `Do you want to update ${id}?`,
+            title: `Do you want to update member ID ${id}?`,
             showDenyButton: true,
             confirmButtonText: "Yes",
             denyButtonText: `No`
@@ -213,7 +215,7 @@ var memberTable = {
 
     deleteMember: function(id) {
         Swal.fire({
-            title: `Do you want to delete ${id}?`,
+            title: `Do you want to delete member ID ${id}?`,
             showDenyButton: true,
             confirmButtonText: "Yes",
             denyButtonText: `No`
@@ -241,64 +243,31 @@ var memberTable = {
         }
     },
 
-    action: function(type, id) {
-        switch (type) {
-            case "update":
-                $.ajax({
-                    type: "POST",
-                    url: "ajax/member.php",
-                    data: {
-                        action: "update",
-                        id: id
-                        // Include any other update data here
-                    },
-                    success: function(response) {
-                        if (response.status === 'success') {
-                            Swal.fire("Member updated", "", "success");
-                            memberTable.showMember(); // Refresh table
-                        } else {
-                            toastr.error("Failed to update member");
-                            console.error('Update failed:', response.message);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("AJAX Error (update):", status, error);
-                    }
-                });
-                break;
-
-            case "delete":
-                $.ajax({
-                    type: "POST",
-                    url: "ajax/member.php",
-                    data: {
-                        action: "delete",
-                        id: id
-                    },
-                    success: function(response) {
-                        if (response.status === 'success') {
-                            Swal.fire("Member deleted", "", "success");
-                            memberTable.showMember(); // Refresh table
-                        } else {
-                            toastr.error("Failed to delete member");
-                            console.error('Delete failed:', response.message);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("AJAX Error (delete):", status, error);
-                    }
-                });
-                break;
-
-            default:
-                console.warn("Unknown action type:", type);
-                break;
-        }
+    action: function(actionType, id) {
+        $.ajax({
+            type: "POST",
+            url: "controller/main.php",
+            data: {
+                action: actionType,
+                type: "members",
+                id: id
+            },
+            success: function(response) {
+                if (response.status === 'success') {
+                    Swal.fire(`Member ${actionType}d`, "", "success");
+                    memberTable.showMember();
+                } else {
+                    toastr.error(`Failed to ${actionType} member`);
+                    console.error(`${actionType} failed:`, response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(`AJAX Error (${actionType}):`, status, error);
+            }
+        });
     }
-
 };
 
-// Initialize on document ready
 $(document).ready(function() {
     memberTable.init();
 });

@@ -6,7 +6,7 @@ class Member {
         $this->conn = $db;
     }
 
-    public function showMember() {
+    public function show() {
     try {
         $this->conn->beginTransaction();
 
@@ -73,7 +73,7 @@ class Member {
 }
 
 
-    public function addMember($data) {
+    public function add($data) {
         try {
             // Start transaction
             $this->conn->beginTransaction();
@@ -150,7 +150,7 @@ class Member {
         }
     }
 
-    public function updateMember($id = 0) {
+    public function update($id = 0) {
         if ($id <= 0) {
             echo json_encode(['status' => 'error', 'message' => 'Invalid ID']);
             return;
@@ -230,37 +230,34 @@ class Member {
         }
     }
 
-    public function deleteMember($id = 0) {
-        if ($id <= 0) {
-            echo json_encode(['status' => 'error', 'message' => 'Invalid ID']);
-            return;
-        }
-
-        try {
-            $this->conn->beginTransaction();
-
-            // Delete from accounts_info
-            $stmt = $this->conn->prepare("DELETE FROM accounts_info WHERE accounts_id = :id");
-            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-            $stmt->execute();
-
-            // Delete from accounts_address
-            $stmt = $this->conn->prepare("DELETE FROM accounts_address WHERE accounts_id = :id");
-            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-            $stmt->execute();
-
-            // Delete from accounts
-            $stmt = $this->conn->prepare("DELETE FROM accounts WHERE id = :id");
-            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-            $stmt->execute();
-
-            $this->conn->commit();
-
-            echo json_encode(['status' => 'success']);
-        } catch (PDOException $e) {
-            $this->conn->rollBack();
-            echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
-        }
+    public function delete($id = 0) {
+    if ($id <= 0) {
+        return ['status' => 'error', 'message' => 'Invalid ID'];
     }
+
+    try {
+        $this->conn->beginTransaction();
+
+        $stmt = $this->conn->prepare("DELETE FROM accounts_info WHERE accounts_id = :id");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $stmt = $this->conn->prepare("DELETE FROM accounts_address WHERE accounts_id = :id");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $stmt = $this->conn->prepare("DELETE FROM accounts WHERE id = :id");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $this->conn->commit();
+
+        return ['status' => 'success'];
+    } catch (PDOException $e) {
+        $this->conn->rollBack();
+        return ['status' => 'error', 'message' => $e->getMessage()];
+    }
+}
+
 
 }

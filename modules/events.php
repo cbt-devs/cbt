@@ -36,7 +36,13 @@
 
                         <div class="col-md-6">
                             <label for="eventTime" class="form-label">Time <span class="text-danger">*</span></label>
-                            <input type="time" class="form-control" id="eventTime" name="eventTime" required>
+                            <input type="time" class="form-control" id="eventTime" name="eventTime" step="1800"
+                                required>
+                        </div>
+
+                        <div class="col-md-8">
+                            <label for="place" class="form-label">Place of Event</label>
+                            <input type="text" class="form-control" id="place" name="place">
                         </div>
                     </div>
                 </div>
