@@ -12,8 +12,6 @@ class Ministries {
         $stmt->execute();
         $ministries = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $this->conn->commit();
-
         return $ministries;
     } catch (PDOException $e) {
         return [
