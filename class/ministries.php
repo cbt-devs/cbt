@@ -42,4 +42,65 @@ class Ministries {
             return ['status' => 'error', 'message' => $e->getMessage()];
         }
     }
+
+    public function update($data_r = []) {
+    try {
+        if (empty($data_r)) {
+            return ['status' => 'error', 'message' => 'No data provided for update'];
+        }
+
+        $id = $data_r['id'] ?? null;
+        $name = $data_r['ministryName'] ?? null;
+        $ageStart = $data_r['startAge'] ?? null;
+        $ageEnd = $data_r['endAge'] ?? null;
+        // Handle active status, default to 0 if not set or falsy
+        $active = isset($data_r['active']) && ($data_r['active'] == 1 || $data_r['active'] === '1') ? 1 : 0;
+
+        if (!$id || !$name) {
+            return ['status' => 'error', 'message' => 'ID and Ministry Name are required'];
+        }
+
+        $sql = "UPDATE ministries SET name = :name, age_start = :age_start, age_end = :age_end, active = :active WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([
+            ':name' => $name,
+            ':age_start' => $ageStart,
+            ':age_end' => $ageEnd,
+            ':active' => $active,
+            ':id' => $id
+        ]);
+
+        if ($stmt->rowCount() === 0) {
+            return ['status' => 'error', 'message' => 'No ministry updated. Please check the ID.'];
+        }
+
+            return ['status' => 'success'];
+        } catch (PDOException $e) {
+            return ['status' => 'error', 'message' => 'Database error: ' . $e->getMessage()];
+        }
+    }
+
+
+
+    public function delete($id = 0) {
+        if ($id <= 0) {
+            return ['status' => 'error', 'message' => 'Invalid ID'];
+        }
+
+        try {
+            $this->conn->beginTransaction();
+
+            $sql = "UPDATE ministries SET active = 0 WHERE id = :id";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([':id' => $id]);
+
+            $this->conn->commit();
+
+            return ['status' => 'success'];
+        } catch (PDOException $e) {
+            $this->conn->rollBack();
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
+
 }

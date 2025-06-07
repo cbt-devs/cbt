@@ -45,7 +45,7 @@ switch ($action) {
 
     case 'update':
         if (isset($_POST['id'])) {
-            $handler->update($_POST['id'], $_POST);
+            $handler->update($_POST);
             echo json_encode(['status' => 'success']);
         } else {
             echo json_encode(['status' => 'error', 'message' => 'ID missing']);

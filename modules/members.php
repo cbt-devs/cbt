@@ -18,7 +18,7 @@
     </thead>
 </table>
 
-<div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="addMemberModal">
     <div class="modal-dialog modal-lg">
         <!-- made wider for better layout -->
         <div class="modal-content">
