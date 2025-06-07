@@ -76,6 +76,15 @@
                                     max="100" step="1" placeholder="End Age">
                             </div>
                         </div>
+                        <div class="col-md-12 mt-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="updateActive" name="active"
+                                    value="1">
+                                <label class="form-check-label" for="updateActive">
+                                    Active
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -255,6 +264,7 @@ var ministryTable = {
             $('#editMinistryName').val(rowData.name);
             $('#editStartAge').val(rowData.age_start);
             $('#editEndAge').val(rowData.age_end);
+            $('#updateActive').prop('checked', rowData.active == 1);
 
             const modal = new bootstrap.Modal(document.getElementById('updateMinistryModal'));
             modal.show();
