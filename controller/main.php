@@ -2,12 +2,14 @@
 require_once '../class/database.php';
 require_once '../class/member.php';
 require_once '../class/ministries.php';
+require_once '../class/events.php';
 
 $pdo = new Database();
 $conn = $pdo->getConnection();
 
 $member = new Member($conn);
 $ministry = new Ministries($conn);
+$event = new Events($conn);
 
 header('Content-Type: application/json');
 
@@ -17,6 +19,7 @@ $type = $_POST['type'] ?? '';
 $handlers = [
     'members' => $member,
     'ministries' => $ministry,
+    'events' => $event,
 ];
 
 if (!isset($handlers[$type])) {
