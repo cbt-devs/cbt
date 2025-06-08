@@ -12,6 +12,15 @@ $ministryData = $ministry->show();
 
 <table id="eventTable" class="table table-striped" style="width:100%"></table>
 
+<style>
+#calendar {
+    max-width: 100%;
+    margin: 40px auto;
+}
+</style>
+
+<div id="calendar"></div>
+
 <div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
@@ -72,3 +81,27 @@ $ministryData = $ministry->show();
         </div>
     </div>
 </div>
+
+<script>
+$(document).ready(function() {
+    console.log("working calendar");
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        themeSystem: 'bootstrap5',
+        initialView: 'dayGridMonth',
+        events: [{
+                title: 'Event 1',
+                start: '2025-06-10'
+            },
+            {
+                title: 'Event 2',
+                start: '2025-06-12',
+                end: '2025-06-14'
+            }
+        ]
+    });
+
+    calendar.render();
+});
+</script>
