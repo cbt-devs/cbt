@@ -127,8 +127,8 @@ var eventsCalendar = {
                     html: `
                     <p><strong>Location:</strong> ${props.location}</p>
                     <p><strong>Ministries:</strong> ${props.ministries}</p>
-                    <p><strong>Start:</strong> ${event.start.toLocaleString()}</p>
-                    <p><strong>End:</strong> ${event.end ? event.end.toLocaleString() : 'N/A'}</p>
+                    <p><strong>Start:</strong> ${eventsCalendar.formatDateTime(event.start.toLocaleString())}</p>
+                    <p><strong>End:</strong> ${event.end ? eventsCalendar.formatDateTime(event.end.toLocaleString()) : 'N/A'}</p>
                 `,
                     icon: 'info'
                 });
@@ -293,7 +293,21 @@ var eventsCalendar = {
                 console.error(`AJAX Error (${actionType}):`, status, error);
             }
         });
-    }
+    },
+
+    formatDateTime: function(dateTimeStr) {
+        const date = new Date(dateTimeStr);
+        const options = {
+            year: 'numeric',
+            month: 'short',
+            day: '2-digit',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        };
+        // Remove the comma between date and time
+        return date.toLocaleString('en-US', options).replace(',', '');
+    },
 };
 
 $(document).ready(function() {
