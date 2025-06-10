@@ -1,6 +1,18 @@
 <?php 
 require_once __DIR__ . '/../init.php';
 $ministryData = $ministry->show();
+
+function generateTimeOptions() {
+    $options = '<option value="">Select Time</option>';
+    for ($hour = 0; $hour < 24; $hour++) {
+        for ($minute = 0; $minute < 60; $minute += 30) {
+            $time24 = sprintf('%02d:%02d', $hour, $minute);
+            $time12 = date('g:i A', strtotime($time24));
+            $options .= "<option value=\"$time24\">$time12</option>";
+        }
+    }
+    return $options;
+}
 ?>
 
 <h2>Events Management</h2>
@@ -54,7 +66,6 @@ $ministryData = $ministry->show();
                             </select>
                         </div>
 
-
                         <div class="col-md-6">
                             <label for="eventDate" class="form-label">Start Date <span
                                     class="text-danger">*</span></label>
@@ -64,8 +75,9 @@ $ministryData = $ministry->show();
                         <div class="col-md-6">
                             <label for="eventTime" class="form-label">Start Time <span
                                     class="text-danger">*</span></label>
-                            <input type="time" class="form-control" id="eventTime" name="eventTime" step="1800"
-                                required>
+                            <select class="form-control" id="eventTime" name="eventTime" required>
+                                <?php echo generateTimeOptions(); ?>
+                            </select>
                         </div>
 
                         <div class="col-md-6">
@@ -77,10 +89,10 @@ $ministryData = $ministry->show();
                         <div class="col-md-6">
                             <label for="eventEndTime" class="form-label">End Time <span
                                     class="text-danger">*</span></label>
-                            <input type="time" class="form-control" id="eventEndTime" name="eventEndTime" step="1800"
-                                required>
+                            <select class="form-control" id="eventEndTime" name="eventEndTime" required>
+                                <?php echo generateTimeOptions(); ?>
+                            </select>
                         </div>
-
 
                         <div class="col-md-8">
                             <label for="place" class="form-label">Place of Event</label>
@@ -120,6 +132,7 @@ var eventsCalendar = {
             eventClick: function(info) {
                 const event = info.event;
                 const props = event.extendedProps;
+                const ministry = 
 
                 // Example: Show details using SweetAlert
                 Swal.fire({
