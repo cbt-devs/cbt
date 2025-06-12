@@ -1,14 +1,38 @@
-<h1>Select Verses to Generate PowerPoint</h1>
+<h1>Generate PowerPoint</h1>
+<div class="p-3 mb-2 text-dark"
+    style="background-color:rgb(248, 204, 60); border-radius: 5px; border: 2px solid rgb(210, 163, 10)">
+    <span style="font-weight: bolder;">Instruction:</span><br>
+    <ul>
+        <li>Select book</li>
+        <li>Select chapter</li>
+        <li>Select verse</li>
+        <li>Click the button add slide</li>
+    </ul>
+</div>
 
-<select id="bookSelect"></select>
-<select id="chapterSelect"></select>
-<select id="verseSelect"></select>
-<button onclick="addVerse()">Add to List</button>
+<div class="row">
+    <div class="col-3">
+        <select id="bookSelect" class="form-select mb-2"></select>
+    </div>
+    <div class="col-2">
+        <select id="chapterSelect" class="form-select mb-2"></select>
+    </div>
+    <div class="col-2">
+        <select id="verseSelect" class="form-select mb-2"></select>
+    </div>
+    <div class="col-5">
+        <button type="button" class="btn btn-success" onclick="addVerse()">
+            <i class="fa-solid fa-plus"></i> Add Slide
+        </button>
+    </div>
+</div>
 
-<h3>Selected Verses:</h3>
+<h4>Slides Contents:</h4>
 <ul id="verseList"></ul>
 
-<button onclick="createPpt()">Create PPT</button>
+<button class="btn btn-success" onclick="createPpt()">
+    <i class="fa-solid fa-file-powerpoint"></i> Create PowerPoint
+</button>
 
 <script>
 let bibleData = {};
@@ -89,18 +113,20 @@ function addVerse() {
 
     const verseList = document.getElementById("verseList");
     const li = document.createElement("li");
-    li.textContent = `${reference} - ${text}`;
-    li.style.marginBottom = "5px";
 
     const removeBtn = document.createElement("button");
-    removeBtn.textContent = "❌ Remove";
-    removeBtn.style.marginLeft = "10px";
+    removeBtn.innerHTML = '<i class="fa-solid fa-trash"></i> Remove';
+    removeBtn.className = "btn btn-danger btn-sm me-2 mt-2 mb-2";
     removeBtn.onclick = () => {
         selectedVerses = selectedVerses.filter(v => v.ref !== reference);
         verseList.removeChild(li);
     };
 
+    const verseText = document.createElement("span");
+    verseText.textContent = `${reference} - ${text}`;
+
     li.appendChild(removeBtn);
+    li.appendChild(verseText);
     verseList.appendChild(li);
 }
 
