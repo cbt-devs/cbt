@@ -6,7 +6,7 @@ class Member {
         $this->conn = $db;
     }
 
-    public function show() {
+    public function show( $origdate = 0 ) {
     try {
         $this->conn->beginTransaction();
 
@@ -55,9 +55,9 @@ class Member {
                 'status' => $acc['status'],
                 'name' => $name,
                 'gender' => $gender,
-                'bday' => date('M d, Y', strtotime($bday)),
+                'bday' => !$origdate ? date('M d, Y', strtotime($bday)) : $bday,
                 'address' => $address,
-                'baptism_date' => date('M d, Y', strtotime($baptist_date))
+                'baptism_date' => !$origdate ? date('M d, Y', strtotime($baptist_date)) : $baptist_date
             ];
         }
 
