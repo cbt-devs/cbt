@@ -1,8 +1,8 @@
 <?php
-    require_once 'class/database.php';
-    require_once 'class/member.php';
-    require_once 'class/ministries.php';
-    require_once 'class/events.php';
+    require_once __DIR__ . '/../class/database.php';
+    require_once __DIR__ . '/../class/member.php';
+    require_once __DIR__ . '/../class/ministries.php';
+    require_once __DIR__ . '/../class/events.php';
 
     $pdo = new Database();
     $conn = $pdo->getConnection();
