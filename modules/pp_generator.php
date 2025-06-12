@@ -96,7 +96,7 @@ function addVerse() {
     const verse = document.getElementById("verseSelect").value;
 
     if (!book || !chapter || !verse) {
-        alert("Please select book, chapter, and verse.");
+        Swal.fire("Please select book, chapter, and verse.", "", "error");
         return;
     }
 
@@ -132,7 +132,7 @@ function addVerse() {
 
 function createPpt() {
     if (selectedVerses.length === 0) {
-        alert("No verses selected.");
+        Swal.fire("No verses selected.", "", "error");
         return;
     }
 
