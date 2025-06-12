@@ -56,7 +56,7 @@ $nav = new Navigation();
                     <ul class="nav flex-column ms-3">
                         <li class="nav-item">
                             <a href="#" class="nav-link load-content"
-                                data-page="<?= $nav->getLink('create_powerpoint') ?>">Create PowerPoint</a>
+                                data-page="<?= $nav->getLink('pp_generator') ?>">Create PowerPoint</a>
                         </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link load-content"

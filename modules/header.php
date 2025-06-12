@@ -24,6 +24,9 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.22.0/dist/sweetalert2.all.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.22.0/dist/sweetalert2.min.css" rel="stylesheet">
 
+    <script src="assets/PptxGenJS-4.0.0/libs/jszip.min.js"></script>
+    <script src="assets/PptxGenJS-4.0.0/dist/pptxgen.min.js"></script>
+
     <!-- FullCalendar CSS -->
     <script src="assets/fullcalendar/dist/index.global.min.js"></script>
 
