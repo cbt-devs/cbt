@@ -53,7 +53,7 @@ function generateTimeOptions() {
                         <div class="col-md-6">
                             <label for="ministry" class="form-label">Ministry</label>
                             <select class="form-control" id="ministry" name="ministry[]" multiple>
-                                <option value="" selected>-- Select Ministry --</option>
+                                <option value="all" selected>-- Select Ministry --</option>
                                 <?php
                                 if (!empty($ministryData)) {
                                     foreach ($ministryData as $ministry) {
@@ -132,19 +132,19 @@ var eventsCalendar = {
             eventClick: function(info) {
                 const event = info.event;
                 const props = event.extendedProps;
-                const ministry = 
+                const ministry =
 
-                // Example: Show details using SweetAlert
-                Swal.fire({
-                    title: event.title,
-                    html: `
+                    // Example: Show details using SweetAlert
+                    Swal.fire({
+                        title: event.title,
+                        html: `
                     <p><strong>Location:</strong> ${props.location}</p>
                     <p><strong>Ministries:</strong> ${props.ministries}</p>
                     <p><strong>Start:</strong> ${eventsCalendar.formatDateTime(event.start.toLocaleString())}</p>
                     <p><strong>End:</strong> ${event.end ? eventsCalendar.formatDateTime(event.end.toLocaleString()) : 'N/A'}</p>
                 `,
-                    icon: 'info'
-                });
+                        icon: 'info'
+                    });
 
                 // Optionally prevent default browser behavior
                 info.jsEvent.preventDefault();
