@@ -37,7 +37,7 @@ ol li {
 </div>
 
 <div id="bibleSection">
-    <div class="row g-2 align-items-end mt-3">
+    <div class="row g-2 align-items-end">
         <div class="row g-2 align-items-end">
             <div class="col-md-3">
                 <select id="bookSelect">
@@ -62,7 +62,6 @@ ol li {
         </div>
     </div>
 
-    <h4>Slides Contents:</h4>
     <ul id="verseList"></ul>
 
     <button class="btn btn-primary" onclick="createPpt()">
