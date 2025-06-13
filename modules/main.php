@@ -81,3 +81,86 @@
     </div>
 </div>
 </div>
+
+<script>
+var labels = ['Red', 'Blue', 'Yellow'];
+var data = [12, 19, 3];
+
+var chartjs = {
+    init: () => {
+        console.log("wat wat");
+        chartjs.bar();
+        chartjs.doughnut();
+        chartjs.line();
+    },
+    bar: () => {
+        const barChart = document.getElementById('barChart');
+        if (!barChart) return; // Check if element exists
+        new Chart(barChart.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Sample Data',
+                    data: data,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                    ],
+                    borderWidth: 2,
+                }, ],
+            },
+            options: {
+                responsive: false
+            },
+        });
+    },
+    doughnut: () => {
+        const doughnutChart = document.getElementById('doughnutChart');
+        if (!doughnutChart) return; // Check if element exists
+        new Chart(doughnutChart.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Sample Data',
+                    data: data,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                    ],
+                    borderWidth: 2,
+                }, ],
+            },
+            options: {
+                responsive: false
+            },
+        });
+    },
+    line: () => {
+        const lineChart = document.getElementById('lineChart');
+        if (!lineChart) return; // Check if element exists
+        new Chart(lineChart.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar'],
+                datasets: [{
+                    label: 'Sample Data',
+                    data: data,
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    fill: true,
+                }, ],
+            },
+            options: {
+                responsive: false
+            },
+        });
+    },
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    chartjs.init();
+});
+</script>

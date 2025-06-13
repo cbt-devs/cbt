@@ -30,5 +30,8 @@
     <!-- FullCalendar CSS -->
     <script src="assets/fullcalendar/dist/index.global.min.js"></script>
 
+    <!-- ChartJS -->
+    <script src="assets/chartjs/dist/chart.umd.js"></script>
+
     <script src="assets/js/main.js"></script>
 </head>
