@@ -71,6 +71,7 @@ ol li {
         });
     }
 
+    // Fetch Bible data and populate the Book select
     fetch("assets/kjvbible.txt")
         .then(response => response.text())
         .then(text => {
@@ -89,6 +90,7 @@ ol li {
             populateBooks();
         });
 
+    // Populate Book Select
     function populateBooks() {
         const bookSelect = document.getElementById("bookSelect");
         bookSelect.innerHTML = `<option value="">Select Book</option>`;
@@ -109,6 +111,7 @@ ol li {
             populateChapters(bookSelect.value);
         });
     }
+
 
     function populateChapters(book) {
         const chapterSelect = document.getElementById("chapterSelect");
@@ -148,6 +151,7 @@ ol li {
         }
     }
 
+    // Add selected verse to the list
     window.addVerse = function() {
         const book = document.getElementById("bookSelect").value;
         const chapter = document.getElementById("chapterSelect").value;
@@ -244,13 +248,17 @@ ol li {
             searchable: true
         });
     }
+
+    // Init on DOM ready
+    document.addEventListener("DOMContentLoaded", function() {
+        // Bind NiceSelect placeholders
+        ["bookSelect", "chapterSelect", "verseSelect"].forEach(id => {
+            refreshNiceSelect(document.getElementById(id));
+        });
+    });
 })();
 
 $(document).ready(function() {
-    ["bookSelect", "chapterSelect", "verseSelect"].forEach(id => {
-        refreshNiceSelect(document.getElementById(id));
-    });
-
     const tooltipEl = document.querySelector('[data-bs-toggle="tooltip"]');
     console.log('Tooltip Element:', tooltipEl); // Check if element is found
 
