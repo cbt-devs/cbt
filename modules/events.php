@@ -15,6 +15,13 @@ function generateTimeOptions() {
 }
 ?>
 
+<style>
+.nice-select {
+    width: 100%;
+    margin-bottom: 0 !important;
+}
+</style>
+
 <h2>Events Management</h2>
 <p>Here you can manage all your events.</p>
 
@@ -52,8 +59,8 @@ function generateTimeOptions() {
 
                         <div class="col-md-6">
                             <label for="ministry" class="form-label">Ministry</label>
-                            <select class="form-control" id="ministry" name="ministry[]" multiple>
-                                <option value="all" selected>-- Select Ministry --</option>
+                            <select class="form-control nice-select2" id="ministry" name="ministry[]" multiple>
+                                <option value="all" selected>All</option>
                                 <?php
                                 if (!empty($ministryData)) {
                                     foreach ($ministryData as $ministry) {
@@ -325,5 +332,9 @@ var eventsCalendar = {
 
 $(document).ready(function() {
     eventsCalendar.init();
+
+    document.querySelectorAll(".nice-select2").forEach(el => {
+        NiceSelect.bind(el);
+    });
 });
 </script>

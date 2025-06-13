@@ -488,7 +488,6 @@ ol li {
 
 $(document).ready(function() {
     const tooltipEl = document.querySelector('[data-bs-toggle="tooltip"]');
-    console.log('Tooltip Element:', tooltipEl); // Check if element is found
 
     if (tooltipEl) {
         new bootstrap.Tooltip(tooltipEl);
