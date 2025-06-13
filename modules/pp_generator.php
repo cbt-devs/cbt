@@ -1,14 +1,42 @@
-<h1>Generate PowerPoint</h1>
-<div class="p-3 mb-2 text-dark"
-    style="background-color:rgb(248, 204, 60); border-radius: 5px; border: 2px solid rgb(210, 163, 10)">
-    <span style="font-weight: bolder;">Instruction:</span><br>
-    <ul>
-        <li>Select book</li>
-        <li>Select chapter</li>
-        <li>Select verse</li>
-        <li>Click the button add slide</li>
-    </ul>
+<style>
+ol li {
+    text-align: left;
+}
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="m-0">Generate PowerPoint</h1>
+
+    <button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom"
+        data-bs-html="true" title="<div style='text-align: left; font-size: 0.9rem; padding-left: 10px;'>
+            <strong>Steps:</strong>
+            <ol style='padding-left: 1.2em; margin-bottom: 0;'>
+                <li>Select book</li>
+                <li>Select chapter</li>
+                <li>Select verse</li>
+                <li>Click Add slide</li>
+                <li>Once done adding the slide click Create Powerpoint</li>
+            </ol>
+        </div>">
+        Instruction Manual <i class="fa-solid fa-book"></i>
+    </button>
 </div>
+
+
+
+<script>
+$(document).ready(function() {
+    const tooltipEl = document.querySelector('[data-bs-toggle="tooltip"]');
+    console.log('Tooltip Element:', tooltipEl); // Check if element is found
+
+    if (tooltipEl) {
+        const tooltip = new bootstrap.Tooltip(tooltipEl);
+        console.log('Tooltip initialized:', tooltip);
+    } else {
+        console.log('Tooltip element not found.');
+    }
+});
+</script>
 
 <div class="row">
     <div class="col-3">
