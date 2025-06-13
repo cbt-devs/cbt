@@ -71,8 +71,16 @@ ol li {
 </div>
 
 <div id="hymnalSection" class="mt-3" style="display: none;">
-    <!-- Placeholder -->
-    <p class="text-muted">No Hymnals functionality yet.</p>
+    <div class="row g-2 align-items-end">
+        <div class="col-md-6">
+            <select id="hymnSelect"></select>
+            <div id="hymnLyrics" class="mt-5"></div>
+        </div>
+    </div>
+
+    <button class="btn btn-primary mt-3" onclick="createHymnPpt()">
+        <i class="fa-solid fa-file-powerpoint"></i> Create PowerPoint
+    </button>
 </div>
 
 <script>
@@ -292,6 +300,191 @@ ol li {
         });
     });
 })();
+
+(function() {
+    let hymnsData = {};
+
+    // Load hymns JSON
+    fetch("assets/hymns.json")
+        .then(response => response.json())
+        .then(data => {
+            hymnsData = data; // store the full JSON object, not just hymns
+            populateHymnSelect();
+        });
+
+    window.createHymnPpt = function() {
+        const hymnSelect = document.getElementById("hymnSelect");
+        const hymnNumber = hymnSelect.value;
+
+        if (!hymnNumber) {
+            Swal.fire("No hymn selected.", "", "error");
+            return;
+        }
+
+        const hymn = hymnsData.hymns[hymnNumber];
+        if (!hymn) {
+            Swal.fire("Invalid hymn selected.", "", "error");
+            return;
+        }
+
+        Swal.fire({
+            title: 'Enter file name',
+            input: 'text',
+            inputLabel: 'PowerPoint filename',
+            inputValue: hymn.titleWithHymnNumber,
+            showCancelButton: true,
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'You must enter a filename!';
+                }
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const filename = result.value.trim() + ".pptx";
+
+                let pptx = new PptxGenJS();
+
+                // Add each verse as a separate slide
+                hymn.verses.forEach((verseText, index) => {
+                    let slide = pptx.addSlide();
+                    slide.addImage({
+                        path: "assets/img/background.jpg",
+                        x: 0,
+                        y: 0,
+                        w: "100%",
+                        h: "100%"
+                    });
+                    slide.addText([{
+                            text: `${hymn.titleWithHymnNumber} - Verse ${index + 1}\n`,
+                            options: {
+                                fontSize: 24,
+                                bold: true,
+                                color: '003366'
+                            }
+                        },
+                        {
+                            text: verseText,
+                            options: {
+                                fontSize: 28,
+                                color: '000000'
+                            }
+                        }
+                    ], {
+                        x: 0.5,
+                        y: 1,
+                        w: '90%',
+                        h: 4
+                    });
+                });
+
+                // Add chorus (optional)
+                if (hymn.chorus) {
+                    let slide = pptx.addSlide();
+                    slide.addImage({
+                        path: "assets/img/background.jpg",
+                        x: 0,
+                        y: 0,
+                        w: "100%",
+                        h: "100%"
+                    });
+                    slide.addText([{
+                            text: `${hymn.titleWithHymnNumber} - Chorus\n`,
+                            options: {
+                                fontSize: 24,
+                                bold: true,
+                                color: '003366'
+                            }
+                        },
+                        {
+                            text: hymn.chorus,
+                            options: {
+                                fontSize: 28,
+                                color: '000000'
+                            }
+                        }
+                    ], {
+                        x: 0.5,
+                        y: 1,
+                        w: '90%',
+                        h: 4
+                    });
+                }
+
+                pptx.writeFile(filename);
+            }
+        });
+    }
+
+    // Populate hymnal <select>
+    function populateHymnSelect() {
+        const hymnSelect = document.getElementById("hymnSelect");
+        hymnSelect.innerHTML = `<option value="">Select Hymn</option>`;
+
+        const categories = hymnsData.categories;
+        const hymns = hymnsData.hymns;
+
+        Object.entries(categories).forEach(([category, hymnIds]) => {
+            const optgroup = document.createElement("optgroup");
+            optgroup.label = category.charAt(0).toUpperCase() + category.slice(1);
+
+            hymnIds.forEach(id => {
+                const hymn = hymns[id];
+                if (hymn) {
+                    const option = document.createElement("option");
+                    option.value = hymn.number;
+                    option.textContent = hymn.titleWithHymnNumber;
+                    optgroup.appendChild(option);
+                }
+            });
+
+            hymnSelect.appendChild(optgroup);
+        });
+
+        refreshNiceSelect(hymnSelect);
+
+        hymnSelect.addEventListener("change", () => {
+            displayHymnLyrics(hymnSelect.value);
+        });
+    }
+
+
+    // Display selected hymn lyrics
+    function displayHymnLyrics(hymnNumber) {
+        const hymn = hymnsData.hymns[hymnNumber];
+        const container = document.getElementById("hymnLyrics");
+
+        if (!hymn) {
+            container.innerHTML = "";
+            return;
+        }
+
+        let html = `<h5>${hymn.titleWithHymnNumber}</h5><hr>`;
+
+        // Verses
+        hymn.verses.forEach((v, i) => {
+            html += `<p><strong>Verse ${i + 1}:</strong><br>${v.replace(/\n/g, "<br>")}</p>`;
+        });
+
+        // Chorus (optional)
+        if (hymn.chorus) {
+            html += `<p><strong>Chorus:</strong><br>${hymn.chorus.replace(/\n/g, "<br>")}</p>`;
+        }
+
+        container.innerHTML = html;
+    }
+
+    // Rebind NiceSelect (if used)
+    function refreshNiceSelect(selectElement) {
+        const wrapper = selectElement.nextElementSibling;
+        if (wrapper && wrapper.classList.contains("nice-select")) {
+            wrapper.remove();
+        }
+        NiceSelect.bind(selectElement, {
+            searchable: true
+        });
+    }
+})();
+
 
 $(document).ready(function() {
     const tooltipEl = document.querySelector('[data-bs-toggle="tooltip"]');
