@@ -2,6 +2,11 @@
 ol li {
     text-align: left;
 }
+
+.nice-select {
+    width: 100%;
+    margin-bottom: 0 !important;
+}
 </style>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -22,33 +27,23 @@ ol li {
     </button>
 </div>
 
-
-
-<script>
-$(document).ready(function() {
-    const tooltipEl = document.querySelector('[data-bs-toggle="tooltip"]');
-    console.log('Tooltip Element:', tooltipEl); // Check if element is found
-
-    if (tooltipEl) {
-        const tooltip = new bootstrap.Tooltip(tooltipEl);
-        console.log('Tooltip initialized:', tooltip);
-    } else {
-        console.log('Tooltip element not found.');
-    }
-});
-</script>
-
-<div class="row">
-    <div class="col-3">
-        <select id="bookSelect" class="form-select mb-2"></select>
+<div class="row g-2 align-items-end">
+    <div class="col-md-3">
+        <select id="bookSelect">
+            <option value="">Select Book</option>
+        </select>
     </div>
-    <div class="col-2">
-        <select id="chapterSelect" class="form-select mb-2"></select>
+    <div class="col-md-3">
+        <select id="chapterSelect">
+            <option value="">Select Chapter</option>
+        </select>
     </div>
-    <div class="col-2">
-        <select id="verseSelect" class="form-select mb-2"></select>
+    <div class="col-md-3">
+        <select id="verseSelect">
+            <option value="">Select Verse</option>
+        </select>
     </div>
-    <div class="col-5">
+    <div class="col-md-3 d-grid">
         <button type="button" class="btn btn-success" onclick="addVerse()">
             <i class="fa-solid fa-plus"></i> Add Slide
         </button>
@@ -66,6 +61,15 @@ $(document).ready(function() {
 (function() {
     let bibleData = {};
     let selectedVerses = [];
+
+    // Utility: Rebind NiceSelect on a given select element
+    function refreshNiceSelect(selectElement) {
+        const existing = selectElement.closest(".nice-select");
+        if (existing) existing.remove();
+        NiceSelect.bind(selectElement, {
+            searchable: true
+        });
+    }
 
     fetch("assets/kjvbible.txt")
         .then(response => response.text())
@@ -88,8 +92,17 @@ $(document).ready(function() {
     function populateBooks() {
         const bookSelect = document.getElementById("bookSelect");
         bookSelect.innerHTML = `<option value="">Select Book</option>`;
-        for (let book in bibleData) {
+        const books = Object.keys(bibleData);
+
+        books.forEach(book => {
             bookSelect.innerHTML += `<option value="${book}">${book}</option>`;
+        });
+
+        refreshNiceSelect(bookSelect);
+
+        if (books.length > 0) {
+            bookSelect.value = books[0];
+            populateChapters(books[0]); // Auto-select first book
         }
 
         bookSelect.addEventListener("change", () => {
@@ -100,9 +113,17 @@ $(document).ready(function() {
     function populateChapters(book) {
         const chapterSelect = document.getElementById("chapterSelect");
         chapterSelect.innerHTML = `<option value="">Select Chapter</option>`;
-        const chapters = bibleData[book];
-        for (let chapter in chapters) {
+        const chapters = Object.keys(bibleData[book]);
+
+        chapters.forEach(chapter => {
             chapterSelect.innerHTML += `<option value="${chapter}">${chapter}</option>`;
+        });
+
+        refreshNiceSelect(chapterSelect);
+
+        if (chapters.length > 0) {
+            chapterSelect.value = chapters[0];
+            populateVerses(book, chapters[0]); // Auto-select first chapter
         }
 
         chapterSelect.addEventListener("change", () => {
@@ -113,9 +134,17 @@ $(document).ready(function() {
     function populateVerses(book, chapter) {
         const verseSelect = document.getElementById("verseSelect");
         verseSelect.innerHTML = `<option value="">Select Verse</option>`;
-        const verses = bibleData[book][chapter];
-        for (let verse in verses) {
+        const verses = Object.keys(bibleData[book][chapter]);
+
+        verses.forEach(verse => {
             verseSelect.innerHTML += `<option value="${verse}">${verse}</option>`;
+        });
+
+        refreshNiceSelect(verseSelect);
+
+        if (verses.length > 0) {
+            verseSelect.value = verses[0];
+            // Optional: You can trigger verse display or log here
         }
     }
 
@@ -159,6 +188,7 @@ $(document).ready(function() {
         verseList.appendChild(li);
     }
 
+    // Create the PowerPoint file
     window.createPpt = function() {
         if (selectedVerses.length === 0) {
             Swal.fire("No verses selected.", "", "error");
@@ -200,5 +230,35 @@ $(document).ready(function() {
 
         pptx.writeFile("Selected_Verses.pptx");
     }
+
+    function refreshNiceSelect(selectElement) {
+        // Remove any old NiceSelect wrappers
+        const wrapper = selectElement.nextElementSibling;
+        if (wrapper && wrapper.classList.contains("nice-select")) {
+            wrapper.remove();
+        }
+
+        // Ensure it's visible and bound again
+        selectElement.style.display = "";
+        NiceSelect.bind(selectElement, {
+            searchable: true
+        });
+    }
 })();
+
+$(document).ready(function() {
+    ["bookSelect", "chapterSelect", "verseSelect"].forEach(id => {
+        refreshNiceSelect(document.getElementById(id));
+    });
+
+    const tooltipEl = document.querySelector('[data-bs-toggle="tooltip"]');
+    console.log('Tooltip Element:', tooltipEl); // Check if element is found
+
+    if (tooltipEl) {
+        const tooltip = new bootstrap.Tooltip(tooltipEl);
+        console.log('Tooltip initialized:', tooltip);
+    } else {
+        console.log('Tooltip element not found.');
+    }
+});
 </script>

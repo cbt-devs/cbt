@@ -33,5 +33,9 @@
     <!-- ChartJS -->
     <script src="assets/chartjs/dist/chart.umd.js"></script>
 
+    <!-- Nice-Select2 -->
+    <script src="assets/nice-select2/nice-select2.js"></script>
+    <link href="assets/nice-select2/nice-select2.css" rel="stylesheet">
+
     <script src="assets/js/main.js"></script>
 </head>
