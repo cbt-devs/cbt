@@ -240,39 +240,51 @@ ol li {
                 const filename = result.value.trim() + ".pptx";
 
                 let pptx = new PptxGenJS();
-                selectedVerses.forEach(v => {
+
+                // Background image path
+                const bgImage = {
+                    path: "assets/img/background.jpg",
+                    x: 0,
+                    y: 0,
+                    w: "100%",
+                    h: "100%"
+                };
+
+                // --- Slide 1: Title Only ---
+                let titleSlide = pptx.addSlide();
+                titleSlide.addImage(bgImage);
+
+                titleSlide.addText(titleSlide, {
+                    x: 0.5,
+                    y: 2.5,
+                    w: "90%",
+                    align: "center",
+                    fontSize: 38,
+                    bold: true,
+                    color: "1F4E79", // Dark blue for title
+                    fontFace: "Arial Black"
+                });
+
+                // --- Slide 2 onward: Lyrics ---
+                selectedVerses.forEach(verse => {
                     let slide = pptx.addSlide();
-                    slide.addImage({
-                        path: "assets/img/background.jpg",
-                        x: 0,
-                        y: 0,
-                        w: "100%",
-                        h: "100%"
-                    });
-                    slide.addText([{
-                            text: v.ref + "\n",
-                            options: {
-                                fontSize: 25,
-                                bold: true,
-                                color: '003366'
-                            }
-                        },
-                        {
-                            text: v.text,
-                            options: {
-                                fontSize: 30,
-                                color: '000000'
-                            }
-                        }
-                    ], {
-                        x: 0.5,
-                        y: 1,
-                        w: '90%',
-                        h: 3
+                    slide.addImage(bgImage);
+
+                    slide.addText(verse, {
+                        x: 0.7,
+                        y: 1.2,
+                        w: "85%",
+                        h: 4.5,
+                        align: "center",
+                        fontSize: 36,
+                        color: "000000",
+                        fontFace: "Calibri"
                     });
                 });
 
+                // Export
                 pptx.writeFile(filename);
+
             }
         });
     }
@@ -330,7 +342,7 @@ ol li {
             title: 'Enter file name',
             input: 'text',
             inputLabel: 'PowerPoint filename',
-            inputValue: hymn.titleWithHymnNumber,
+            inputValue: hymn.title,
             showCancelButton: true,
             inputValidator: (value) => {
                 if (!value) {
@@ -354,7 +366,7 @@ ol li {
                         h: "100%"
                     });
                     slide.addText([{
-                            text: `${hymn.titleWithHymnNumber} - Verse ${index + 1}\n`,
+                            text: `${hymn.title} - Verse ${index + 1}\n`,
                             options: {
                                 fontSize: 24,
                                 bold: true,
@@ -387,7 +399,7 @@ ol li {
                         h: "100%"
                     });
                     slide.addText([{
-                            text: `${hymn.titleWithHymnNumber} - Chorus\n`,
+                            text: `${hymn.title} - Chorus\n`,
                             options: {
                                 fontSize: 24,
                                 bold: true,
@@ -431,7 +443,7 @@ ol li {
                 if (hymn) {
                     const option = document.createElement("option");
                     option.value = hymn.number;
-                    option.textContent = hymn.titleWithHymnNumber;
+                    option.textContent = hymn.title;
                     optgroup.appendChild(option);
                 }
             });
@@ -457,7 +469,7 @@ ol li {
             return;
         }
 
-        let html = `<h5>${hymn.titleWithHymnNumber}</h5><hr>`;
+        let html = `<h5>${hymn.title}</h5><hr>`;
 
         // Verses
         hymn.verses.forEach((v, i) => {
