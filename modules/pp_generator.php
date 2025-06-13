@@ -27,35 +27,53 @@ ol li {
     </button>
 </div>
 
-<div class="row g-2 align-items-end">
-    <div class="col-md-3">
-        <select id="bookSelect">
-            <option value="">Select Book</option>
-        </select>
-    </div>
-    <div class="col-md-3">
-        <select id="chapterSelect">
-            <option value="">Select Chapter</option>
-        </select>
-    </div>
-    <div class="col-md-3">
-        <select id="verseSelect">
-            <option value="">Select Verse</option>
-        </select>
-    </div>
-    <div class="col-md-3 d-grid">
-        <button type="button" class="btn btn-success" onclick="addVerse()">
-            <i class="fa-solid fa-plus"></i> Add Slide
-        </button>
-    </div>
+<div class="btn-group" role="group" aria-label="Capsule buttons" id="capsuleToggle">
+    <button type="button" class="btn btn-primary px-4 rounded-start-pill active" data-type="bible">
+        <i class="fa-solid fa-book-open"></i> Bible
+    </button>
+    <button type="button" class="btn btn-outline-primary px-4 rounded-end-pill" data-type="hymnals">
+        <i class="fa-solid fa-music"></i> Hymnals
+    </button>
 </div>
 
-<h4>Slides Contents:</h4>
-<ul id="verseList"></ul>
+<div id="bibleSection">
+    <div class="row g-2 align-items-end mt-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <select id="bookSelect">
+                    <option value="">Select Book</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select id="chapterSelect">
+                    <option value="">Select Chapter</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select id="verseSelect">
+                    <option value="">Select Verse</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-grid">
+                <button type="button" class="btn btn-primary" onclick="addVerse()">
+                    <i class="fa-solid fa-plus"></i> Add Slide
+                </button>
+            </div>
+        </div>
+    </div>
 
-<button class="btn btn-success" onclick="createPpt()">
-    <i class="fa-solid fa-file-powerpoint"></i> Create PowerPoint
-</button>
+    <h4>Slides Contents:</h4>
+    <ul id="verseList"></ul>
+
+    <button class="btn btn-primary" onclick="createPpt()">
+        <i class="fa-solid fa-file-powerpoint"></i> Create PowerPoint
+    </button>
+</div>
+
+<div id="hymnalSection" class="mt-3" style="display: none;">
+    <!-- Placeholder -->
+    <p class="text-muted">No Hymnals functionality yet.</p>
+</div>
 
 <script>
 (function() {
@@ -263,10 +281,39 @@ $(document).ready(function() {
     console.log('Tooltip Element:', tooltipEl); // Check if element is found
 
     if (tooltipEl) {
-        const tooltip = new bootstrap.Tooltip(tooltipEl);
-        console.log('Tooltip initialized:', tooltip);
+        new bootstrap.Tooltip(tooltipEl);
     } else {
         console.log('Tooltip element not found.');
     }
+
+    const group = document.getElementById('capsuleToggle');
+    const buttons = group.querySelectorAll('button');
+
+    const bibleSection = document.getElementById("bibleSection");
+    const hymnalSection = document.getElementById("hymnalSection");
+
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Style toggling
+            buttons.forEach(b => {
+                b.classList.remove('btn-primary', 'btn-outline-primary', 'active');
+                b.classList.add('btn-outline-primary');
+            });
+            btn.classList.remove('btn-outline-primary');
+            btn.classList.add('btn-primary', 'active');
+
+            // Section toggling
+            const selected = btn.dataset.type;
+            console.log('Selected:', selected);
+
+            if (selected === 'bible') {
+                bibleSection.style.display = 'block';
+                hymnalSection.style.display = 'none';
+            } else if (selected === 'hymnals') {
+                bibleSection.style.display = 'none';
+                hymnalSection.style.display = 'block';
+            }
+        });
+    });
 });
 </script>
