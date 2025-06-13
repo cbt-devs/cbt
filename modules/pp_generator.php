@@ -217,40 +217,57 @@ ol li {
             return;
         }
 
-        let pptx = new PptxGenJS();
-        selectedVerses.forEach(v => {
-            let slide = pptx.addSlide();
-            slide.addImage({
-                path: "assets/img/background.jpg",
-                x: 0,
-                y: 0,
-                w: "100%",
-                h: "100%"
-            });
-            slide.addText([{
-                    text: v.ref + "\n",
-                    options: {
-                        fontSize: 25,
-                        bold: true,
-                        color: '003366'
-                    }
-                },
-                {
-                    text: v.text,
-                    options: {
-                        fontSize: 30,
-                        color: '000000'
-                    }
+        Swal.fire({
+            title: 'Enter file name',
+            input: 'text',
+            inputLabel: 'PowerPoint filename',
+            inputValue: 'Lesson - ',
+            showCancelButton: true,
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'You must enter a filename!';
                 }
-            ], {
-                x: 0.5,
-                y: 1,
-                w: '90%',
-                h: 3
-            });
-        });
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const filename = result.value.trim() + ".pptx";
 
-        pptx.writeFile("Selected_Verses.pptx");
+                let pptx = new PptxGenJS();
+                selectedVerses.forEach(v => {
+                    let slide = pptx.addSlide();
+                    slide.addImage({
+                        path: "assets/img/background.jpg",
+                        x: 0,
+                        y: 0,
+                        w: "100%",
+                        h: "100%"
+                    });
+                    slide.addText([{
+                            text: v.ref + "\n",
+                            options: {
+                                fontSize: 25,
+                                bold: true,
+                                color: '003366'
+                            }
+                        },
+                        {
+                            text: v.text,
+                            options: {
+                                fontSize: 30,
+                                color: '000000'
+                            }
+                        }
+                    ], {
+                        x: 0.5,
+                        y: 1,
+                        w: '90%',
+                        h: 3
+                    });
+                });
+
+                pptx.writeFile(filename);
+            }
+        });
     }
 
     function refreshNiceSelect(selectElement) {
