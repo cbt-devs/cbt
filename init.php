@@ -18,7 +18,11 @@ function generateTimeOptions() {
         for ($minute = 0; $minute < 60; $minute += 30) {
             $time24 = sprintf('%02d:%02d', $hour, $minute);
             $time12 = date('g:i A', strtotime($time24));
-            $options .= "<option value=\"$time24\">$time12</option>";
+
+            // Auto-select 08:00
+            $selected = ($time24 === '08:00') ? ' selected' : '';
+
+            $options .= "<option value=\"$time24\"$selected>$time12</option>";
         }
     }
     return $options;
