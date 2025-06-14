@@ -1,18 +1,6 @@
 <?php 
 require_once __DIR__ . '/../init.php';
 $ministryData = $ministry->show();
-
-function generateTimeOptions() {
-    $options = '<option value="">Select Time</option>';
-    for ($hour = 0; $hour < 24; $hour++) {
-        for ($minute = 0; $minute < 60; $minute += 30) {
-            $time24 = sprintf('%02d:%02d', $hour, $minute);
-            $time12 = date('g:i A', strtotime($time24));
-            $options .= "<option value=\"$time24\">$time12</option>";
-        }
-    }
-    return $options;
-}
 ?>
 
 <style>
