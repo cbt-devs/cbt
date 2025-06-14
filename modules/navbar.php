@@ -12,14 +12,12 @@ $nav = new Navigation();
             </a>
         </li>
 
-        <!-- Management Dropdown -->
-        <li class="nav-item dropdown">
-            <a href="#" class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
-                data-bs-target="#managementDropdown" aria-expanded="false" aria-controls="managementDropdown">
+        <!-- Management Dropdown (Always Open) -->
+        <li class="nav-item">
+            <div class="nav-link d-flex justify-content-between align-items-center">
                 <span><i class="fa-solid fa-table me-2"></i>Management</span>
-                <i class="fa-solid fa-chevron-down"></i>
-            </a>
-            <div class="collapse" id="managementDropdown">
+            </div>
+            <div>
                 <ul class="nav flex-column ms-3">
                     <li class="nav-item">
                         <a href="#" class="nav-link load-content"
@@ -44,14 +42,12 @@ $nav = new Navigation();
             </div>
         </li>
 
-        <!-- Tools Dropdown -->
-        <li class="nav-item dropdown">
-            <a href="#" class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
-                data-bs-target="#toolsDropdown" aria-expanded="false" aria-controls="toolsDropdown">
+        <!-- Tools Dropdown (Always Open) -->
+        <li class="nav-item">
+            <div class="nav-link d-flex justify-content-between align-items-center">
                 <span><i class="fa-solid fa-screwdriver-wrench me-2"></i>Tools</span>
-                <i class="fa-solid fa-chevron-down"></i>
-            </a>
-            <div class="collapse" id="toolsDropdown">
+            </div>
+            <div>
                 <ul class="nav flex-column ms-3">
                     <li class="nav-item">
                         <a href="#" class="nav-link load-content"
@@ -69,6 +65,4 @@ $nav = new Navigation();
             </div>
         </li>
     </ul>
-
-
 </nav>
