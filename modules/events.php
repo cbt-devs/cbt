@@ -135,7 +135,11 @@ var eventsCalendar = {
             themeSystem: 'bootstrap5',
             initialView: 'dayGridMonth',
             events: [],
-
+            eventTimeFormat: {
+                hour: 'numeric',
+                minute: '2-digit',
+                meridiem: 'short'
+            },
             eventClick: function(info) {
                 const event = info.event;
                 const props = event.extendedProps;
