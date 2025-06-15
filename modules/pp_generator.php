@@ -83,101 +83,104 @@ ol li {
 </div>
 
 <script>
-(function() {
-    let bibleData = {};
-    let selectedVerses = [];
+var bibleverse = {
+    bibleData: {},
+    selectedVerses: [],
 
-    // Utility: Rebind NiceSelect on a given select element
-    function refreshNiceSelect(selectElement) {
-        const existing = selectElement.closest(".nice-select");
-        if (existing) existing.remove();
+    init: function() {
+        this.fetchBibleData();
+        this.bindNiceSelects();
+    },
+
+    fetchBibleData: function() {
+        fetch("assets/kjvbible.txt")
+            .then(response => response.text())
+            .then(text => {
+                const booksJson = text.split(/(?=\{"book":)/).map(obj => JSON.parse(obj));
+                booksJson.forEach(book => {
+                    const bookName = book.book;
+                    bibleverse.bibleData[bookName] = {};
+                    book.chapters.forEach(chap => {
+                        const chapNum = chap.chapter;
+                        bibleverse.bibleData[bookName][chapNum] = {};
+                        chap.verses.forEach(v => {
+                            bibleverse.bibleData[bookName][chapNum][v.verse] = v
+                                .text;
+                        });
+                    });
+                });
+                bibleverse.populateBooks();
+            });
+    },
+
+    refreshNiceSelect: function(selectElement) {
+        const wrapper = selectElement.nextElementSibling;
+        if (wrapper && wrapper.classList.contains("nice-select")) wrapper.remove();
+        selectElement.style.display = "";
         NiceSelect.bind(selectElement, {
             searchable: true
         });
-    }
+    },
 
-    // Fetch Bible data and populate the Book select
-    fetch("assets/kjvbible.txt")
-        .then(response => response.text())
-        .then(text => {
-            const booksJson = text.split(/(?=\{"book":)/).map(obj => JSON.parse(obj));
-            booksJson.forEach(book => {
-                const bookName = book.book;
-                bibleData[bookName] = {};
-                book.chapters.forEach(chap => {
-                    const chapNum = chap.chapter;
-                    bibleData[bookName][chapNum] = {};
-                    chap.verses.forEach(v => {
-                        bibleData[bookName][chapNum][v.verse] = v.text;
-                    });
-                });
-            });
-            populateBooks();
-        });
-
-    // Populate Book Select
-    function populateBooks() {
+    populateBooks: function() {
         const bookSelect = document.getElementById("bookSelect");
         bookSelect.innerHTML = `<option value="">Select Book</option>`;
-        const books = Object.keys(bibleData);
+        const books = Object.keys(bibleverse.bibleData);
 
         books.forEach(book => {
             bookSelect.innerHTML += `<option value="${book}">${book}</option>`;
         });
 
-        refreshNiceSelect(bookSelect);
+        bibleverse.refreshNiceSelect(bookSelect);
 
         if (books.length > 0) {
             bookSelect.value = books[0];
-            populateChapters(books[0]); // Auto-select first book
+            bibleverse.populateChapters(books[0]);
         }
 
         bookSelect.addEventListener("change", () => {
-            populateChapters(bookSelect.value);
+            bibleverse.populateChapters(bookSelect.value);
         });
-    }
+    },
 
-
-    function populateChapters(book) {
+    populateChapters: function(book) {
         const chapterSelect = document.getElementById("chapterSelect");
         chapterSelect.innerHTML = `<option value="">Select Chapter</option>`;
-        const chapters = Object.keys(bibleData[book]);
+        const chapters = Object.keys(bibleverse.bibleData[book]);
 
         chapters.forEach(chapter => {
             chapterSelect.innerHTML += `<option value="${chapter}">${chapter}</option>`;
         });
 
-        refreshNiceSelect(chapterSelect);
+        bibleverse.refreshNiceSelect(chapterSelect);
 
         if (chapters.length > 0) {
             chapterSelect.value = chapters[0];
-            populateVerses(book, chapters[0]); // Auto-select first chapter
+            bibleverse.populateVerses(book, chapters[0]);
         }
 
         chapterSelect.addEventListener("change", () => {
-            populateVerses(book, chapterSelect.value);
+            bibleverse.populateVerses(book, chapterSelect.value);
         });
-    }
+    },
 
-    function populateVerses(book, chapter) {
+    populateVerses: function(book, chapter) {
         const verseSelect = document.getElementById("verseSelect");
         verseSelect.innerHTML = `<option value="">Select Verse</option>`;
-        const verses = Object.keys(bibleData[book][chapter]);
+        const verses = Object.keys(bibleverse.bibleData[book][chapter]);
 
         verses.forEach(verse => {
             verseSelect.innerHTML += `<option value="${verse}">${verse}</option>`;
         });
 
-        refreshNiceSelect(verseSelect);
+        bibleverse.refreshNiceSelect(verseSelect);
 
         if (verses.length > 0) {
             verseSelect.value = verses[0];
-            // Optional: You can trigger verse display or log here
         }
-    }
+    },
 
-    // Add selected verse to the list
-    window.addVerse = function() {
+    addVerse: function() {
         const book = document.getElementById("bookSelect").value;
         const chapter = document.getElementById("chapterSelect").value;
         const verse = document.getElementById("verseSelect").value;
@@ -188,15 +191,15 @@ ol li {
         }
 
         const reference = `${book} ${chapter}:${verse}`;
-        const text = bibleData[book][chapter][verse];
+        const text = bibleverse.bibleData[book][chapter][verse];
 
-        if (selectedVerses.some(v => v.ref === reference)) return;
+        if (bibleverse.selectedVerses.some(v => v.ref === reference)) return;
 
         const verseObj = {
             ref: reference,
             text
         };
-        selectedVerses.push(verseObj);
+        bibleverse.selectedVerses.push(verseObj);
 
         const verseList = document.getElementById("verseList");
         const li = document.createElement("li");
@@ -205,7 +208,7 @@ ol li {
         removeBtn.innerHTML = '<i class="fa-solid fa-trash"></i> Remove';
         removeBtn.className = "btn btn-danger btn-sm me-2 mt-2 mb-2";
         removeBtn.onclick = () => {
-            selectedVerses = selectedVerses.filter(v => v.ref !== reference);
+            bibleverse.selectedVerses = bibleverse.selectedVerses.filter(v => v.ref !== reference);
             verseList.removeChild(li);
         };
 
@@ -215,11 +218,10 @@ ol li {
         li.appendChild(removeBtn);
         li.appendChild(verseText);
         verseList.appendChild(li);
-    }
+    },
 
-    // Create the PowerPoint file
-    window.createPpt = function() {
-        if (selectedVerses.length === 0) {
+    createPpt: function() {
+        if (bibleverse.selectedVerses.length === 0) {
             Swal.fire("No verses selected.", "", "error");
             return;
         }
@@ -238,10 +240,8 @@ ol li {
         }).then((result) => {
             if (result.isConfirmed) {
                 const filename = result.value.trim() + ".pptx";
-
                 let pptx = new PptxGenJS();
 
-                // Background image path
                 const bgImage = {
                     path: "assets/img/background.jpg",
                     x: 0,
@@ -250,27 +250,23 @@ ol li {
                     h: "100%"
                 };
 
-                // --- Slide 1: Title Only ---
                 let titleSlide = pptx.addSlide();
                 titleSlide.addImage(bgImage);
-
-                titleSlide.addText(titleSlide, {
+                titleSlide.addText("Lesson Title", {
                     x: 0.5,
                     y: 2.5,
                     w: "90%",
                     align: "center",
                     fontSize: 38,
                     bold: true,
-                    color: "1F4E79", // Dark blue for title
+                    color: "1F4E79",
                     fontFace: "Arial Black"
                 });
 
-                // --- Slide 2 onward: Lyrics ---
-                selectedVerses.forEach(verse => {
+                bibleverse.selectedVerses.forEach(verse => {
                     let slide = pptx.addSlide();
                     slide.addImage(bgImage);
-
-                    slide.addText(verse, {
+                    slide.addText(`${verse.ref}\n\n${verse.text}`, {
                         x: 0.7,
                         y: 1.2,
                         w: "85%",
@@ -282,48 +278,34 @@ ol li {
                     });
                 });
 
-                // Export
                 pptx.writeFile(filename);
-
             }
         });
-    }
+    },
 
-    function refreshNiceSelect(selectElement) {
-        // Remove any old NiceSelect wrappers
-        const wrapper = selectElement.nextElementSibling;
-        if (wrapper && wrapper.classList.contains("nice-select")) {
-            wrapper.remove();
-        }
-
-        // Ensure it's visible and bound again
-        selectElement.style.display = "";
-        NiceSelect.bind(selectElement, {
-            searchable: true
+    bindNiceSelects: function() {
+        document.addEventListener("DOMContentLoaded", () => {
+            ["bookSelect", "chapterSelect", "verseSelect"].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) bibleverse.refreshNiceSelect(el);
+            });
         });
     }
+};
 
-    // Init on DOM ready
-    document.addEventListener("DOMContentLoaded", function() {
-        // Bind NiceSelect placeholders
-        ["bookSelect", "chapterSelect", "verseSelect"].forEach(id => {
-            refreshNiceSelect(document.getElementById(id));
-        });
-    });
-})();
+var hymns = {
+    hymnsData: {},
 
-(function() {
-    let hymnsData = {};
+    init: function() {
+        fetch("assets/hymns.json")
+            .then(response => response.json())
+            .then(data => {
+                hymns.hymnsData = data;
+                hymns.populateHymnSelect();
+            });
+    },
 
-    // Load hymns JSON
-    fetch("assets/hymns.json")
-        .then(response => response.json())
-        .then(data => {
-            hymnsData = data; // store the full JSON object, not just hymns
-            populateHymnSelect();
-        });
-
-    window.createHymnPpt = function() {
+    createPpt: function() {
         const hymnSelect = document.getElementById("hymnSelect");
         const hymnNumber = hymnSelect.value;
 
@@ -332,7 +314,7 @@ ol li {
             return;
         }
 
-        const hymn = hymnsData.hymns[hymnNumber];
+        const hymn = hymns.hymnsData.hymns[hymnNumber];
         if (!hymn) {
             Swal.fire("Invalid hymn selected.", "", "error");
             return;
@@ -355,7 +337,7 @@ ol li {
 
                 let pptx = new PptxGenJS();
 
-                // Add each verse as a separate slide
+                // Add each verse as a slide
                 hymn.verses.forEach((verseText, index) => {
                     let slide = pptx.addSlide();
                     slide.addImage({
@@ -388,7 +370,7 @@ ol li {
                     });
                 });
 
-                // Add chorus (optional)
+                // Add chorus slide if exists
                 if (hymn.chorus) {
                     let slide = pptx.addSlide();
                     slide.addImage({
@@ -424,22 +406,21 @@ ol li {
                 pptx.writeFile(filename);
             }
         });
-    }
+    },
 
-    // Populate hymnal <select>
-    function populateHymnSelect() {
+    populateHymnSelect: function() {
         const hymnSelect = document.getElementById("hymnSelect");
         hymnSelect.innerHTML = `<option value="">Select Hymn</option>`;
 
-        const categories = hymnsData.categories;
-        const hymns = hymnsData.hymns;
+        const categories = hymns.hymnsData.categories;
+        const hymnsList = hymns.hymnsData.hymns;
 
         Object.entries(categories).forEach(([category, hymnIds]) => {
             const optgroup = document.createElement("optgroup");
             optgroup.label = category.charAt(0).toUpperCase() + category.slice(1);
 
             hymnIds.forEach(id => {
-                const hymn = hymns[id];
+                const hymn = hymnsList[id];
                 if (hymn) {
                     const option = document.createElement("option");
                     option.value = hymn.number;
@@ -451,17 +432,15 @@ ol li {
             hymnSelect.appendChild(optgroup);
         });
 
-        refreshNiceSelect(hymnSelect);
+        hymns.refreshNiceSelect(hymnSelect);
 
         hymnSelect.addEventListener("change", () => {
-            displayHymnLyrics(hymnSelect.value);
+            hymns.displayHymnLyrics(hymnSelect.value);
         });
-    }
+    },
 
-
-    // Display selected hymn lyrics
-    function displayHymnLyrics(hymnNumber) {
-        const hymn = hymnsData.hymns[hymnNumber];
+    displayHymnLyrics: function(hymnNumber) {
+        const hymn = hymns.hymnsData.hymns[hymnNumber];
         const container = document.getElementById("hymnLyrics");
 
         if (!hymn) {
@@ -471,21 +450,18 @@ ol li {
 
         let html = `<h5>${hymn.title}</h5><hr>`;
 
-        // Verses
         hymn.verses.forEach((v, i) => {
             html += `<p><strong>Verse ${i + 1}:</strong><br>${v.replace(/\n/g, "<br>")}</p>`;
         });
 
-        // Chorus (optional)
         if (hymn.chorus) {
             html += `<p><strong>Chorus:</strong><br>${hymn.chorus.replace(/\n/g, "<br>")}</p>`;
         }
 
         container.innerHTML = html;
-    }
+    },
 
-    // Rebind NiceSelect (if used)
-    function refreshNiceSelect(selectElement) {
+    refreshNiceSelect: function(selectElement) {
         const wrapper = selectElement.nextElementSibling;
         if (wrapper && wrapper.classList.contains("nice-select")) {
             wrapper.remove();
@@ -494,10 +470,16 @@ ol li {
             searchable: true
         });
     }
-})();
-
+};
 
 $(document).ready(function() {
+    window.addVerse = bibleverse.addVerse;
+    window.createPpt = bibleverse.createPpt;
+    window.createHymnPpt = hymns.createPpt;
+
+    bibleverse.init();
+    hymns.init();
+
     const tooltipEl = document.querySelector('[data-bs-toggle="tooltip"]');
 
     if (tooltipEl) {
