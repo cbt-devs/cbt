@@ -250,31 +250,43 @@ var bibleverse = {
                     h: "100%"
                 };
 
-                let titleSlide = pptx.addSlide();
-                titleSlide.addImage(bgImage);
-                titleSlide.addText("Lesson Title", {
-                    x: 0.5,
-                    y: 2.5,
-                    w: "90%",
-                    align: "center",
-                    fontSize: 38,
-                    bold: true,
-                    color: "1F4E79",
-                    fontFace: "Arial Black"
-                });
-
                 bibleverse.selectedVerses.forEach(verse => {
                     let slide = pptx.addSlide();
                     slide.addImage(bgImage);
-                    slide.addText(`${verse.ref}\n\n${verse.text}`, {
-                        x: 0.7,
-                        y: 1.2,
-                        w: "85%",
-                        h: 4.5,
+
+                    // Determine font size based on text length
+                    let verseLength = verse.text.length;
+                    let verseFontSize = 45;
+
+                    if (verseLength > 300) {
+                        verseFontSize = 36; // Long verse
+                    } else if (verseLength > 180) {
+                        verseFontSize = 40; // Medium verse
+                    }
+
+                    // Add verse text
+                    slide.addText(verse.text, {
+                        x: 0.5,
+                        y: 0.1,
+                        w: "90%",
+                        h: 5.5,
+                        align: "center",
+                        fontSize: verseFontSize,
+                        fontFace: "Calibri",
+                        color: "000000"
+                    });
+
+                    // Add verse reference at bottom
+                    slide.addText(verse.ref, {
+                        x: 0.5,
+                        y: 5, // near the bottom of 7.5" tall slide
+                        w: "90%",
+                        h: 0.5,
                         align: "center",
                         fontSize: 36,
-                        color: "000000",
-                        fontFace: "Calibri"
+                        fontFace: "Bahnschrift Condensed",
+                        bold: true,
+                        color: "000000"
                     });
                 });
 
