@@ -1,8 +1,16 @@
-html, body {
-    height: 100%;
-    margin: 0;
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+.modal-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
 }
 
 .fa-solid {
-    color: rgba(30, 80, 182, 0.958)
+  color: rgba(30, 80, 182, 0.958);
 }
