@@ -122,6 +122,11 @@ var eventsCalendar = {
         this.calendar = new FullCalendar.Calendar(calendarEl, {
             themeSystem: 'bootstrap5',
             initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+            },
             events: [],
             eventTimeFormat: {
                 hour: 'numeric',
