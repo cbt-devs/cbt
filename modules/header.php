@@ -35,6 +35,8 @@
     <script src="assets/nice-select2/nice-select2.js"></script>
     <link href="assets/nice-select2/nice-select2.css" rel="stylesheet">
 
+    <script src="assets/js-loading-overlay/js-loading-overlay.min.js"></script>
+
     <script src="assets/js/main.js"></script>
     <link href="assets/css/main.css" rel="stylesheet">
     <link href="assets/css/fonts.css" rel="stylesheet">
