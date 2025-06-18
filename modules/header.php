@@ -12,8 +12,6 @@
     <link href="assets/fontawesome-free-6.7.2-web/css/fontawesome.min.css" rel="stylesheet">
     <script src="assets/fontawesome-free-6.7.2-web/js/all.min.js"></script>
 
-    <link href="assets/css/main.css" rel="stylesheet">
-
     <link href="assets/js/datatable.js" rel="stylesheet">
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -38,4 +36,6 @@
     <link href="assets/nice-select2/nice-select2.css" rel="stylesheet">
 
     <script src="assets/js/main.js"></script>
+    <link href="assets/css/main.css" rel="stylesheet">
+    <link href="assets/css/fonts.css" rel="stylesheet">
 </head>
