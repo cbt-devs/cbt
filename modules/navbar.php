@@ -3,7 +3,9 @@ $nav = new Navigation();
 ?>
 
 <nav class="col-md-2 p-3 d-flex flex-column shadow-sm">
-    <img src="assets/img/CBT Logo 1.svg" alt="CBT Logo" width="100" class="mx-auto d-block">
+    <a href="#" class="load-content p-0 m-0 text-decoration-none" data-page="<?= $nav->getLink('main') ?>">
+        <img src="assets/img/CBT Logo 1.svg" alt="CBT Logo" width="100" class="mx-auto d-block">
+    </a>
 
     <ul class="nav flex-column flex-grow-1 mt-3">
         <li class="nav-item bg-info-subtle rounded">
