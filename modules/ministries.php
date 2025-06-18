@@ -8,12 +8,11 @@
 <table id="ministryTable" class="table table-striped" style="width:100%"></table>
 
 <!-- Add Ministry Modal -->
-<div class="modal fade" id="addMinistryModal">
+<div class="modal fade" id="addMinistryModal" tabindex="-1" aria-labelledby="addMinistryModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header pb-0" style="border-bottom: none;">
                 <h5 class="modal-title" id="addMinistryModalLabel">Add Ministry</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <form id="addMinistryForm">
@@ -40,7 +39,7 @@
                     </div>
                 </div>
 
-                <div class="modal-footer">
+                <div class="modal-footer d-flex justify-content-between" style="border-top: none;">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
@@ -48,6 +47,7 @@
         </div>
     </div>
 </div>
+
 
 <!-- Edit Ministry Modal -->
 <div class="modal fade" id="updateMinistryModal">

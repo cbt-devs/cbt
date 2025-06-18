@@ -20,17 +20,14 @@
 
 <div class="modal fade" id="addMemberModal">
     <div class="modal-dialog modal-lg">
-        <!-- made wider for better layout -->
         <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Add Member</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header pb-0" style="border-bottom: none;">
+                <h5 class="modal-title" id="exampleModalLabel">Add Member</h5>
             </div>
 
             <form id="addMemberForm">
-                <!-- Moved form tag to wrap whole modal body+footer -->
                 <div class="modal-body">
-                    <div class="row mb-3">
+                    <div class="row g-3">
                         <div class="col-md-4">
                             <label for="firstName" class="form-label">First Name</label>
                             <input type="text" class="form-control" id="firstName" name="firstName" value="q" required>
@@ -43,15 +40,13 @@
                             <label for="lastName" class="form-label">Last Name</label>
                             <input type="text" class="form-control" id="lastName" name="lastName" value="q" required>
                         </div>
-                    </div>
 
-                    <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="gender" class="form-label">Gender</label>
-                            <select class="form-select" id="gender" name="gender" required>
-                                <option value="" selected disabled>Select gender</option>
+                            <select class="form-control" id="gender" name="gender" required>
+                                <option value="" disabled>Select gender</option>
                                 <option value="female">Female</option>
-                                <option selected value="male">Male</option>
+                                <option value="male" selected>Male</option>
                             </select>
                         </div>
                         <div class="col-md-6">
@@ -59,14 +54,13 @@
                             <input type="date" class="form-control" id="birthdate" name="birthdate"
                                 value="<?= date('Y-m-d') ?>" required>
                         </div>
-                    </div>
 
-                    <div class="mb-3">
-                        <label for="addressLine" class="form-label">Address Line</label>
-                        <input type="text" class="form-control" id="addressLine" name="addressLine" value="q" required>
-                    </div>
+                        <div class="col-12">
+                            <label for="addressLine" class="form-label">Address Line</label>
+                            <input type="text" class="form-control" id="addressLine" name="addressLine" value="q"
+                                required>
+                        </div>
 
-                    <div class="row mb-3">
                         <div class="col-md-4">
                             <label for="city" class="form-label">City</label>
                             <input type="text" class="form-control" id="city" name="city" value="q" required>
@@ -80,15 +74,17 @@
                             <input type="number" class="form-control" id="postalCode" name="postalCode" value="1100"
                                 required>
                         </div>
-                    </div>
 
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="primary" name="primary" value="1">
-                        <label class="form-check-label" for="primary">Primary Address</label>
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="primary" name="primary" value="1">
+                                <label class="form-check-label" for="primary">Primary Address</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="modal-footer">
+                <div class="modal-footer d-flex justify-content-between" style="border-top: none;">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
@@ -96,6 +92,7 @@
         </div>
     </div>
 </div>
+
 
 <script>
 var memberTable = {
