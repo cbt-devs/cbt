@@ -16,7 +16,7 @@
     $event_ctr = count( $event->show() );
     $ministry_ctr = count( $ministry->show() );
     $member_ctr = count( $member_r = $member->show( _origdate: true ) );
-    $logs_r = $logs->show( _limit: 5 );
+    $logs_r = $logs->show( _limit: 20 );
 
     $newly_baptist_ctr = 0;
     foreach( $member_r as $member ) {
@@ -73,12 +73,12 @@
 <div class="row">
     <div class="card col-8 m-2">
         <div class="card-title d-flex justify-content-between mx-2 mb-0">
-            <span>Reports</span>
+            <span>Events</span>
             <i class="bi bi-three-dots"></i>
         </div>
 
-        <div class="card-body d-flex justify-content-center align-items-center">
-            <canvas id="barChart" width="400" height="400"></canvas>
+        <div class="card-body d-flex justify-content-center align-items-center" style="height: 400px;">
+            <canvas id="barChart" class="w-100 h-100"></canvas>
         </div>
     </div>
     <div class="card col m-2">
@@ -87,15 +87,14 @@
             <i class="bi bi-three-dots"></i>
         </div>
 
-        <div class="card-body">
+        <div class="card-body" style="max-height: 400px; overflow-y: auto;">
             <ul class="timeline list-unstyled position-relative ps-4">
                 <?php foreach ($logs_r as $row): ?>
                 <li class="mb-4 position-relative">
                     <span class="dot bg-<?php 
-                    // Optional: cycle color based on ID or random
-                    $colors = ['primary', 'success', 'danger', 'info', 'warning', 'secondary'];
-                    echo $colors[$row['id'] % count($colors)];
-                ?>"></span>
+                $colors = ['primary', 'success', 'danger', 'info', 'warning', 'secondary'];
+                echo $colors[$row['id'] % count($colors)];
+            ?>"></span>
                     <small class="text-muted">
                         <?= $logs->time_elapsed_string($row['date']) ?>
                     </small>
