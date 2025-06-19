@@ -12,6 +12,7 @@
     $event = new Events($conn);
 
     $event_ctr = count( $event->show() );
+    $ministry_ctr = count( $ministry->show() );
     $member_ctr = count( $member_r = $member->show( 1 ) );
 
     $newly_baptist_ctr = 0;
@@ -29,31 +30,37 @@
 ?>
 
 <div class="row">
-    <div class="card col-2 m-2">
+    <div class="card col m-2">
         <div class="card-body d-flex flex-column flex-wrap align-content-center">
             <i class="fa-solid fa-place-of-worship fa-2x text-primary"></i>
             6 missions
         </div>
     </div>
-    <div class="card col-2 m-2">
+    <div class="card col m-2">
+        <div class="card-body d-flex flex-column flex-wrap align-content-center">
+            <i class="fa-solid fa-people-group fa-2x text-primary"></i>
+            <?= $ministry_ctr ?> Ministry
+        </div>
+    </div>
+    <div class="card col m-2">
         <div class="card-body d-flex flex-column flex-wrap align-content-center">
             <i class="fa-solid fa-user-group fa-2x text-primary"></i>
             <?= $member_ctr ?> total members
         </div>
     </div>
-    <div class="card col-2 m-2">
+    <div class="card col m-2">
         <div class="card-body d-flex flex-column flex-wrap align-content-center">
             <i class="fa-solid fa-user fa-2x text-primary"></i>
             2 new members
         </div>
     </div>
-    <div class="card col-2 m-2">
+    <div class="card col m-2">
         <div class="card-body d-flex flex-column flex-wrap align-content-center">
             <i class="fa-solid fa-water-ladder fa-2x text-primary"></i>
             <?=  $newly_baptist_ctr ?> newly baptist
         </div>
     </div>
-    <div class="card col-2 m-2">
+    <div class="card col     m-2">
         <div class="card-body d-flex flex-column flex-wrap align-content-center">
             <i class="fa-solid fa-calendar-check fa-2x text-primary"></i>
             <?= $event_ctr ?> events
@@ -61,25 +68,38 @@
     </div>
 </div>
 <div class="row">
-    <div class="card col m-2">
+    <div class="card col-8 m-2">
+        <div class="card-title d-flex justify-content-between mx-2">
+            <h5>Reports</h5>
+            <i class="bi bi-three-dots"></i>
+        </div>
+
         <div class="card-body d-flex justify-content-center align-items-center">
             <canvas id="barChart" width="400" height="400"></canvas>
         </div>
     </div>
-
     <div class="card col m-2">
+        <div class="card-title d-flex justify-content-between mx-2">
+            <h5>Latest updates</h5>
+            <i class="bi bi-three-dots"></i>
+        </div>
+
         <div class="card-body d-flex justify-content-center align-items-center">
-            <canvas id="doughnutChart" width="400" height="400"></canvas>
+
         </div>
     </div>
 </div>
 <div class="row">
     <div class="card col m-2">
         <div class="card-body d-flex justify-content-center align-items-center">
+            <canvas id="doughnutChart" width="400" height="400"></canvas>
+        </div>
+    </div>
+    <div class="card col m-2">
+        <div class="card-body d-flex justify-content-center align-items-center">
             <canvas id="lineChart" width="400" height="400"></canvas>
         </div>
     </div>
-</div>
 </div>
 
 <script>
