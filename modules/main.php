@@ -3,6 +3,7 @@
     require_once __DIR__ . '/../class/member.php';
     require_once __DIR__ . '/../class/ministries.php';
     require_once __DIR__ . '/../class/events.php';
+    require_once __DIR__ . '/../class/logs.php';
 
     $pdo = new Database();
     $conn = $pdo->getConnection();
@@ -10,10 +11,12 @@
     $member = new Member($conn);
     $ministry = new Ministries($conn);
     $event = new Events($conn);
+    $logs = new Logs($conn);
 
     $event_ctr = count( $event->show() );
     $ministry_ctr = count( $ministry->show() );
-    $member_ctr = count( $member_r = $member->show( 1 ) );
+    $member_ctr = count( $member_r = $member->show( _origdate: true ) );
+    $logs_r = $logs->show( _limit: 5 );
 
     $newly_baptist_ctr = 0;
     foreach( $member_r as $member ) {
@@ -69,8 +72,8 @@
 </div>
 <div class="row">
     <div class="card col-8 m-2">
-        <div class="card-title d-flex justify-content-between mx-2">
-            <h5>Reports</h5>
+        <div class="card-title d-flex justify-content-between mx-2 mb-0">
+            <span>Reports</span>
             <i class="bi bi-three-dots"></i>
         </div>
 
@@ -79,13 +82,27 @@
         </div>
     </div>
     <div class="card col m-2">
-        <div class="card-title d-flex justify-content-between mx-2">
-            <h5>Latest updates</h5>
+        <div class="card-title d-flex justify-content-between align-items-center mx-3 mt-3">
+            <span class="fw-semibold">Recent Activity</span>
             <i class="bi bi-three-dots"></i>
         </div>
 
-        <div class="card-body d-flex justify-content-center align-items-center">
-
+        <div class="card-body">
+            <ul class="timeline list-unstyled position-relative ps-4">
+                <?php foreach ($logs_r as $row): ?>
+                <li class="mb-4 position-relative">
+                    <span class="dot bg-<?php 
+                    // Optional: cycle color based on ID or random
+                    $colors = ['primary', 'success', 'danger', 'info', 'warning', 'secondary'];
+                    echo $colors[$row['id'] % count($colors)];
+                ?>"></span>
+                    <small class="text-muted">
+                        <?= $logs->time_elapsed_string($row['date']) ?>
+                    </small>
+                    <p class="mb-0"><?= htmlspecialchars($row['text']) ?></p>
+                </li>
+                <?php endforeach; ?>
+            </ul>
         </div>
     </div>
 </div>

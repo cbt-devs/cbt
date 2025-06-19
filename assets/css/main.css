@@ -12,13 +12,32 @@ body {
 }
 
 .card-title {
-  padding: 20px 0 15px 0;
-  font-size: 18px;
-  font-weight: 500;
+  padding: 20px 0 0 0;
+  font-size: 16px;
+  font-weight: 700;
   color: #012970;
   font-family: 'Nunito', sans-serif;
 }
 
 .fa-solid {
   color: rgba(30, 80, 182, 0.958);
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 8px;
+  width: 2px;
+  height: 100%;
+  background-color: #dee2e6;
+}
+
+.timeline .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  position: absolute;
+  left: -20px;
+  top: 5px;
 }
