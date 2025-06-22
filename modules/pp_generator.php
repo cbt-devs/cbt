@@ -529,5 +529,7 @@ $(document).ready(function() {
             }
         });
     });
+
+    JsLoadingOverlay.hide();
 });
 </script>

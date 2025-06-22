@@ -162,7 +162,10 @@ var ministryTable = {
                             searchable: false,
                             title: 'Actions'
                         }
-                    ]
+                    ],
+                    initComplete: function() {
+                        JsLoadingOverlay.hide();
+                    }
                 });
             }
 

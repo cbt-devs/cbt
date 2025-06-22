@@ -128,22 +128,6 @@ var commitmentTable = {
     },
 
     show: function() {
-        JsLoadingOverlay.show({
-            overlayBackgroundColor: '#141414',
-            overlayOpacity: 0.6,
-            spinnerIcon: 'square-loader',
-            spinnerColor: '#0D6EFD',
-            spinnerSize: '2x',
-            overlayIDName: 'overlay',
-            spinnerIDName: 'spinner',
-            offsetX: 0,
-            offsetY: 0,
-            containerID: null,
-            lockScroll: false,
-            overlayZIndex: 9998,
-            spinnerZIndex: 9999,
-        });
-
         $.ajax({
             type: "POST",
             url: "controller/main.php",
