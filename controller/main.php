@@ -3,6 +3,7 @@ require_once '../class/database.php';
 require_once '../class/member.php';
 require_once '../class/ministries.php';
 require_once '../class/events.php';
+require_once '../class/commitments.php';
 
 $pdo = new Database();
 $conn = $pdo->getConnection();
@@ -10,16 +11,19 @@ $conn = $pdo->getConnection();
 $member = new Member($conn);
 $ministry = new Ministries($conn);
 $event = new Events($conn);
+$commitment = new Commitments($conn);
 
 header('Content-Type: application/json');
 
 $action = $_POST['action'] ?? '';
 $type = $_POST['type'] ?? '';
+$table_name = ( $table_name = ( $_POST['table_name'] ?? '' ) ) ? $table_name : '';
 
 $handlers = [
     'members' => $member,
     'ministries' => $ministry,
     'events' => $event,
+    'commitments' => $commitment,
 ];
 
 if (!isset($handlers[$type])) {
@@ -31,7 +35,7 @@ $handler = $handlers[$type];
 
 switch ($action) {
     case 'show':
-        $result = $handler->show();
+        $result = $handler->show( $table_name );
         echo json_encode([
             'status' => $result ? 'success' : 'error',
             'data' => $result
