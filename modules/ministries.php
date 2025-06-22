@@ -1,7 +1,7 @@
 <h2>Ministry Management</h2>
 <p>Here you can manage all ministries.</p>
 
-<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addMinistryModal">
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMinistryModal">
     <i class="fa-solid fa-plus"></i> Add Ministry
 </button>
 

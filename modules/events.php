@@ -13,7 +13,7 @@ $ministryData = $ministry->show();
 <h2>Events Management</h2>
 <p>Here you can manage all your events.</p>
 
-<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEventModal">
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEventModal">
     <i class="fa-solid fa-plus"></i> Add Event
 </button>
 

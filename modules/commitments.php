@@ -17,7 +17,7 @@ $commitments_type = $commitments->type_show();
 <h2>Commitments Management</h2>
 <p>Here you can manage all the church commitments.</p>
 
-<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal">
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
     <i class="fa-solid fa-plus"></i> Add Commitment
 </button>
 
