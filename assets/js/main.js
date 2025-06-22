@@ -1,20 +1,49 @@
 document.addEventListener('DOMContentLoaded', function () {
-  // Select all links with the 'load-content' class
   document.querySelectorAll('.load-content').forEach((link) => {
     link.addEventListener('click', function (e) {
-      e.preventDefault(); // Prevent page reload
+      e.preventDefault();
 
-      const page = this.getAttribute('data-page'); // Get the target page
+      const page = this.getAttribute('data-page');
       const contentDiv = document.querySelector('.contents');
 
-      // Load content using fetch
+      loader.init(); // optional, your loader
+
       fetch(page)
-        .then((response) => response.text())
-        .then((data) => {
-          loader.init();
-          contentDiv.innerHTML = data; // Update content
+        .then((response) => {
+          if (!response.ok) {
+            // Handle 404 or server error
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.text();
         })
-        .catch((error) => console.error('Error loading content:', error));
+        .then((data) => {
+          contentDiv.innerHTML = data;
+          JsLoadingOverlay.hide();
+        })
+        .catch((error) => {
+          console.error('Error loading content:', error);
+
+          contentDiv.innerHTML = `
+    <div style="
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      padding: 2rem;
+      background-color: #cbe3ff;
+    ">
+      <img src="assets/img/404.jpg" alt="404 Not Found" style="
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+      " />
+    </div>
+  `;
+
+          JsLoadingOverlay.hide();
+        });
     });
   });
 });
