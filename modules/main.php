@@ -34,37 +34,37 @@
 
 <div class="row">
     <div class="card col m-2">
-        <div class="card-body d-flex flex-column flex-wrap align-content-center">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center text-center">
             <i class="fa-solid fa-place-of-worship fa-2x text-primary"></i>
             6 missions
         </div>
     </div>
     <div class="card col m-2">
-        <div class="card-body d-flex flex-column flex-wrap align-content-center">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center text-center">
             <i class="fa-solid fa-people-group fa-2x text-primary"></i>
             <?= $ministry_ctr ?> Ministry
         </div>
     </div>
     <div class="card col m-2">
-        <div class="card-body d-flex flex-column flex-wrap align-content-center">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center text-center">
             <i class="fa-solid fa-user-group fa-2x text-primary"></i>
             <?= $member_ctr ?> total members
         </div>
     </div>
     <div class="card col m-2">
-        <div class="card-body d-flex flex-column flex-wrap align-content-center">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center text-center">
             <i class="fa-solid fa-user fa-2x text-primary"></i>
             2 new members
         </div>
     </div>
     <div class="card col m-2">
-        <div class="card-body d-flex flex-column flex-wrap align-content-center">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center text-center">
             <i class="fa-solid fa-water-ladder fa-2x text-primary"></i>
             <?=  $newly_baptist_ctr ?> newly baptist
         </div>
     </div>
     <div class="card col     m-2">
-        <div class="card-body d-flex flex-column flex-wrap align-content-center">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center text-center">
             <i class="fa-solid fa-calendar-check fa-2x text-primary"></i>
             <?= $event_ctr ?> events
         </div>
