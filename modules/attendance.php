@@ -23,7 +23,7 @@ $formatted_today = $today->format('l d, Y');
         </button>
     </div>
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
-        <i class="fa-solid fa-plus"></i> Add Commitment
+        <i class="fa-solid fa-plus"></i> Add Attendance
     </button>
 </div>
 
