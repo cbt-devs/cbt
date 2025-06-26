@@ -1,29 +1,32 @@
-<?php 
+<?php
 require_once __DIR__ . '/../init.php';
 $ministryData = $ministry->show();
 ?>
 
 <style>
-.nice-select {
-    width: 100%;
-    margin-bottom: 0 !important;
-}
+    .nice-select {
+        width: 100%;
+        margin-bottom: 0 !important;
+    }
 </style>
 
-<h2>Events Management</h2>
-<p>Here you can manage all your events.</p>
-
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEventModal">
-    <i class="fa-solid fa-plus"></i> Add Event
-</button>
+<div class="d-flex justify-content-between align-items-start">
+    <div>
+        <h2>Events Management</h2>
+        <p>Here you can manage all your events.</p>
+    </div>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEventModal">
+        <i class="fa-solid fa-plus"></i> Add Event
+    </button>
+</div>
 
 <table id="eventTable" class="table table-striped" style="width:100%"></table>
 
 <style>
-#calendar {
-    max-width: 100%;
-    margin: 40px auto;
-}
+    #calendar {
+        max-width: 100%;
+        margin: 40px auto;
+    }
 </style>
 
 <div id="calendar"></div>
@@ -106,233 +109,233 @@ $ministryData = $ministry->show();
 
 
 <script>
-var eventsCalendar = {
-    calendar: null,
+    var eventsCalendar = {
+        calendar: null,
 
-    init: function() {
-        this.initCalendar();
-        this.bindEvents();
+        init: function() {
+            this.initCalendar();
+            this.bindEvents();
 
-        // Load events from server and render on calendar
-        this.show();
-    },
+            // Load events from server and render on calendar
+            this.show();
+        },
 
-    initCalendar: function() {
-        var calendarEl = document.getElementById('calendar');
-        this.calendar = new FullCalendar.Calendar(calendarEl, {
-            themeSystem: 'bootstrap5',
-            initialView: 'dayGridMonth',
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
-            },
-            events: [],
-            eventTimeFormat: {
-                hour: 'numeric',
-                minute: '2-digit',
-                meridiem: 'short'
-            },
-            eventClick: function(info) {
-                const event = info.event;
-                const props = event.extendedProps;
-                const ministry =
+        initCalendar: function() {
+            var calendarEl = document.getElementById('calendar');
+            this.calendar = new FullCalendar.Calendar(calendarEl, {
+                themeSystem: 'bootstrap5',
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+                },
+                events: [],
+                eventTimeFormat: {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    meridiem: 'short'
+                },
+                eventClick: function(info) {
+                    const event = info.event;
+                    const props = event.extendedProps;
+                    const ministry =
 
-                    // Example: Show details using SweetAlert
-                    Swal.fire({
-                        title: event.title,
-                        html: `
+                        // Example: Show details using SweetAlert
+                        Swal.fire({
+                            title: event.title,
+                            html: `
                     <p><strong>Location:</strong> ${props.location}</p>
                     <p><strong>Ministries:</strong> ${props.ministries}</p>
                     <p><strong>Start:</strong> ${eventsCalendar.formatDateTime(event.start.toLocaleString())}</p>
                     <p><strong>End:</strong> ${event.end ? eventsCalendar.formatDateTime(event.end.toLocaleString()) : 'N/A'}</p>
                 `,
-                        icon: 'info'
+                            icon: 'info'
+                        });
+
+                    // Optionally prevent default browser behavior
+                    info.jsEvent.preventDefault();
+                }
+            });
+
+            this.calendar.render();
+        },
+
+        show: function() {
+            var self = this;
+            $.ajax({
+                type: "POST",
+                url: "controller/main.php",
+                data: {
+                    action: "show",
+                    type: "events"
+                },
+                dataType: "json",
+                success: function(response) {
+                    if (response.status === "success" && Array.isArray(response.data)) {
+                        console.log(response.data);
+                        const fcEvents = response.data.map(ev => ({
+                            id: ev.id,
+                            title: ev.event_name,
+                            start: ev.start_date, // full datetime string
+                            end: ev.end_date, // full datetime string
+                            extendedProps: {
+                                location: ev.event_location,
+                                ministries: ev.ministries
+                            }
+                        }));
+
+                        self.calendar.removeAllEvents();
+                        self.calendar.addEventSource(fcEvents);
+                        JsLoadingOverlay.hide();
+                    } else {
+                        console.error("Failed to load events:", response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX error loading events:", error);
+                }
+            });
+        },
+
+
+        add: function(formElement) {
+            formElement.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(formElement);
+                formData.append('action', 'add');
+                formData.append('type', 'events');
+
+                try {
+                    const response = await fetch('controller/main.php', {
+                        method: 'POST',
+                        body: formData
                     });
+                    const result = await response.json();
 
-                // Optionally prevent default browser behavior
-                info.jsEvent.preventDefault();
-            }
-        });
+                    console.log(result)
 
-        this.calendar.render();
-    },
-
-    show: function() {
-        var self = this;
-        $.ajax({
-            type: "POST",
-            url: "controller/main.php",
-            data: {
-                action: "show",
-                type: "events"
-            },
-            dataType: "json",
-            success: function(response) {
-                if (response.status === "success" && Array.isArray(response.data)) {
-                    console.log(response.data);
-                    const fcEvents = response.data.map(ev => ({
-                        id: ev.id,
-                        title: ev.event_name,
-                        start: ev.start_date, // full datetime string
-                        end: ev.end_date, // full datetime string
-                        extendedProps: {
-                            location: ev.event_location,
-                            ministries: ev.ministries
-                        }
-                    }));
-
-                    self.calendar.removeAllEvents();
-                    self.calendar.addEventSource(fcEvents);
-                    JsLoadingOverlay.hide();
-                } else {
-                    console.error("Failed to load events:", response.message);
+                    if (result.status === 'success') {
+                        Swal.fire("Event added", "", "success");
+                        formElement.reset();
+                        eventsCalendar.show(); // reload calendar events
+                        const modal = bootstrap.Modal.getInstance(document.getElementById(
+                            'addEventModal'));
+                        if (modal) modal.hide();
+                    } else {
+                        toastr.error('Failed to add event');
+                        console.error('Add event error:', result.message);
+                    }
+                } catch (error) {
+                    console.error('Fetch error:', error);
+                    alert('There was a problem submitting the form.');
                 }
-            },
-            error: function(xhr, status, error) {
-                console.error("AJAX error loading events:", error);
-            }
-        });
-    },
+            });
+        },
 
+        update: function(formElement) {
+            formElement.addEventListener('submit', async function(e) {
+                e.preventDefault();
 
-    add: function(formElement) {
-        formElement.addEventListener('submit', async function(e) {
-            e.preventDefault();
+                const formData = new FormData(formElement);
+                formData.append('action', 'update');
+                formData.append('type', 'events');
 
-            const formData = new FormData(formElement);
-            formData.append('action', 'add');
-            formData.append('type', 'events');
+                try {
+                    const response = await fetch('controller/main.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
 
-            try {
-                const response = await fetch('controller/main.php', {
-                    method: 'POST',
-                    body: formData
-                });
-                const result = await response.json();
-
-                console.log(result)
-
-                if (result.status === 'success') {
-                    Swal.fire("Event added", "", "success");
-                    formElement.reset();
-                    eventsCalendar.show(); // reload calendar events
-                    const modal = bootstrap.Modal.getInstance(document.getElementById(
-                        'addEventModal'));
-                    if (modal) modal.hide();
-                } else {
-                    toastr.error('Failed to add event');
-                    console.error('Add event error:', result.message);
+                    if (result.status === 'success') {
+                        Swal.fire("Event updated", "", "success");
+                        events.show();
+                        const modal = bootstrap.Modal.getInstance(document.getElementById(
+                            'editEventModal'));
+                        if (modal) modal.hide();
+                    } else {
+                        toastr.error('Failed to update event');
+                        console.error('Update event error:', result.message);
+                    }
+                } catch (error) {
+                    console.error('Fetch error:', error);
+                    alert('There was a problem updating the event.');
                 }
-            } catch (error) {
-                console.error('Fetch error:', error);
-                alert('There was a problem submitting the form.');
-            }
-        });
-    },
+            });
+        },
 
-    update: function(formElement) {
-        formElement.addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            const formData = new FormData(formElement);
-            formData.append('action', 'update');
-            formData.append('type', 'events');
-
-            try {
-                const response = await fetch('controller/main.php', {
-                    method: 'POST',
-                    body: formData
-                });
-                const result = await response.json();
-
-                if (result.status === 'success') {
-                    Swal.fire("Event updated", "", "success");
-                    events.show();
-                    const modal = bootstrap.Modal.getInstance(document.getElementById(
-                        'editEventModal'));
-                    if (modal) modal.hide();
-                } else {
-                    toastr.error('Failed to update event');
-                    console.error('Update event error:', result.message);
+        delete: function(id, name) {
+            Swal.fire({
+                title: `Do you want to delete event "${name}"?`,
+                showDenyButton: true,
+                confirmButtonText: "Yes",
+                denyButtonText: "No"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    events.action('delete', id);
                 }
-            } catch (error) {
-                console.error('Fetch error:', error);
-                alert('There was a problem updating the event.');
-            }
-        });
-    },
+            });
+        },
 
-    delete: function(id, name) {
-        Swal.fire({
-            title: `Do you want to delete event "${name}"?`,
-            showDenyButton: true,
-            confirmButtonText: "Yes",
-            denyButtonText: "No"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                events.action('delete', id);
-            }
-        });
-    },
+        bindEvents: function() {
+            // bind add form
+            const addForm = document.getElementById('addEventForm');
+            if (addForm) this.add(addForm);
 
-    bindEvents: function() {
-        // bind add form
-        const addForm = document.getElementById('addEventForm');
-        if (addForm) this.add(addForm);
+            // bind update form
+            const editForm = document.getElementById('editEventForm');
+            if (editForm) this.update(editForm);
 
-        // bind update form
-        const editForm = document.getElementById('editEventForm');
-        if (editForm) this.update(editForm);
+            // You can also add calendar event click handling here if needed
+        },
 
-        // You can also add calendar event click handling here if needed
-    },
-
-    action: function(actionType, id) {
-        $.ajax({
-            type: "POST",
-            url: "controller/main.php",
-            data: {
-                action: actionType,
-                type: "events",
-                id: id
-            },
-            dataType: "json",
-            success: function(response) {
-                if (response.status === 'success') {
-                    Swal.fire(`Event ${actionType}d`, "", "success");
-                    events.show();
-                } else {
-                    toastr.error(`Failed to ${actionType} event`);
-                    console.error(`${actionType} failed:`, response.message);
+        action: function(actionType, id) {
+            $.ajax({
+                type: "POST",
+                url: "controller/main.php",
+                data: {
+                    action: actionType,
+                    type: "events",
+                    id: id
+                },
+                dataType: "json",
+                success: function(response) {
+                    if (response.status === 'success') {
+                        Swal.fire(`Event ${actionType}d`, "", "success");
+                        events.show();
+                    } else {
+                        toastr.error(`Failed to ${actionType} event`);
+                        console.error(`${actionType} failed:`, response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(`AJAX Error (${actionType}):`, status, error);
                 }
-            },
-            error: function(xhr, status, error) {
-                console.error(`AJAX Error (${actionType}):`, status, error);
-            }
+            });
+        },
+
+        formatDateTime: function(dateTimeStr) {
+            const date = new Date(dateTimeStr);
+            const options = {
+                year: 'numeric',
+                month: 'short',
+                day: '2-digit',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            };
+            // Remove the comma between date and time
+            return date.toLocaleString('en-US', options).replace(',', '');
+        },
+    };
+
+    $(document).ready(function() {
+        eventsCalendar.init();
+
+        document.querySelectorAll(".nice-select2").forEach(el => {
+            NiceSelect.bind(el);
         });
-    },
-
-    formatDateTime: function(dateTimeStr) {
-        const date = new Date(dateTimeStr);
-        const options = {
-            year: 'numeric',
-            month: 'short',
-            day: '2-digit',
-            hour: 'numeric',
-            minute: '2-digit',
-            hour12: true
-        };
-        // Remove the comma between date and time
-        return date.toLocaleString('en-US', options).replace(',', '');
-    },
-};
-
-$(document).ready(function() {
-    eventsCalendar.init();
-
-    document.querySelectorAll(".nice-select2").forEach(el => {
-        NiceSelect.bind(el);
     });
-});
 </script>
