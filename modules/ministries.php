@@ -1,9 +1,12 @@
-<h2>Ministry Management</h2>
-<p>Here you can manage all ministries.</p>
-
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMinistryModal">
-    <i class="fa-solid fa-plus"></i> Add Ministry
-</button>
+<div class="d-flex justify-content-between align-items-start">
+    <div>
+        <h2>Ministry Management</h2>
+        <p>Here you can manage all ministries.</p>
+    </div>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMinistryModal">
+        <i class="fa-solid fa-plus"></i> Add Ministry
+    </button>
+</div>
 
 <table id="ministryTable" class="table table-striped" style="width:100%"></table>
 
@@ -99,57 +102,57 @@
 
 
 <script>
-var ministryTable = {
-    init: function() {
-        this.bindEvents();
-        this.showMinistries();
-    },
+    var ministryTable = {
+        init: function() {
+            this.bindEvents();
+            this.showMinistries();
+        },
 
-    showMinistries: function() {
-        $.ajax({
-            type: "POST",
-            url: "controller/main.php",
-            data: {
-                action: "show",
-                type: "ministries"
-            },
-            success: function(response) {
-                const data = response.data;
+        showMinistries: function() {
+            $.ajax({
+                type: "POST",
+                url: "controller/main.php",
+                data: {
+                    action: "show",
+                    type: "ministries"
+                },
+                success: function(response) {
+                    const data = response.data;
 
-                if ($.fn.dataTable.isDataTable('#ministryTable')) {
-                    $('#ministryTable').DataTable().clear().destroy();
-                }
+                    if ($.fn.dataTable.isDataTable('#ministryTable')) {
+                        $('#ministryTable').DataTable().clear().destroy();
+                    }
 
-                $('#ministryTable').DataTable({
-                    data: data,
-                    columns: [{
-                            data: 'name',
-                            title: 'Ministry Name'
-                        },
-                        {
-                            data: 'age_start',
-                            title: 'Start Age'
-                        },
-                        {
-                            data: 'age_end',
-                            title: 'End Age'
-                        },
-                        {
-                            data: 'active',
-                            title: 'Active',
-                            className: 'text-center',
-                            render: function(data, type, row) {
-                                return `<div class="text-center">
+                    $('#ministryTable').DataTable({
+                        data: data,
+                        columns: [{
+                                data: 'name',
+                                title: 'Ministry Name'
+                            },
+                            {
+                                data: 'age_start',
+                                title: 'Start Age'
+                            },
+                            {
+                                data: 'age_end',
+                                title: 'End Age'
+                            },
+                            {
+                                data: 'active',
+                                title: 'Active',
+                                className: 'text-center',
+                                render: function(data, type, row) {
+                                    return `<div class="text-center">
                                             ${data == 1 
                                                 ? '<span class="text-success fw-bold">&#10003;</span>' 
                                                 : '<span class="text-danger fw-bold">&#10007;</span>'}
                                         </div>`;
-                            }
-                        },
-                        {
-                            data: null,
-                            render: function(data, type, row) {
-                                return `
+                                }
+                            },
+                            {
+                                data: null,
+                                render: function(data, type, row) {
+                                    return `
                         <button class="btn btn-warning btn-sm edit-btn" data-id="${row.id}">
                             <i class="fa-solid fa-pen"></i>
                         </button>
@@ -157,164 +160,164 @@ var ministryTable = {
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     `;
-                            },
-                            orderable: false,
-                            searchable: false,
-                            title: 'Actions'
+                                },
+                                orderable: false,
+                                searchable: false,
+                                title: 'Actions'
+                            }
+                        ],
+                        initComplete: function() {
+                            JsLoadingOverlay.hide();
                         }
-                    ],
-                    initComplete: function() {
-                        JsLoadingOverlay.hide();
+                    });
+                }
+
+            });
+        },
+
+        addMinistry: function(formElement) {
+            formElement.addEventListener('submit', async function(event) {
+                event.preventDefault();
+
+                const formData = new FormData(formElement);
+                formData.append('action', 'add');
+                formData.append('type', 'ministries');
+
+                try {
+                    const response = await fetch('controller/main.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.status === 'success') {
+                        Swal.fire("Ministry added", "", "success");
+                        formElement.reset();
+                        ministryTable.showMinistries();
+                    } else {
+                        toastr.error('Failed to add the ministry');
+                        console.error('Error:', result.message);
                     }
-                });
-            }
 
-        });
-    },
+                    const modal = bootstrap.Modal.getInstance(document.getElementById(
+                        'addMinistryModal'));
+                    if (modal) modal.hide();
 
-    addMinistry: function(formElement) {
-        formElement.addEventListener('submit', async function(event) {
-            event.preventDefault();
-
-            const formData = new FormData(formElement);
-            formData.append('action', 'add');
-            formData.append('type', 'ministries');
-
-            try {
-                const response = await fetch('controller/main.php', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const result = await response.json();
-
-                if (result.status === 'success') {
-                    Swal.fire("Ministry added", "", "success");
-                    formElement.reset();
-                    ministryTable.showMinistries();
-                } else {
-                    toastr.error('Failed to add the ministry');
-                    console.error('Error:', result.message);
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('There was a problem submitting the form.');
                 }
+            });
+        },
 
-                const modal = bootstrap.Modal.getInstance(document.getElementById(
-                    'addMinistryModal'));
-                if (modal) modal.hide();
+        edit: function(formElement) {
+            formElement.addEventListener('submit', async function(event) {
+                event.preventDefault();
 
-            } catch (error) {
-                console.error('Error:', error);
-                alert('There was a problem submitting the form.');
-            }
-        });
-    },
+                const formData = new FormData(formElement);
+                formData.append('action', 'update');
+                formData.append('type', 'ministries');
 
-    edit: function(formElement) {
-        formElement.addEventListener('submit', async function(event) {
-            event.preventDefault();
+                try {
+                    const response = await fetch('controller/main.php', {
+                        method: 'POST',
+                        body: formData
+                    });
 
-            const formData = new FormData(formElement);
-            formData.append('action', 'update');
-            formData.append('type', 'ministries');
+                    const result = await response.json();
 
-            try {
-                const response = await fetch('controller/main.php', {
-                    method: 'POST',
-                    body: formData
-                });
+                    if (result.status === 'success') {
+                        Swal.fire("Ministry updated", "", "success");
+                        ministryTable.showMinistries();
+                    } else {
+                        toastr.error('Failed to update the ministry');
+                        console.error('Update error:', result.message);
+                    }
 
-                const result = await response.json();
-
-                if (result.status === 'success') {
-                    Swal.fire("Ministry updated", "", "success");
-                    ministryTable.showMinistries();
-                } else {
-                    toastr.error('Failed to update the ministry');
-                    console.error('Update error:', result.message);
+                    const modal = bootstrap.Modal.getInstance(document.getElementById(
+                        'updateMinistryModal'));
+                    if (modal) modal.hide();
+                } catch (error) {
+                    console.error('Fetch error:', error);
+                    const responseText = await response.text();
+                    console.log('Raw response:', responseText);
+                    alert('There was a problem updating the ministry.');
                 }
-
-                const modal = bootstrap.Modal.getInstance(document.getElementById(
-                    'updateMinistryModal'));
-                if (modal) modal.hide();
-            } catch (error) {
-                console.error('Fetch error:', error);
-                const responseText = await response.text();
-                console.log('Raw response:', responseText);
-                alert('There was a problem updating the ministry.');
-            }
-        });
-    },
+            });
+        },
 
 
-    delete: function(id, name) {
-        Swal.fire({
-            title: `Do you want to disable ministry ${name}?`,
-            showDenyButton: true,
-            confirmButtonText: "Yes",
-            denyButtonText: `No`
-        }).then((result) => {
-            if (result.isConfirmed) {
-                ministryTable.action('delete', id);
-            }
-        });
-    },
-
-    bindEvents: function() {
-        $('#ministryTable').on('click', '.edit-btn', function() {
-            const id = $(this).data('id');
-            const rowData = $('#ministryTable').DataTable().row($(this).parents('tr')).data();
-
-            $('#editMinistryId').val(id);
-            $('#editMinistryName').val(rowData.name);
-            $('#editStartAge').val(rowData.age_start);
-            $('#editEndAge').val(rowData.age_end);
-            $('#updateActive').prop('checked', rowData.active == 1);
-
-            const modal = new bootstrap.Modal(document.getElementById('updateMinistryModal'));
-            modal.show();
-        });
-
-        $('#ministryTable').on('click', '.delete-btn', function() {
-            const id = $(this).data('id');
-            const name = $(this).closest('tr').find('td:first').text();
-            ministryTable.delete(id, name);
-        });
-
-        const form = document.getElementById('addMinistryForm');
-        if (form) this.addMinistry(form);
-
-        const editForm = document.getElementById('editMinistryForm');
-        if (editForm) this.edit(editForm); // <- ADD THIS LINE
-    },
-
-
-    action: function(actionType, id) {
-        $.ajax({
-            type: "POST",
-            url: "controller/main.php",
-            data: {
-                action: actionType,
-                type: "ministries",
-                id: id
-            },
-            success: function(response) {
-                console.log(response);
-
-                if (response.status === 'success') {
-                    Swal.fire(`Ministries ${actionType}d`, "", "success");
-                    ministryTable.showMinistries();
-                } else {
-                    toastr.error(`Failed to ${actionType} ministry`);
-                    console.error(`${actionType} failed:`, response.message);
+        delete: function(id, name) {
+            Swal.fire({
+                title: `Do you want to disable ministry ${name}?`,
+                showDenyButton: true,
+                confirmButtonText: "Yes",
+                denyButtonText: `No`
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    ministryTable.action('delete', id);
                 }
-            },
-            error: function(xhr, status, error) {
-                console.error(`AJAX Error (${actionType}):`, status, error);
-            }
-        });
-    }
-};
+            });
+        },
 
-$(document).ready(function() {
-    ministryTable.init();
-});
+        bindEvents: function() {
+            $('#ministryTable').on('click', '.edit-btn', function() {
+                const id = $(this).data('id');
+                const rowData = $('#ministryTable').DataTable().row($(this).parents('tr')).data();
+
+                $('#editMinistryId').val(id);
+                $('#editMinistryName').val(rowData.name);
+                $('#editStartAge').val(rowData.age_start);
+                $('#editEndAge').val(rowData.age_end);
+                $('#updateActive').prop('checked', rowData.active == 1);
+
+                const modal = new bootstrap.Modal(document.getElementById('updateMinistryModal'));
+                modal.show();
+            });
+
+            $('#ministryTable').on('click', '.delete-btn', function() {
+                const id = $(this).data('id');
+                const name = $(this).closest('tr').find('td:first').text();
+                ministryTable.delete(id, name);
+            });
+
+            const form = document.getElementById('addMinistryForm');
+            if (form) this.addMinistry(form);
+
+            const editForm = document.getElementById('editMinistryForm');
+            if (editForm) this.edit(editForm); // <- ADD THIS LINE
+        },
+
+
+        action: function(actionType, id) {
+            $.ajax({
+                type: "POST",
+                url: "controller/main.php",
+                data: {
+                    action: actionType,
+                    type: "ministries",
+                    id: id
+                },
+                success: function(response) {
+                    console.log(response);
+
+                    if (response.status === 'success') {
+                        Swal.fire(`Ministries ${actionType}d`, "", "success");
+                        ministryTable.showMinistries();
+                    } else {
+                        toastr.error(`Failed to ${actionType} ministry`);
+                        console.error(`${actionType} failed:`, response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(`AJAX Error (${actionType}):`, status, error);
+                }
+            });
+        }
+    };
+
+    $(document).ready(function() {
+        ministryTable.init();
+    });
 </script>

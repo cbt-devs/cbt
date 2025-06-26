@@ -1,35 +1,37 @@
 <?php
-    require_once __DIR__ . '/../class/database.php';
-    require_once __DIR__ . '/../class/member.php';
-    require_once __DIR__ . '/../class/ministries.php';
-    require_once __DIR__ . '/../class/events.php';
-    require_once __DIR__ . '/../class/logs.php';
+require_once __DIR__ . '/../class/database.php';
+require_once __DIR__ . '/../class/member.php';
+require_once __DIR__ . '/../class/ministries.php';
+require_once __DIR__ . '/../class/events.php';
+require_once __DIR__ . '/../class/logs.php';
 
-    $pdo = new Database();
-    $conn = $pdo->getConnection();
+$pdo = new Database();
+$conn = $pdo->getConnection();
 
-    $member = new Member($conn);
-    $ministry = new Ministries($conn);
-    $event = new Events($conn);
-    $logs = new Logs($conn);
+$member = new Member($conn);
+$ministry = new Ministries($conn);
+$event = new Events($conn);
+$logs = new Logs($conn);
 
-    $event_ctr = count( $event->show() );
-    $ministry_ctr = count( $ministry->show() );
-    $member_ctr = count( $member_r = $member->show( _origdate: true ) );
-    $logs_r = $logs->show( _limit: 20 );
+$event_ctr = count($event->show());
+$ministry_ctr = count($ministry->show());
+$member_ctr = count($member_r = $member->show(_origdate: true));
+$logs_r = $logs->show(_limit: 20);
 
-    $newly_baptist_ctr = 0;
-    foreach( $member_r as $member ) {
-        if( $member[ 'baptism_date' ] ?? 0 ) {
-            $baptismDate = new DateTime($member['baptism_date']);
-            $currentDate = new DateTime();
+$newly_baptist_ctr = 0;
+foreach ($member_r as $member) {
+    if ($member['baptism_date'] ?? 0) {
+        $baptismDate = new DateTime($member['baptism_date']);
+        $currentDate = new DateTime();
 
-            if( $baptismDate->format('m') === $currentDate->format('m') &&
-                $baptismDate->format('Y') === $currentDate->format('Y') ) {
-                    $newly_baptist_ctr += 1;
-            }
+        if (
+            $baptismDate->format('m') === $currentDate->format('m') &&
+            $baptismDate->format('Y') === $currentDate->format('Y')
+        ) {
+            $newly_baptist_ctr += 1;
         }
     }
+}
 ?>
 
 <div class="row">
@@ -60,7 +62,7 @@
     <div class="card col m-2">
         <div class="card-body d-flex flex-column justify-content-center align-items-center text-center">
             <i class="fa-solid fa-water-ladder fa-2x text-primary"></i>
-            <?=  $newly_baptist_ctr ?> newly baptist
+            <?= $newly_baptist_ctr ?> newly baptist
         </div>
     </div>
     <div class="card col     m-2">
@@ -90,16 +92,16 @@
         <div class="card-body" style="max-height: 400px; overflow-y: auto;">
             <ul class="timeline list-unstyled position-relative ps-4">
                 <?php foreach ($logs_r as $row): ?>
-                <li class="mb-4 position-relative">
-                    <span class="dot bg-<?php 
-                $colors = ['primary', 'success', 'danger', 'info', 'warning', 'secondary'];
-                echo $colors[$row['id'] % count($colors)];
-            ?>"></span>
-                    <small class="text-muted">
-                        <?= $logs->time_elapsed_string($row['date']) ?>
-                    </small>
-                    <p class="mb-0"><?= htmlspecialchars($row['text']) ?></p>
-                </li>
+                    <li class="mb-4 position-relative">
+                        <span class="dot bg-<?php
+                                            $colors = ['primary', 'success', 'danger', 'info', 'warning', 'secondary'];
+                                            echo $colors[$row['id'] % count($colors)];
+                                            ?>"></span>
+                        <small class="text-muted">
+                            <?= $logs->time_elapsed_string($row['date']) ?>
+                        </small>
+                        <p class="mb-0"><?= htmlspecialchars($row['text']) ?></p>
+                    </li>
                 <?php endforeach; ?>
             </ul>
         </div>
@@ -119,84 +121,84 @@
 </div>
 
 <script>
-var labels = ['Red', 'Blue', 'Yellow'];
-var data = [12, 19, 3];
+    var labels = ['Red', 'Blue', 'Yellow'];
+    var data = [12, 19, 3];
 
-var chartjs = {
-    init: () => {
-        console.log("wat wat");
-        chartjs.bar();
-        chartjs.doughnut();
-        chartjs.line();
-    },
-    bar: () => {
-        const barChart = document.getElementById('barChart');
-        if (!barChart) return; // Check if element exists
-        new Chart(barChart.getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Sample Data',
-                    data: data,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.7)',
-                        'rgba(54, 162, 235, 0.7)',
-                        'rgba(255, 206, 86, 0.7)',
-                    ],
-                    borderWidth: 2,
-                }, ],
-            },
-            options: {
-                responsive: false
-            },
-        });
-    },
-    doughnut: () => {
-        const doughnutChart = document.getElementById('doughnutChart');
-        if (!doughnutChart) return; // Check if element exists
-        new Chart(doughnutChart.getContext('2d'), {
-            type: 'doughnut',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Sample Data',
-                    data: data,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.7)',
-                        'rgba(54, 162, 235, 0.7)',
-                        'rgba(255, 206, 86, 0.7)',
-                    ],
-                    borderWidth: 2,
-                }, ],
-            },
-            options: {
-                responsive: false
-            },
-        });
-    },
-    line: () => {
-        const lineChart = document.getElementById('lineChart');
-        if (!lineChart) return; // Check if element exists
-        new Chart(lineChart.getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar'],
-                datasets: [{
-                    label: 'Sample Data',
-                    data: data,
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    fill: true,
-                }, ],
-            },
-            options: {
-                responsive: false
-            },
-        });
-    },
-};
+    var chartjs = {
+        init: () => {
+            console.log("wat wat");
+            chartjs.bar();
+            chartjs.doughnut();
+            chartjs.line();
+        },
+        bar: () => {
+            const barChart = document.getElementById('barChart');
+            if (!barChart) return; // Check if element exists
+            new Chart(barChart.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Sample Data',
+                        data: data,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                        ],
+                        borderWidth: 2,
+                    }, ],
+                },
+                options: {
+                    responsive: false
+                },
+            });
+        },
+        doughnut: () => {
+            const doughnutChart = document.getElementById('doughnutChart');
+            if (!doughnutChart) return; // Check if element exists
+            new Chart(doughnutChart.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Sample Data',
+                        data: data,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                        ],
+                        borderWidth: 2,
+                    }, ],
+                },
+                options: {
+                    responsive: false
+                },
+            });
+        },
+        line: () => {
+            const lineChart = document.getElementById('lineChart');
+            if (!lineChart) return; // Check if element exists
+            new Chart(lineChart.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar'],
+                    datasets: [{
+                        label: 'Sample Data',
+                        data: data,
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        fill: true,
+                    }, ],
+                },
+                options: {
+                    responsive: false
+                },
+            });
+        },
+    };
 
-document.addEventListener('DOMContentLoaded', function() {
-    chartjs.init();
-});
+    document.addEventListener('DOMContentLoaded', function() {
+        chartjs.init();
+    });
 </script>
