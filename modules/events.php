@@ -2,14 +2,6 @@
 require_once __DIR__ . '/../init.php';
 $ministryData = $ministry->show();
 ?>
-
-<style>
-    .nice-select {
-        width: 100%;
-        margin-bottom: 0 !important;
-    }
-</style>
-
 <div class="d-flex justify-content-between align-items-start">
     <div>
         <h2>Events Management</h2>
