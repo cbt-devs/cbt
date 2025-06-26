@@ -1,9 +1,12 @@
-<h2>Members Management</h2>
-<p>Here you can manage all your members.</p>
-
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMemberModal">
-    <i class="fa-solid fa-plus"></i> Add Member
-</button>
+<div class="d-flex justify-content-between align-items-start">
+    <div>
+        <h2>Members Management</h2>
+        <p>Here you can manage all your members.</p>
+    </div>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMemberModal">
+        <i class="fa-solid fa-plus"></i> Add Member
+    </button>
+</div>
 
 <table id="memberTable" class="table table-striped" style="width:100%">
     <thead>
@@ -95,48 +98,48 @@
 
 
 <script>
-var memberTable = {
-    init: function() {
-        this.showMember();
-        this.bindEvents();
-    },
+    var memberTable = {
+        init: function() {
+            this.showMember();
+            this.bindEvents();
+        },
 
-    showMember: function() {
-        $.ajax({
-            type: "POST",
-            url: "controller/main.php",
-            data: {
-                action: "show",
-                type: "members"
-            },
-            success: function(response) {
-                const data = response.data;
+        showMember: function() {
+            $.ajax({
+                type: "POST",
+                url: "controller/main.php",
+                data: {
+                    action: "show",
+                    type: "members"
+                },
+                success: function(response) {
+                    const data = response.data;
 
-                if ($.fn.dataTable.isDataTable('#memberTable')) {
-                    $('#memberTable').DataTable().clear().destroy();
-                }
+                    if ($.fn.dataTable.isDataTable('#memberTable')) {
+                        $('#memberTable').DataTable().clear().destroy();
+                    }
 
-                $('#memberTable').DataTable({
-                    data: data,
-                    columns: [{
-                            data: 'name'
-                        },
-                        {
-                            data: 'email'
-                        },
-                        {
-                            data: 'bday'
-                        },
-                        {
-                            data: 'address'
-                        },
-                        {
-                            data: 'baptism_date'
-                        },
-                        {
-                            data: null,
-                            render: function(data, type, row) {
-                                return `
+                    $('#memberTable').DataTable({
+                        data: data,
+                        columns: [{
+                                data: 'name'
+                            },
+                            {
+                                data: 'email'
+                            },
+                            {
+                                data: 'bday'
+                            },
+                            {
+                                data: 'address'
+                            },
+                            {
+                                data: 'baptism_date'
+                            },
+                            {
+                                data: null,
+                                render: function(data, type, row) {
+                                    return `
                                     <button class="btn btn-warning btn-sm edit-btn" data-id="${row.id}">
                                         <i class="fa-solid fa-pen"></i>
                                     </button>
@@ -144,131 +147,131 @@ var memberTable = {
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 `;
-                            },
-                            orderable: false,
-                            searchable: false
+                                },
+                                orderable: false,
+                                searchable: false
+                            }
+                        ],
+                        initComplete: function() {
+                            JsLoadingOverlay.hide();
                         }
-                    ],
-                    initComplete: function() {
-                        JsLoadingOverlay.hide();
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX Error (show):", status, error);
+                }
+            });
+        },
+
+        addMember: function(formElement) {
+            formElement.addEventListener('submit', async function(event) {
+                event.preventDefault();
+
+                const formData = new FormData(formElement);
+                formData.append('action', 'add');
+                formData.append('type', 'members');
+
+                try {
+                    const response = await fetch('controller/main.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.status === 'success') {
+                        Swal.fire("Member added", "", "success");
+                        formElement.reset();
+                        memberTable.showMember();
+                    } else {
+                        toastr.error('Failed to add the member');
+                        console.error('Failed:', result.message);
                     }
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error("AJAX Error (show):", status, error);
-            }
-        });
-    },
 
-    addMember: function(formElement) {
-        formElement.addEventListener('submit', async function(event) {
-            event.preventDefault();
+                    if (document.activeElement instanceof HTMLElement) {
+                        document.activeElement.blur();
+                    }
 
-            const formData = new FormData(formElement);
-            formData.append('action', 'add');
-            formData.append('type', 'members');
+                    const modal = bootstrap.Modal.getInstance(document.getElementById(
+                        'addMemberModal'));
+                    modal.hide();
 
-            try {
-                const response = await fetch('controller/main.php', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const result = await response.json();
-
-                if (result.status === 'success') {
-                    Swal.fire("Member added", "", "success");
-                    formElement.reset();
-                    memberTable.showMember();
-                } else {
-                    toastr.error('Failed to add the member');
-                    console.error('Failed:', result.message);
+                } catch (error) {
+                    console.error('Error (add):', error);
+                    alert('There was a problem submitting the form.');
                 }
+            });
+        },
 
-                if (document.activeElement instanceof HTMLElement) {
-                    document.activeElement.blur();
+        editMember: function(id) {
+            Swal.fire({
+                title: `Do you want to update member ID ${id}?`,
+                showDenyButton: true,
+                confirmButtonText: "Yes",
+                denyButtonText: `No`
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    memberTable.action('update', id);
                 }
+            });
+        },
 
-                const modal = bootstrap.Modal.getInstance(document.getElementById(
-                    'addMemberModal'));
-                modal.hide();
+        deleteMember: function(id) {
+            Swal.fire({
+                title: `Do you want to delete member ID ${id}?`,
+                showDenyButton: true,
+                confirmButtonText: "Yes",
+                denyButtonText: `No`
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    memberTable.action('delete', id);
+                }
+            });
+        },
 
-            } catch (error) {
-                console.error('Error (add):', error);
-                alert('There was a problem submitting the form.');
+        bindEvents: function() {
+            $('#memberTable').on('click', '.edit-btn', function() {
+                const id = $(this).data('id');
+                memberTable.editMember(id);
+            });
+
+            $('#memberTable').on('click', '.delete-btn', function() {
+                const id = $(this).data('id');
+                memberTable.deleteMember(id);
+            });
+
+            const form = document.getElementById('addMemberForm');
+            if (form) {
+                memberTable.addMember(form);
             }
-        });
-    },
+        },
 
-    editMember: function(id) {
-        Swal.fire({
-            title: `Do you want to update member ID ${id}?`,
-            showDenyButton: true,
-            confirmButtonText: "Yes",
-            denyButtonText: `No`
-        }).then((result) => {
-            if (result.isConfirmed) {
-                memberTable.action('update', id);
-            }
-        });
-    },
-
-    deleteMember: function(id) {
-        Swal.fire({
-            title: `Do you want to delete member ID ${id}?`,
-            showDenyButton: true,
-            confirmButtonText: "Yes",
-            denyButtonText: `No`
-        }).then((result) => {
-            if (result.isConfirmed) {
-                memberTable.action('delete', id);
-            }
-        });
-    },
-
-    bindEvents: function() {
-        $('#memberTable').on('click', '.edit-btn', function() {
-            const id = $(this).data('id');
-            memberTable.editMember(id);
-        });
-
-        $('#memberTable').on('click', '.delete-btn', function() {
-            const id = $(this).data('id');
-            memberTable.deleteMember(id);
-        });
-
-        const form = document.getElementById('addMemberForm');
-        if (form) {
-            memberTable.addMember(form);
+        action: function(actionType, id) {
+            $.ajax({
+                type: "POST",
+                url: "controller/main.php",
+                data: {
+                    action: actionType,
+                    type: "members",
+                    id: id
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        Swal.fire(`Member ${actionType}d`, "", "success");
+                        memberTable.showMember();
+                    } else {
+                        toastr.error(`Failed to ${actionType} member`);
+                        console.error(`${actionType} failed:`, response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(`AJAX Error (${actionType}):`, status, error);
+                }
+            });
         }
-    },
+    };
 
-    action: function(actionType, id) {
-        $.ajax({
-            type: "POST",
-            url: "controller/main.php",
-            data: {
-                action: actionType,
-                type: "members",
-                id: id
-            },
-            success: function(response) {
-                if (response.status === 'success') {
-                    Swal.fire(`Member ${actionType}d`, "", "success");
-                    memberTable.showMember();
-                } else {
-                    toastr.error(`Failed to ${actionType} member`);
-                    console.error(`${actionType} failed:`, response.message);
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error(`AJAX Error (${actionType}):`, status, error);
-            }
-        });
-    }
-};
-
-$(document).ready(function() {
-    memberTable.init();
-});
+    $(document).ready(function() {
+        memberTable.init();
+    });
 </script>

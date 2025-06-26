@@ -1,25 +1,28 @@
-<?php 
+<?php
 require_once __DIR__ . '/../init.php';
 $members_r = $member->show();
 $commitments_type = $commitments->type_show();
 ?>
 
 <style>
-.nice-select {
-    width: 100% !important;
-    min-width: 200px;
-    /* optional: adjust based on your layout */
-    max-width: 100%;
-    white-space: nowrap;
-}
+    .nice-select {
+        width: 100% !important;
+        min-width: 200px;
+        /* optional: adjust based on your layout */
+        max-width: 100%;
+        white-space: nowrap;
+    }
 </style>
 
-<h2>Commitments Management</h2>
-<p>Here you can manage all the church commitments.</p>
-
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
-    <i class="fa-solid fa-plus"></i> Add Commitment
-</button>
+<div class="d-flex justify-content-between align-items-start">
+    <div>
+        <h2>Commitments Management</h2>
+        <p>Here you can manage all the church commitments.</p>
+    </div>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
+        <i class="fa-solid fa-plus"></i> Add Commitment
+    </button>
+</div>
 
 <div class="row">
     <div class="col-md-10">
@@ -61,13 +64,13 @@ $commitments_type = $commitments->type_show();
                             <select class="form-control nice-select2" id="member" name="member">
                                 <option value="">Select Member</option>
                                 <?php
-                                    if (!empty($members_r)) {
-                                        foreach ($members_r as $member) {
-                                            echo '<option value="' . htmlspecialchars($member['id']) . '">' . htmlspecialchars($member['name']) . '</option>';
-                                        }
-                                    } else {
-                                        echo '<option value="">No member found</option>';
+                                if (!empty($members_r)) {
+                                    foreach ($members_r as $member) {
+                                        echo '<option value="' . htmlspecialchars($member['id']) . '">' . htmlspecialchars($member['name']) . '</option>';
                                     }
+                                } else {
+                                    echo '<option value="">No member found</option>';
+                                }
                                 ?>
                             </select>
                         </div>
@@ -120,163 +123,163 @@ $commitments_type = $commitments->type_show();
 </div>
 
 <script>
-var commitmentTable = {
-    init: function() {
-        this.show();
-        this.showType();
-        this.bindEvents();
-    },
+    var commitmentTable = {
+        init: function() {
+            this.show();
+            this.showType();
+            this.bindEvents();
+        },
 
-    show: function() {
-        $.ajax({
-            type: "POST",
-            url: "controller/main.php",
-            data: {
-                action: "show",
-                type: "commitments",
-            },
-            dataType: 'json',
-            success: function(response) {
-                const data = response.data;
+        show: function() {
+            $.ajax({
+                type: "POST",
+                url: "controller/main.php",
+                data: {
+                    action: "show",
+                    type: "commitments",
+                },
+                dataType: 'json',
+                success: function(response) {
+                    const data = response.data;
 
-                if ($.fn.dataTable.isDataTable('#commitmentTable')) {
-                    $('#commitmentTable').DataTable().clear().destroy();
-                }
+                    if ($.fn.dataTable.isDataTable('#commitmentTable')) {
+                        $('#commitmentTable').DataTable().clear().destroy();
+                    }
 
-                $('#commitmentTable').DataTable({
-                    data: data,
-                    columns: [{
-                            data: 'member',
-                            title: 'Member'
-                        },
-                        {
-                            data: 'type',
-                            title: 'Type'
-                        },
-                        {
-                            data: 'start',
-                            title: 'Start',
-                        },
-                        {
-                            data: 'end',
-                            title: 'End',
-                        },
-                        {
-                            data: 'amount',
-                            title: 'Amount',
-                            render: function(data) {
-                                return `₱${parseFloat(data).toFixed(2)}`;
-                            }
-                        },
-                        {
-                            data: null,
-                            title: 'Actions',
-                            orderable: false,
-                            searchable: false,
-                            render: function(data, type, row) {
-                                return `
+                    $('#commitmentTable').DataTable({
+                        data: data,
+                        columns: [{
+                                data: 'member',
+                                title: 'Member'
+                            },
+                            {
+                                data: 'type',
+                                title: 'Type'
+                            },
+                            {
+                                data: 'start',
+                                title: 'Start',
+                            },
+                            {
+                                data: 'end',
+                                title: 'End',
+                            },
+                            {
+                                data: 'amount',
+                                title: 'Amount',
+                                render: function(data) {
+                                    return `₱${parseFloat(data).toFixed(2)}`;
+                                }
+                            },
+                            {
+                                data: null,
+                                title: 'Actions',
+                                orderable: false,
+                                searchable: false,
+                                render: function(data, type, row) {
+                                    return `
                                 <button class="btn btn-danger btn-sm delete-btn" data-id="${row.id}">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>`;
+                                }
                             }
+                        ],
+                        initComplete: function() {
+                            JsLoadingOverlay.hide();
                         }
-                    ],
-                    initComplete: function() {
-                        JsLoadingOverlay.hide();
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX Error (show commitments):", status, error);
+                }
+            });
+        },
+
+        showType: function() {
+            $.ajax({
+                type: "POST",
+                url: "controller/main.php",
+                data: {
+                    action: "show",
+                    type: "commitments",
+                    table_name: "commitments_type"
+                },
+                dataType: 'json',
+                success: function(response) {
+                    const data = response.data;
+
+                    if ($.fn.dataTable.isDataTable('#typeTable')) {
+                        $('#typeTable').DataTable().clear().destroy();
                     }
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error("AJAX Error (show commitments):", status, error);
-            }
-        });
-    },
 
-    showType: function() {
-        $.ajax({
-            type: "POST",
-            url: "controller/main.php",
-            data: {
-                action: "show",
-                type: "commitments",
-                table_name: "commitments_type"
-            },
-            dataType: 'json',
-            success: function(response) {
-                const data = response.data;
-
-                if ($.fn.dataTable.isDataTable('#typeTable')) {
-                    $('#typeTable').DataTable().clear().destroy();
+                    $('#typeTable').DataTable({
+                        data: data,
+                        searching: false, // Hide search box
+                        info: false, // Hide "Showing X of Y entries"
+                        lengthChange: false, // Hide "Show N entries" dropdown
+                        searching: false,
+                        columns: [{
+                            data: 'name',
+                            title: 'Type Name'
+                        }]
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error loading type data:", error);
                 }
+            });
+        },
 
-                $('#typeTable').DataTable({
-                    data: data,
-                    searching: false, // Hide search box
-                    info: false, // Hide "Showing X of Y entries"
-                    lengthChange: false, // Hide "Show N entries" dropdown
-                    searching: false,
-                    columns: [{
-                        data: 'name',
-                        title: 'Type Name'
-                    }]
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error("Error loading type data:", error);
-            }
-        });
-    },
+        add: function(formElement) {
+            formElement.addEventListener('submit', async function(e) {
+                e.preventDefault();
 
-    add: function(formElement) {
-        formElement.addEventListener('submit', async function(e) {
-            e.preventDefault();
+                const formData = new FormData(formElement);
+                formData.append('action', 'add');
+                formData.append('type', 'commitments');
 
-            const formData = new FormData(formElement);
-            formData.append('action', 'add');
-            formData.append('type', 'commitments');
+                try {
+                    const response = await fetch('controller/main.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
 
-            try {
-                const response = await fetch('controller/main.php', {
-                    method: 'POST',
-                    body: formData
-                });
-                const result = await response.json();
+                    console.log(result)
 
-                console.log(result)
-
-                if (result.status === 'success') {
-                    Swal.fire("Commitment added", "", "success");
-                    formElement.reset();
-                    const modal = bootstrap.Modal.getInstance(document.getElementById(
-                        'addModal'));
-                    if (modal) modal.hide();
-                } else {
-                    toastr.error('Failed to add event');
-                    console.error('Add event error:', result.message);
+                    if (result.status === 'success') {
+                        Swal.fire("Commitment added", "", "success");
+                        formElement.reset();
+                        const modal = bootstrap.Modal.getInstance(document.getElementById(
+                            'addModal'));
+                        if (modal) modal.hide();
+                    } else {
+                        toastr.error('Failed to add event');
+                        console.error('Add event error:', result.message);
+                    }
+                } catch (error) {
+                    console.error('Fetch error:', error);
+                    alert('There was a problem submitting the form.');
                 }
-            } catch (error) {
-                console.error('Fetch error:', error);
-                alert('There was a problem submitting the form.');
-            }
+            });
+        },
+
+        bindEvents: function() {
+            const addForm = document.getElementById('addForm');
+            if (addForm) this.add(addForm);
+        },
+    };
+
+
+    $(document).ready(function() {
+        commitmentTable.init();
+
+        NiceSelect.bind(document.getElementById("commitment"), {
+            searchable: true
         });
-    },
 
-    bindEvents: function() {
-        const addForm = document.getElementById('addForm');
-        if (addForm) this.add(addForm);
-    },
-};
-
-
-$(document).ready(function() {
-    commitmentTable.init();
-
-    NiceSelect.bind(document.getElementById("commitment"), {
-        searchable: true
+        NiceSelect.bind(document.getElementById("member"), {
+            searchable: true
+        });
     });
-
-    NiceSelect.bind(document.getElementById("member"), {
-        searchable: true
-    });
-});
 </script>
