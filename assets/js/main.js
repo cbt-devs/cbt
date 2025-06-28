@@ -67,3 +67,44 @@ var loader = {
     });
   },
 };
+
+function validateRequiredFields(fields) {
+  let isValid = true;
+
+  fields.forEach(({ element, message }) => {
+    const value = element.value.trim();
+    const isEmpty =
+      element.tagName === 'SELECT'
+        ? value === '' || value === '0'
+        : value === '';
+
+    if (isEmpty) {
+      showValidationTooltip(element, message);
+      isValid = false;
+    }
+  });
+
+  return isValid;
+}
+
+function showValidationTooltip(el, message) {
+  el.setAttribute('data-bs-toggle', 'tooltip');
+  el.setAttribute('data-bs-placement', 'top');
+  el.setAttribute('data-bs-html', 'true');
+  el.setAttribute(
+    'title',
+    `
+      <div style='text-align: left; font-size: 0.9rem; padding-left: 10px;'>
+          <strong>Missing Field:</strong><br>${message}
+      </div>`
+  );
+
+  const tooltip = new bootstrap.Tooltip(el);
+  tooltip.show();
+
+  setTimeout(() => {
+    tooltip.dispose();
+    el.removeAttribute('data-bs-toggle');
+    el.removeAttribute('title');
+  }, 3000);
+}
