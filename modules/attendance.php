@@ -12,6 +12,10 @@ $formatted_today = $today->format('l d, Y');
     .dt-search label {
         font-size: 0;
     }
+
+    #addMemberForm .nice-select {
+        margin-bottom: 15px !important;
+    }
 </style>
 
 <div class="d-flex justify-content-between align-items-start">
@@ -77,7 +81,7 @@ $formatted_today = $today->format('l d, Y');
 <table id="attendanceTable" class="table table-striped" style="width:100%"></table>
 
 <div class="modal fade" id="addModal">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header pb-0" style="border-bottom: none;">
                 <h5 class="modal-title" id="exampleModalLabel">Add Attendance</h5>
@@ -86,8 +90,7 @@ $formatted_today = $today->format('l d, Y');
             <form id="addMemberForm">
                 <div class="modal-body">
                     <div class="row g-3">
-                        <div class="col-md-3">
-                            <label for="ministry" class="form-label">Ministry</label>
+                        <div class="col">
                             <select class="form-control nice-select2" id="ministry" name="ministry">
                                 <option value="all" selected>All</option>
                                 <?php
@@ -100,8 +103,7 @@ $formatted_today = $today->format('l d, Y');
                                 }
                                 ?>
                             </select>
-                        </div>
-                        <div class="col-md-6">
+                            <input type="text" id="customSearch" class="form-control mb-2 mt-2" placeholder="Search members...">
                             <table id="memberList" class="table table-striped"></table>
                         </div>
                     </div>
@@ -117,32 +119,11 @@ $formatted_today = $today->format('l d, Y');
 </div>
 
 <script>
-    const dateDisplay = document.getElementById('dateDisplay');
-    let currentDate = new Date('<?= $today->format('Y-m-d') ?>'); // from PHP
-
-    function formatDate(date) {
-        const options = {
-            weekday: 'long',
-            day: 'numeric',
-            year: 'numeric'
-        };
-        return date.toLocaleDateString('en-US', options);
-    }
-
-    document.getElementById('prevDate').addEventListener('click', () => {
-        currentDate.setDate(currentDate.getDate() - 1);
-        dateDisplay.textContent = formatDate(currentDate);
-    });
-
-    document.getElementById('nextDate').addEventListener('click', () => {
-        currentDate.setDate(currentDate.getDate() + 1);
-        dateDisplay.textContent = formatDate(currentDate);
-    });
-
     var attendanceTable = {
         init: function() {
             this.show();
             this.showMember();
+            this.bindEvents();
         },
         show: function() {
             $.ajax({
@@ -183,7 +164,7 @@ $formatted_today = $today->format('l d, Y');
 
                     $('#memberList').DataTable({
                         data: data,
-                        searching: true,
+                        searching: false,
                         info: false,
                         lengthChange: false,
                         columns: [{
@@ -211,14 +192,61 @@ $formatted_today = $today->format('l d, Y');
                     console.error("AJAX Error (show):", status, error);
                 }
             });
-        }
+        },
+
+        bindEvents: function() {
+            document.querySelectorAll(".nice-select2").forEach(el => {
+                NiceSelect.bind(el);
+            });
+
+            $(document).on('click', '.nice-select', function() {
+                const $select = $(this);
+                const $dropdown = $select.find('.list');
+
+                // Match the width of the visible .nice-select element
+                const selectWidth = $select.outerWidth();
+
+                $dropdown.css({
+                    'width': selectWidth + 'px',
+                    'min-width': selectWidth + 'px',
+                    'left': 0
+                });
+            });
+
+
+            const searchInput = document.getElementById('customSearch');
+            if (searchInput) {
+                searchInput.addEventListener('keyup', function() {
+                    $('#memberList').DataTable().search(this.value).draw();
+                });
+            }
+
+            const dateDisplay = document.getElementById('dateDisplay');
+            let currentDate = new Date('<?= $today->format('Y-m-d') ?>'); // from PHP
+
+            function formatDate(date) {
+                const options = {
+                    weekday: 'long',
+                    day: 'numeric',
+                    year: 'numeric'
+                };
+                return date.toLocaleDateString('en-US', options);
+            }
+
+            document.getElementById('prevDate').addEventListener('click', () => {
+                currentDate.setDate(currentDate.getDate() - 1);
+                dateDisplay.textContent = formatDate(currentDate);
+            });
+
+            document.getElementById('nextDate').addEventListener('click', () => {
+                currentDate.setDate(currentDate.getDate() + 1);
+                dateDisplay.textContent = formatDate(currentDate);
+            });
+        },
+
     }
 
     $(document).ready(function() {
         attendanceTable.init();
-
-        document.querySelectorAll(".nice-select2").forEach(el => {
-            NiceSelect.bind(el);
-        });
     });
 </script>
