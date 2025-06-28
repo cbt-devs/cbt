@@ -80,6 +80,15 @@ $type_r = Attendance::TYPE;
     </div>
 </div>
 
+<div class="col-md-4">
+    <div class="input-group mt-3 mb-2">
+        <span class="input-group-text">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </span>
+        <input type="text" id="attendanceSearch" class="form-control" placeholder="Search member...">
+    </div>
+</div>
+
 <table id="attendanceTable" class="table table-striped" style="width:100%"></table>
 
 <div class="modal fade" id="addModal">
@@ -148,15 +157,61 @@ $type_r = Attendance::TYPE;
 
                     console.log(data);
 
+                    // Destroy existing table if it exists
                     if ($.fn.dataTable.isDataTable('#attendanceTable')) {
                         $('#attendanceTable').DataTable().clear().destroy();
                     }
+
+                    // Initialize DataTable
+                    $('#attendanceTable').DataTable({
+                        data: data,
+                        lengthChange: false,
+                        columns: [{
+                                data: 'name',
+                                title: 'Name'
+                            },
+                            {
+                                data: 'date_attendance',
+                                title: 'Date'
+                            },
+                            {
+                                data: 'type',
+                                title: 'Type',
+                                render: function(data, type, row) {
+                                    let badgeClass = 'secondary';
+                                    if (data === 'present') badgeClass = 'success';
+                                    else if (data === 'absent') badgeClass = 'danger';
+                                    else if (data === 'excused') badgeClass = 'warning';
+
+                                    return `<span class="badge bg-${badgeClass} text-capitalize">${data}</span>`;
+                                }
+                            }
+                        ],
+                        responsive: true,
+                        autoWidth: false,
+                        order: [
+                            [1, 'desc']
+                        ],
+                        language: {
+                            emptyTable: "No attendance records found."
+                        },
+                        initComplete: function() {
+                            // Bind custom search
+                            const table = this.api();
+                            $('#attendanceSearch').off('keyup').on('keyup', function() {
+                                table.search(this.value).draw();
+                            });
+                            JsLoadingOverlay.hide();
+                        }
+                    });
+
                 },
                 error: function(xhr, status, error) {
                     console.error("AJAX Error (show):", status, error);
                 }
             });
         },
+
         showMember: function() {
             $.ajax({
                 type: "POST",
@@ -193,7 +248,6 @@ $type_r = Attendance::TYPE;
                         initComplete: function() {
                             $('#memberList thead').hide();
                             $('#dt-search-0').attr('placeholder', 'Search...');
-                            JsLoadingOverlay.hide();
                         }
                     });
                 },
@@ -249,11 +303,18 @@ $type_r = Attendance::TYPE;
                     });
 
                     const result = await response.json();
-                    JsLoadingOverlay.hide();
 
-                    console.log(result)
+                    if (result.status === 'success') {
+                        Swal.fire("Member added", "", "success");
+                        $('#addModal').modal('hide');
+                        form.reset();
+                        $('#memberList').DataTable().search('').draw();
+                        attendanceTable.show();
+                    } else {
+                        toastr.error('Failed to add attendance');
+                        console.error('Failed:', result.message);
+                    }
                 } catch (error) {
-                    JsLoadingOverlay.hide();
                     console.error('Fetch error:', error);
                     alert('Something went wrong while submitting.');
                 }

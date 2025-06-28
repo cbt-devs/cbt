@@ -14,12 +14,72 @@ class Attendance
         $this->conn = $db;
     }
 
-    public function show()
+    public function show($_origdate = false)
     {
         try {
+            $this->conn->beginTransaction();
 
+            // Get all active members
+            $stmt = $this->conn->prepare("SELECT id FROM accounts WHERE status = 'active'");
+            $stmt->execute();
+            $acc_r = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            return ['working'];
+            if (empty($acc_r)) {
+                $this->conn->commit();
+                return [];
+            }
+
+            $ids = array_column($acc_r, 'id');
+            $acc_r_txt = implode(',', $ids);
+
+            // Get names
+            $stmt = $this->conn->prepare("
+            SELECT accounts_id, first_name, middle_name, last_name
+            FROM accounts_info
+            WHERE accounts_id IN ($acc_r_txt)
+        ");
+            $stmt->execute();
+            $info_r = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Get latest attendance
+            $stmt = $this->conn->prepare("
+            SELECT a1.accounts_id, a1.type, a1.date
+            FROM attendance a1
+            INNER JOIN (
+                SELECT accounts_id, MAX(date) AS max_date
+                FROM attendance
+                GROUP BY accounts_id
+            ) a2 ON a1.accounts_id = a2.accounts_id AND a1.date = a2.max_date
+            WHERE a1.accounts_id IN ($acc_r_txt)
+        ");
+            $stmt->execute();
+            $att_r = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $this->conn->commit();
+
+            // Combine data
+            $data_r = [];
+            foreach ($att_r as $att) {
+                $id = $att['accounts_id'];
+                $type = self::TYPE[$att['type']] ?? 'unknown';
+                $date = $att['date'];
+
+                $name = '';
+                foreach ($info_r as $info) {
+                    if ($info['accounts_id'] == $id) {
+                        $name = trim($info['first_name'] . ' ' . $info['middle_name'] . ' ' . $info['last_name']);
+                        break;
+                    }
+                }
+
+                $data_r[] = [
+                    'name' => $name,
+                    'date_attendance' => $_origdate ? $date : date('M d, Y h:i A', strtotime($date)),
+                    'type' => $type
+                ];
+            }
+
+            return $data_r;
         } catch (PDOException $e) {
             $this->conn->rollBack();
             return [
