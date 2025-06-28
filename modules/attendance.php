@@ -6,11 +6,13 @@ $ministry_r = $ministry->show();
 
 $today = new DateTime();
 $formatted_today = $today->format('l d, Y');
+$type_r = Attendance::TYPE;
 ?>
 <style>
     /* Hide only the label text before the search input */
+    .dt-search input,
     .dt-search label {
-        font-size: 0;
+        display: none;
     }
 
     #addMemberForm .nice-select {
@@ -91,6 +93,14 @@ $formatted_today = $today->format('l d, Y');
                 <div class="modal-body">
                     <div class="row g-3">
                         <div class="col">
+                            <select name="attendance_type" class="form-control nice-select2">
+                                <option value="0" selected>Please Select Type</option>
+                                <?php foreach ($type_r as $key => $label) { ?>
+                                    <option value="<?= htmlspecialchars($key) ?>">
+                                        <?= htmlspecialchars(ucfirst($label)) ?>
+                                    </option>
+                                <?php } ?>
+                            </select>
                             <select class="form-control nice-select2" id="ministry" name="ministry">
                                 <option value="all" selected>All</option>
                                 <?php
@@ -164,7 +174,6 @@ $formatted_today = $today->format('l d, Y');
 
                     $('#memberList').DataTable({
                         data: data,
-                        searching: false,
                         info: false,
                         lengthChange: false,
                         columns: [{
@@ -190,6 +199,63 @@ $formatted_today = $today->format('l d, Y');
                 },
                 error: function(xhr, status, error) {
                     console.error("AJAX Error (show):", status, error);
+                }
+            });
+        },
+
+        validate: function() {
+            document.getElementById('addMemberForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const attendanceType = document.querySelector('select[name="attendance_type"]');
+                const ministry = document.querySelector('select[name="ministry"]');
+                const checkedCheckboxes = document.querySelectorAll('#memberList .row-checkbox:checked');
+
+                const isValid = validateRequiredFields([{
+                        element: attendanceType,
+                        message: 'Please select an attendance type.'
+                    },
+                    {
+                        element: ministry,
+                        message: 'Please select a ministry.'
+                    }
+                ]);
+
+                if (!isValid) return;
+
+                if (checkedCheckboxes.length === 0) {
+                    const searchInput = document.getElementById('customSearch');
+                    showValidationTooltip(searchInput, 'Please select at least one member.');
+                    return;
+                }
+
+                // ✅ Prepare FormData
+                const form = document.getElementById('addMemberForm');
+                const formData = new FormData(form);
+                formData.append('action', 'add');
+                formData.append('type', 'attendance');
+
+                // Append selected member IDs
+                checkedCheckboxes.forEach(cb => {
+                    formData.append('members[]', cb.dataset.id);
+                });
+
+                try {
+                    JsLoadingOverlay.show();
+
+                    const response = await fetch('controller/main.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+                    JsLoadingOverlay.hide();
+
+                    console.log(result)
+                } catch (error) {
+                    JsLoadingOverlay.hide();
+                    console.error('Fetch error:', error);
+                    alert('Something went wrong while submitting.');
                 }
             });
         },
@@ -249,6 +315,8 @@ $formatted_today = $today->format('l d, Y');
                 const $checkbox = $(this).find('input.row-checkbox');
                 $checkbox.prop('checked', !$checkbox.prop('checked'));
             });
+
+            this.validate();
         },
 
     }
