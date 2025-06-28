@@ -1,3 +1,18 @@
+-- UPDATED ALWAYS ON TOP
+
+-- Jeff 05-28-2025
+CREATE TABLE `attendance` (
+  `id` int(11) NOT NULL,
+  `accounts_id` int(11) NOT NULL,
+  `type` int(11) NOT NULL,
+  `description` text NOT NULL,
+  `date` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `attendance`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id` (`accounts_id`) USING BTREE;
+
 -- Jeff 06-23-2025
 CREATE TABLE `accounts` (
   `id` int(255) NOT NULL,
