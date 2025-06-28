@@ -242,6 +242,13 @@ $formatted_today = $today->format('l d, Y');
                 currentDate.setDate(currentDate.getDate() + 1);
                 dateDisplay.textContent = formatDate(currentDate);
             });
+
+            // Row click toggles checkbox
+            $(document).on('click', '#memberList tbody tr', function(e) {
+                if (e.target.tagName.toLowerCase() === 'input') return;
+                const $checkbox = $(this).find('input.row-checkbox');
+                $checkbox.prop('checked', !$checkbox.prop('checked'));
+            });
         },
 
     }
