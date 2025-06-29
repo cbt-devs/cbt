@@ -1,5 +1,12 @@
 -- UPDATED ALWAYS ON TOP
 
+-- Jeff -5-29-2025
+ALTER TABLE `accounts_info` 
+  ADD `contact` VARCHAR(11) NOT NULL DEFAULT '0' AFTER `gender`;
+
+ALTER TABLE `ministries` 
+  ADD `auto` TINYINT NOT NULL DEFAULT '0' AFTER `age_end`;
+
 -- Jeff 05-28-2025
 CREATE TABLE `attendance` (
   `id` int(11) NOT NULL,

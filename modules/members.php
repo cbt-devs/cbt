@@ -91,6 +91,11 @@ $ministry_r = $ministry->show();
                                         <input type="date" class="form-control" id="birthdate" name="birthdate"
                                             value="<?= date('Y-m-d') ?>" required>
                                     </div>
+
+                                    <div class="col-md-6">
+                                        <label for="contact" class="form-label">Contact #</label>
+                                        <input type="text" class="form-control" id="contact" name="contact" value="" placeholder="09123456789">
+                                    </div>
                                 </div>
                             </div>
 
@@ -134,7 +139,7 @@ $ministry_r = $ministry->show();
                                                         <input class="form-check-input" type="checkbox"
                                                             id="ministry_<?= htmlspecialchars($ministry['id']) ?>"
                                                             name="ministry[]"
-                                                            value="<?= htmlspecialchars($ministry['id']) ?>">
+                                                            value="<?= htmlspecialchars($ministry['id']) ?>" <?= $ministry['auto'] ? 'checked' : '' ?>>
                                                         <label class="form-check-label" for="ministry_<?= htmlspecialchars($ministry['id']) ?>">
                                                             <?= htmlspecialchars($ministry['name']) ?>
                                                         </label>
@@ -236,6 +241,10 @@ $ministry_r = $ministry->show();
         addMember: function(formElement) {
             formElement.addEventListener('submit', async function(event) {
                 event.preventDefault();
+
+                const step = memberTable.validate();
+
+                if (!step) return;
 
                 const formData = new FormData(formElement);
                 formData.append('action', 'add');
@@ -352,6 +361,10 @@ $ministry_r = $ministry->show();
 
                 // Manual wizard navigation
                 $('#nextBtn').on('click', function() {
+                    const step = memberTable.validate();
+
+                    if (!step) return;
+
                     $('#smartwizard').smartWizard("next");
                 });
 
@@ -363,6 +376,70 @@ $ministry_r = $ministry->show();
                     $('#smartwizard').smartWizard("reset"); // Go back to step 0
                 });
             });
+        },
+
+        validate: function() {
+            let isValid = false;
+            let stepIndex = parseInt($('#smartwizard .nav .nav-link.active').attr('href').match(/\d+/)[0], 10);
+            switch (stepIndex) {
+                case 1:
+                    isValid = validate.requiredfields([{
+                            element: document.querySelector('input[name="firstName"]'),
+                            message: 'First name missing.'
+                        },
+                        {
+                            element: document.querySelector('input[name="middleName"]'),
+                            message: 'Middle name missing.'
+                        },
+                        {
+                            element: document.querySelector('input[name="lastName"]'),
+                            message: 'Last name missing.'
+                        },
+                        {
+                            element: document.querySelector('select[name="gender"]'),
+                            message: 'Gender missing.'
+                        },
+                        {
+                            element: document.querySelector('input[name="birthdate"]'),
+                            message: 'Birth date missing.'
+                        },
+                        {
+                            element: document.querySelector('input[name="contact"]'),
+                            message: 'Contact missing.'
+                        },
+                    ]);
+
+                    console.log(isValid);
+
+                    break;
+                case 2:
+                    isValid = validate.requiredfields([{
+                            element: document.querySelector('input[name="addressLine"]'),
+                            message: 'House #, Street name missing.'
+                        },
+                        {
+                            element: document.querySelector('input[name="city"]'),
+                            message: 'City missing.'
+                        },
+                        {
+                            element: document.querySelector('input[name="state"]'),
+                            message: 'State missing.'
+                        },
+                        {
+                            element: document.querySelector('input[name="postalCode"]'),
+                            message: 'Postal code missing.'
+                        },
+                    ]);
+                    break;
+                case 3:
+                    isValid = validate.requiredfields([{
+                        element: document.querySelector('input[name="ministry"]'),
+                        message: 'Ministry missing.'
+                    }]);
+                    break;
+            }
+
+            return isValid;
         },
 
         action: function(actionType, id) {

@@ -265,7 +265,7 @@ $type_r = Attendance::TYPE;
                 const ministry = document.querySelector('select[name="ministry"]');
                 const checkedCheckboxes = document.querySelectorAll('#memberList .row-checkbox:checked');
 
-                const isValid = validateRequiredFields([{
+                const isValid = validate.requiredfields([{
                         element: attendanceType,
                         message: 'Please select an attendance type.'
                     },
