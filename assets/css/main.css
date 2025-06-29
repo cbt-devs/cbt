@@ -2,11 +2,11 @@ html,
 body {
   height: 100%;
   margin: 0;
-  font-family: "Poppins", sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 .modal-title {
-  font-family: "Nunito", sans-serif;
+  font-family: 'Nunito', sans-serif;
   font-weight: 700;
   font-size: 18px;
 }
@@ -22,7 +22,7 @@ body {
   font-size: 16px;
   font-weight: 700;
   color: #012970;
-  font-family: "Nunito", sans-serif;
+  font-family: 'Nunito', sans-serif;
 }
 
 .fa-solid {
@@ -30,7 +30,7 @@ body {
 }
 
 .timeline::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 8px;
@@ -50,4 +50,9 @@ body {
 
 nav {
   box-shadow: 0px 0 30px rgba(1, 41, 112, 0.1);
+}
+
+.nice-select {
+  width: 100%;
+  margin-bottom: 0 !important;
 }

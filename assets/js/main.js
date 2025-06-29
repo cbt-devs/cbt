@@ -67,3 +67,49 @@ var loader = {
     });
   },
 };
+
+var validate = {
+  requiredfields: function (fields) {
+    let isValid = true;
+    console.log(fields);
+
+    fields.forEach(({ element, message }) => {
+      let elements = Array.isArray(element) ? element : [element]; // allow single or multiple
+
+      const anyFilled = elements.some((el) => {
+        const value = el.value.trim();
+        return el.tagName === 'SELECT'
+          ? value !== '' && value !== '0'
+          : value !== '';
+      });
+
+      if (!anyFilled) {
+        this.showToolTip(elements[0], message); // show tooltip on the first one
+        isValid = false;
+      }
+    });
+
+    return isValid;
+  },
+  showToolTip: function (el, message) {
+    el.setAttribute('data-bs-toggle', 'tooltip');
+    el.setAttribute('data-bs-placement', 'top');
+    el.setAttribute('data-bs-html', 'true');
+    el.setAttribute(
+      'title',
+      `
+      <div style='text-align: left; font-size: 0.9rem; padding-left: 10px;'>
+          <strong>Missing Field:</strong><br>${message}
+      </div>`
+    );
+
+    const tooltip = new bootstrap.Tooltip(el);
+    tooltip.show();
+
+    setTimeout(() => {
+      tooltip.dispose();
+      el.removeAttribute('data-bs-toggle');
+      el.removeAttribute('title');
+    }, 3000);
+  },
+};

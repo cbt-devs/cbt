@@ -37,6 +37,11 @@
 
     <script src="assets/js-loading-overlay/js-loading-overlay.min.js"></script>
 
+    <!-- SmartWizard CSS/JS -->
+    <link href="assets/smartwizard/dist/css/smart_wizard_all.min.css" rel="stylesheet" />
+    <script src="assets/smartwizard/dist/js/jquery.smartWizard.min.js"></script>
+
+
     <script src="assets/js/main.js"></script>
     <link href="assets/css/main.css" rel="stylesheet">
     <link href="assets/css/fonts.css" rel="stylesheet">

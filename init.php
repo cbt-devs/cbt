@@ -4,6 +4,7 @@ require_once __DIR__ . '/class/database.php';
 require_once __DIR__ . '/class/member.php';
 require_once __DIR__ . '/class/ministries.php';
 require_once __DIR__ . '/class/commitments.php';
+require_once __DIR__ . '/class/attendance.php';
 
 $pdo = new Database();
 $conn = $pdo->getConnection();
@@ -11,8 +12,10 @@ $conn = $pdo->getConnection();
 $member = new Member($conn);
 $ministry = new Ministries($conn);
 $commitments = new Commitments($conn);
+$attendance = new Attendance($conn);
 
-function generateTimeOptions() {
+function generateTimeOptions()
+{
     $options = '<option value="">Select Time</option>';
     for ($hour = 0; $hour < 24; $hour++) {
         for ($minute = 0; $minute < 60; $minute += 30) {

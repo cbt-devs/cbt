@@ -1,3 +1,26 @@
+<?php
+require_once __DIR__ . '/../init.php';
+$ministry_r = $ministry->show();
+?>
+
+<style>
+    .sw-theme-circles .nav .nav-link.active {
+        background-color: var(--bs-primary);
+        color: #fff;
+        border-color: var(--bs-primary);
+    }
+
+    .sw-theme-circles .nav .nav-link.active .num {
+        background-color: #fff;
+        color: var(--bs-primary);
+        border: 2px solid #fff;
+    }
+
+    .sw-theme-arrows {
+        border: none;
+    }
+</style>
+
 <div class="d-flex justify-content-between align-items-start">
     <div>
         <h2>Members Management</h2>
@@ -24,78 +47,130 @@
 <div class="modal fade" id="addMemberModal">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header pb-0" style="border-bottom: none;">
-                <h5 class="modal-title" id="exampleModalLabel">Add Member</h5>
+            <div class="mt-3 d-flex justify-content-center">
+                <h5>New Member Form</h5>
             </div>
 
             <form id="addMemberForm">
                 <div class="modal-body">
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <label for="firstName" class="form-label">First Name</label>
-                            <input type="text" class="form-control" id="firstName" name="firstName" value="q" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="middleName" class="form-label">Middle Name</label>
-                            <input type="text" class="form-control" id="middleName" name="middleName" value="q">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="lastName" class="form-label">Last Name</label>
-                            <input type="text" class="form-control" id="lastName" name="lastName" value="q" required>
-                        </div>
 
-                        <div class="col-md-6">
-                            <label for="gender" class="form-label">Gender</label>
-                            <select class="form-control" id="gender" name="gender" required>
-                                <option value="" disabled>Select gender</option>
-                                <option value="female">Female</option>
-                                <option value="male" selected>Male</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="birthdate" class="form-label">Birthdate</label>
-                            <input type="date" class="form-control" id="birthdate" name="birthdate"
-                                value="<?= date('Y-m-d') ?>" required>
-                        </div>
+                    <!-- SmartWizard Steps -->
+                    <div id="smartwizard">
+                        <ul class="nav">
+                            <li><a class="nav-link" href="#step-1">Step 1<br /><small>Personal Info</small></a></li>
+                            <li><a class="nav-link" href="#step-2">Step 2<br /><small>Address</small></a></li>
+                            <li><a class="nav-link" href="#step-3">Step 3<br /><small>Ministry</small></a></li>
+                        </ul>
 
-                        <div class="col-12">
-                            <label for="addressLine" class="form-label">Address Line</label>
-                            <input type="text" class="form-control" id="addressLine" name="addressLine" value="q"
-                                required>
-                        </div>
+                        <div class="tab-content mt-3">
+                            <!-- Step 1 -->
+                            <div id="step-1" class="tab-pane" role="tabpanel">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label for="firstName" class="form-label">First Name</label>
+                                        <input type="text" class="form-control" id="firstName" name="firstName" value="q" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="middleName" class="form-label">Middle Name</label>
+                                        <input type="text" class="form-control" id="middleName" name="middleName" value="q">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="lastName" class="form-label">Last Name</label>
+                                        <input type="text" class="form-control" id="lastName" name="lastName" value="q" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="gender" class="form-label">Gender</label>
+                                        <select class="form-control" id="gender" name="gender" required>
+                                            <option value="" disabled>Select gender</option>
+                                            <option value="female">Female</option>
+                                            <option value="male" selected>Male</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="birthdate" class="form-label">Birthdate</label>
+                                        <input type="date" class="form-control" id="birthdate" name="birthdate"
+                                            value="<?= date('Y-m-d') ?>" required>
+                                    </div>
 
-                        <div class="col-md-4">
-                            <label for="city" class="form-label">City</label>
-                            <input type="text" class="form-control" id="city" name="city" value="q" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="state" class="form-label">State</label>
-                            <input type="text" class="form-control" id="state" name="state" value="q" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="postalCode" class="form-label">Postal Code</label>
-                            <input type="number" class="form-control" id="postalCode" name="postalCode" value="1100"
-                                required>
-                        </div>
+                                    <div class="col-md-6">
+                                        <label for="contact" class="form-label">Contact #</label>
+                                        <input type="text" class="form-control" id="contact" name="contact" value="" placeholder="09123456789">
+                                    </div>
+                                </div>
+                            </div>
 
-                        <div class="col-12">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="primary" name="primary" value="1">
-                                <label class="form-check-label" for="primary">Primary Address</label>
+                            <!-- Step 2 -->
+                            <div id="step-2" class="tab-pane" role="tabpanel">
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label for="addressLine" class="form-label">Address Line</label>
+                                        <input type="text" class="form-control" id="addressLine" name="addressLine" value="q" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="city" class="form-label">City</label>
+                                        <input type="text" class="form-control" id="city" name="city" value="q" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="state" class="form-label">State</label>
+                                        <input type="text" class="form-control" id="state" name="state" value="q" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="postalCode" class="form-label">Postal Code</label>
+                                        <input type="number" class="form-control" id="postalCode" name="postalCode" value="1100" required>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="primary" name="primary" value="1">
+                                            <label class="form-check-label" for="primary">Primary Address</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 3 -->
+                            <div id="step-3" class="tab-pane" role="tabpanel">
+                                <div class="mb-3">
+                                    <label class="form-label">Select Ministry</label>
+                                    <div class="row">
+                                        <?php if (!empty($ministry_r)) : ?>
+                                            <?php foreach ($ministry_r as $ministry) : ?>
+                                                <div class="col-md-3">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            id="ministry_<?= htmlspecialchars($ministry['id']) ?>"
+                                                            name="ministry[]"
+                                                            value="<?= htmlspecialchars($ministry['id']) ?>" <?= $ministry['auto'] ? 'checked' : '' ?>>
+                                                        <label class="form-check-label" for="ministry_<?= htmlspecialchars($ministry['id']) ?>">
+                                                            <?= htmlspecialchars($ministry['name']) ?>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        <?php else : ?>
+                                            <p class="text-muted">No ministries found</p>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="modal-footer d-flex justify-content-between" style="border-top: none;">
+                <!-- Modal Footer with Navigation Buttons -->
+                <div class="modal-footer justify-content-between" style="border-top: none;">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+
+                    <div class="d-flex gap-2">
+                        <button type="button" id="prevBtn" class="btn btn-secondary" style="display: none;">Previous</button>
+                        <button type="button" id="nextBtn" class="btn btn-primary" style="display: none;">Next</button>
+                        <button type="submit" id="submitBtn" class="btn btn-primary" style="display: none;">Submit</button>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
 
 <script>
     var memberTable = {
@@ -166,6 +241,10 @@
         addMember: function(formElement) {
             formElement.addEventListener('submit', async function(event) {
                 event.preventDefault();
+
+                const step = memberTable.validate();
+
+                if (!step) return;
 
                 const formData = new FormData(formElement);
                 formData.append('action', 'add');
@@ -244,6 +323,123 @@
             if (form) {
                 memberTable.addMember(form);
             }
+
+            $(document).ready(function() {
+                $('#smartwizard').smartWizard({
+                    selected: 0,
+                    theme: 'arrows',
+                    justified: true,
+                    autoAdjustHeight: true,
+                    backButtonSupport: true,
+                    transition: {
+                        animation: 'slide-horizontal'
+                    },
+                    toolbar: {
+                        showNextButton: false,
+                        showPreviousButton: false
+                    }
+                }).on("showStep", function(e, anchorObject, stepIndex, stepDirection, stepPosition) {
+                    const $nextBtn = $('#nextBtn');
+                    const $prevBtn = $('#prevBtn');
+                    const $submitBtn = $('#submitBtn');
+
+                    // Hide all buttons by default
+                    $prevBtn.hide();
+                    $nextBtn.hide();
+                    $submitBtn.hide();
+
+                    if (stepPosition === 'first') {
+                        $nextBtn.show();
+                    } else if (stepPosition === 'middle') {
+                        $prevBtn.show();
+                        $nextBtn.show();
+                    } else if (stepPosition === 'last') {
+                        $prevBtn.show();
+                        $submitBtn.show();
+                    }
+                });
+
+                // Manual wizard navigation
+                $('#nextBtn').on('click', function() {
+                    const step = memberTable.validate();
+
+                    if (!step) return;
+
+                    $('#smartwizard').smartWizard("next");
+                });
+
+                $('#prevBtn').on('click', function() {
+                    $('#smartwizard').smartWizard("prev");
+                });
+
+                $('#addMemberModal').on('hidden.bs.modal', function() {
+                    $('#smartwizard').smartWizard("reset"); // Go back to step 0
+                });
+            });
+        },
+
+        validate: function() {
+            let isValid = false;
+            let stepIndex = parseInt($('#smartwizard .nav .nav-link.active').attr('href').match(/\d+/)[0], 10);
+            switch (stepIndex) {
+                case 1:
+                    isValid = validate.requiredfields([{
+                            element: document.querySelector('input[name="firstName"]'),
+                            message: 'First name missing.'
+                        },
+                        {
+                            element: document.querySelector('input[name="middleName"]'),
+                            message: 'Middle name missing.'
+                        },
+                        {
+                            element: document.querySelector('input[name="lastName"]'),
+                            message: 'Last name missing.'
+                        },
+                        {
+                            element: document.querySelector('select[name="gender"]'),
+                            message: 'Gender missing.'
+                        },
+                        {
+                            element: document.querySelector('input[name="birthdate"]'),
+                            message: 'Birth date missing.'
+                        },
+                        {
+                            element: document.querySelector('input[name="contact"]'),
+                            message: 'Contact missing.'
+                        },
+                    ]);
+
+                    console.log(isValid);
+
+                    break;
+                case 2:
+                    isValid = validate.requiredfields([{
+                            element: document.querySelector('input[name="addressLine"]'),
+                            message: 'House #, Street name missing.'
+                        },
+                        {
+                            element: document.querySelector('input[name="city"]'),
+                            message: 'City missing.'
+                        },
+                        {
+                            element: document.querySelector('input[name="state"]'),
+                            message: 'State missing.'
+                        },
+                        {
+                            element: document.querySelector('input[name="postalCode"]'),
+                            message: 'Postal code missing.'
+                        },
+                    ]);
+                    break;
+                case 3:
+                    isValid = validate.requiredfields([{
+                        element: document.querySelector('input[name="ministry"]'),
+                        message: 'Ministry missing.'
+                    }]);
+                    break;
+            }
+
+            return isValid;
         },
 
         action: function(actionType, id) {
