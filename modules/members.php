@@ -68,15 +68,15 @@ $ministry_r = $ministry->show();
                                 <div class="row g-3">
                                     <div class="col-md-4">
                                         <label for="firstName" class="form-label">First Name</label>
-                                        <input type="text" class="form-control" id="firstName" name="firstName" value="q" required>
+                                        <input type="text" class="form-control" id="firstName" name="firstName" value="" required>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="middleName" class="form-label">Middle Name</label>
-                                        <input type="text" class="form-control" id="middleName" name="middleName" value="q">
+                                        <input type="text" class="form-control" id="middleName" name="middleName" value="">
                                     </div>
                                     <div class="col-md-4">
                                         <label for="lastName" class="form-label">Last Name</label>
-                                        <input type="text" class="form-control" id="lastName" name="lastName" value="q" required>
+                                        <input type="text" class="form-control" id="lastName" name="lastName" value="" required>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="gender" class="form-label">Gender</label>
@@ -104,15 +104,15 @@ $ministry_r = $ministry->show();
                                 <div class="row g-3">
                                     <div class="col-12">
                                         <label for="addressLine" class="form-label">Address Line</label>
-                                        <input type="text" class="form-control" id="addressLine" name="addressLine" value="q" required>
+                                        <input type="text" class="form-control" id="addressLine" name="addressLine" value="" required>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="city" class="form-label">City</label>
-                                        <input type="text" class="form-control" id="city" name="city" value="q" required>
+                                        <input type="text" class="form-control" id="city" name="city" value="" required>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="state" class="form-label">State</label>
-                                        <input type="text" class="form-control" id="state" name="state" value="q" required>
+                                        <input type="text" class="form-control" id="state" name="state" value="" required>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="postalCode" class="form-label">Postal Code</label>
