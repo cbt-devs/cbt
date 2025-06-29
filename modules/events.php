@@ -58,7 +58,7 @@ $ministryData = $ministry->show();
                         <div class="col-md-6">
                             <label for="eventDate" class="form-label">Start Date <span
                                     class="text-danger">*</span></label>
-                            <input type="date" class="form-control" id="eventDate" name="eventDate" required>
+                            <input type="date" class="form-control" id="eventDate" name="eventDate" value="<?= date('Y-m-d') ?>" required>
                         </div>
 
                         <div class="col-md-6">
@@ -72,7 +72,7 @@ $ministryData = $ministry->show();
                         <div class="col-md-6">
                             <label for="eventEndDate" class="form-label">End Date <span
                                     class="text-danger">*</span></label>
-                            <input type="date" class="form-control" id="eventEndDate" name="eventEndDate" required>
+                            <input type="date" class="form-control" id="eventEndDate" name="eventEndDate" value="<?= date('Y-m-d') ?>" required>
                         </div>
 
                         <div class="col-md-6">
