@@ -126,7 +126,6 @@ foreach ($member_r as $member) {
 
     var chartjs = {
         init: () => {
-            console.log("wat wat");
             chartjs.bar();
             chartjs.doughnut();
             chartjs.line();
@@ -150,7 +149,8 @@ foreach ($member_r as $member) {
                     }, ],
                 },
                 options: {
-                    responsive: false
+                    responsive: true,
+                    maintainAspectRatio: false,
                 },
             });
         },
@@ -173,7 +173,8 @@ foreach ($member_r as $member) {
                     }, ],
                 },
                 options: {
-                    responsive: false
+                    responsive: true,
+                    maintainAspectRatio: false,
                 },
             });
         },
@@ -192,7 +193,8 @@ foreach ($member_r as $member) {
                     }, ],
                 },
                 options: {
-                    responsive: false
+                    responsive: true,
+                    maintainAspectRatio: false,
                 },
             });
         },
