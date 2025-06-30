@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then((data) => {
           contentDiv.innerHTML = data;
-          JsLoadingOverlay.hide();
         })
         .catch((error) => {
           console.error('Error loading content:', error);
