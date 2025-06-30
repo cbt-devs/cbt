@@ -18,6 +18,12 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then((data) => {
           contentDiv.innerHTML = data;
+
+          const pageName = page.split('/').pop().replace('.php', '');
+          if (pageName === 'main') {
+            setTimeout(() => chartjs.init(), 1000);
+            setTimeout(() => JsLoadingOverlay.hide(), 1000);
+          }
         })
         .catch((error) => {
           console.error('Error loading content:', error);
