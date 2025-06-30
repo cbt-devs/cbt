@@ -1,6 +1,10 @@
 -- UPDATED ALWAYS ON TOP
 
 -- Jeff  06-30-2025
+ALTER TABLE `accounts_access` ADD INDEX(`role_id`);
+
+ALTER TABLE `accounts_access` ADD INDEX(`updated_by`);
+
 ALTER TABLE `accounts_access` 
   CHANGE `type` `role_id` TINYINT UNSIGNED NOT NULL;
 
