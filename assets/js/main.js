@@ -18,7 +18,12 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then((data) => {
           contentDiv.innerHTML = data;
-          JsLoadingOverlay.hide();
+
+          const pageName = page.split('/').pop().replace('.php', '');
+          if (pageName === 'main') {
+            setTimeout(() => chartjs.init(), 1000);
+            setTimeout(() => JsLoadingOverlay.hide(), 1000);
+          }
         })
         .catch((error) => {
           console.error('Error loading content:', error);
@@ -65,5 +70,51 @@ var loader = {
       overlayZIndex: 9998,
       spinnerZIndex: 9999,
     });
+  },
+};
+
+var validate = {
+  requiredfields: function (fields) {
+    let isValid = true;
+    console.log(fields);
+
+    fields.forEach(({ element, message }) => {
+      let elements = Array.isArray(element) ? element : [element]; // allow single or multiple
+
+      const anyFilled = elements.some((el) => {
+        const value = el.value.trim();
+        return el.tagName === 'SELECT'
+          ? value !== '' && value !== '0'
+          : value !== '';
+      });
+
+      if (!anyFilled) {
+        this.showToolTip(elements[0], message); // show tooltip on the first one
+        isValid = false;
+      }
+    });
+
+    return isValid;
+  },
+  showToolTip: function (el, message) {
+    el.setAttribute('data-bs-toggle', 'tooltip');
+    el.setAttribute('data-bs-placement', 'top');
+    el.setAttribute('data-bs-html', 'true');
+    el.setAttribute(
+      'title',
+      `
+      <div style='text-align: left; font-size: 0.9rem; padding-left: 10px;'>
+          <strong>Missing Field:</strong><br>${message}
+      </div>`
+    );
+
+    const tooltip = new bootstrap.Tooltip(el);
+    tooltip.show();
+
+    setTimeout(() => {
+      tooltip.dispose();
+      el.removeAttribute('data-bs-toggle');
+      el.removeAttribute('title');
+    }, 3000);
   },
 };

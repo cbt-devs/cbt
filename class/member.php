@@ -1,89 +1,92 @@
 <?php
-class Member {
+class Member
+{
     private $conn;
 
-    public function __construct($db) {
+    public function __construct($db)
+    {
         $this->conn = $db;
     }
 
-    public function show( $_origdate = false ) {
-    try {
-        $this->conn->beginTransaction();
+    public function show($_origdate = false)
+    {
+        try {
+            $this->conn->beginTransaction();
 
-        $stmt = $this->conn->prepare("SELECT id, email, status FROM accounts WHERE status = 'active'");
-        $stmt->execute();
-        $acc_r = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt = $this->conn->prepare("SELECT id, email, status FROM accounts WHERE status = 'active'");
+            $stmt->execute();
+            $acc_r = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $ids = array_column($acc_r, 'id');
-        $acc_r_txt = implode(',', $ids);
+            $ids = array_column($acc_r, 'id');
+            $acc_r_txt = implode(',', $ids);
 
-        $stmt = $this->conn->prepare("SELECT accounts_id, address_line, city, state, postal FROM accounts_address WHERE accounts_id IN ( $acc_r_txt )");
-        $stmt->execute();
-        $acc_address_r = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt = $this->conn->prepare("SELECT accounts_id, address_line, city, state, postal FROM accounts_address WHERE accounts_id IN ( $acc_r_txt )");
+            $stmt->execute();
+            $acc_address_r = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $stmt = $this->conn->prepare("SELECT accounts_id, first_name, middle_name, last_name, bday, gender, baptist_date FROM accounts_info WHERE accounts_id IN ( $acc_r_txt )");
-        $stmt->execute();
-        $acc_info_r = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt = $this->conn->prepare("SELECT accounts_id, first_name, middle_name, last_name, bday, gender, baptist_date FROM accounts_info WHERE accounts_id IN ( $acc_r_txt )");
+            $stmt->execute();
+            $acc_info_r = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $this->conn->commit();
+            $this->conn->commit();
 
-        $data_r = [];
-        foreach ($acc_r as $acc) {
-            $id = $acc['id'];
+            $data_r = [];
+            foreach ($acc_r as $acc) {
+                $id = $acc['id'];
 
-            $name = $address = $bday = $gender = $baptist_date = '';
-            foreach ($acc_address_r as $address_r) {
-                if ($id == $address_r['accounts_id']) {
-                    $address = $address_r['address_line'] . ' ' . $address_r['city'] . ' ' . $address_r['state'];
-                    break;
+                $name = $address = $bday = $gender = $baptist_date = '';
+                foreach ($acc_address_r as $address_r) {
+                    if ($id == $address_r['accounts_id']) {
+                        $address = $address_r['address_line'] . ' ' . $address_r['city'] . ' ' . $address_r['state'];
+                        break;
+                    }
                 }
+
+                foreach ($acc_info_r as $info_r) {
+                    if ($id == $info_r['accounts_id']) {
+                        $name = $info_r['first_name'] . ' ' . $info_r['middle_name'] . ' ' . $info_r['last_name'];
+                        $bday = $info_r['bday'];
+                        $gender = $info_r['gender'];
+                        $baptist_date = $info_r['baptist_date'];
+                        break;
+                    }
+                }
+
+                $data_r[] = [
+                    'id' => $id,
+                    'email' => $acc['email'],
+                    'status' => $acc['status'],
+                    'name' => $name,
+                    'gender' => $gender,
+                    'bday' => !$_origdate ? date('M d, Y', strtotime($bday)) : $bday,
+                    'address' => $address,
+                    'baptism_date' => !$_origdate ? date('M d, Y', strtotime($baptist_date)) : $baptist_date
+                ];
             }
 
-            foreach ($acc_info_r as $info_r) {
-                if ($id == $info_r['accounts_id']) {
-                    $name = $info_r['first_name'] . ' ' . $info_r['middle_name'] . ' ' . $info_r['last_name'];
-                    $bday = $info_r['bday'];
-                    $gender = $info_r['gender'];
-                    $baptist_date = $info_r['baptist_date'];
-                    break;
-                }
-            }
-
-            $data_r[] = [
-                'id' => $id,
-                'email' => $acc['email'],
-                'status' => $acc['status'],
-                'name' => $name,
-                'gender' => $gender,
-                'bday' => !$_origdate ? date('M d, Y', strtotime($bday)) : $bday,
-                'address' => $address,
-                'baptism_date' => !$_origdate ? date('M d, Y', strtotime($baptist_date)) : $baptist_date
+            return $data_r;
+        } catch (PDOException $e) {
+            $this->conn->rollBack();
+            return [
+                'status' => 'error',
+                'message' => 'Database error: ' . $e->getMessage()
             ];
         }
-
-        return $data_r;
-
-    } catch (PDOException $e) {
-        $this->conn->rollBack();
-        return [
-            'status' => 'error',
-            'message' => 'Database error: ' . $e->getMessage()
-        ];
     }
-}
 
 
-    public function add($data) {
+    public function add($data)
+    {
         try {
             // Start transaction
             $this->conn->beginTransaction();
-    
+
             // 1. Insert into accounts
             $createdAt = date('Y-m-d H:i:s');
             $status = 'active';
             $email = strtolower($data['firstName'] . '.' . $data['middleName'] . '.' . $data['lastName']) . '@example.com'; // placeholder email
             $password = password_hash('default123', PASSWORD_DEFAULT); // placeholder password
-    
+
             $stmt1 = $this->conn->prepare("
                 INSERT INTO accounts (email, pass, created_at, updated_at, status)
                 VALUES (:email, :pass, :created_at, :updated_at, :status)
@@ -95,13 +98,13 @@ class Member {
                 ':updated_at' => $createdAt,
                 ':status' => $status
             ]);
-    
+
             $accountId = $this->conn->lastInsertId();
-    
+
             // 2. Insert into accounts_info
             $baptistDate = $createdAt; // use current timestamp as placeholder
             $inviterId = 0; // placeholder or default
-    
+
             $stmt2 = $this->conn->prepare("
                 INSERT INTO accounts_info (
                     accounts_id, first_name, middle_name, last_name, bday, gender, baptist_date, inviter_id, updated_at
@@ -120,7 +123,7 @@ class Member {
                 ':inviter_id' => $inviterId,
                 ':updated_at' => $createdAt
             ]);
-    
+
             // 3. Insert into accounts_address
             $stmt3 = $this->conn->prepare("
                 INSERT INTO accounts_address (
@@ -135,14 +138,31 @@ class Member {
                 ':city' => $data['city'],
                 ':state' => $data['state'],
                 ':postal' => $data['postalCode'],
-                ':is_primary' => isset( $data[ 'primary' ] ) ? 1 : 0
+                ':is_primary' => isset($data['primary']) ? 1 : 0
             ]);
-    
+
+            // 4. Insert into accounts_ministry
+            if (!empty($data['ministry']) && is_array($data['ministry'])) {
+                $stmt4 = $this->conn->prepare("
+                    INSERT INTO accounts_ministry (accounts_id, ministry_id, date)
+                    VALUES (:accounts_id, :ministry_id, :date)
+                ");
+
+                foreach ($data['ministry'] as $ministryId) {
+                    if (is_numeric($ministryId)) {
+                        $stmt4->execute([
+                            ':accounts_id' => $accountId,
+                            ':ministry_id' => $ministryId,
+                            ':date' => $createdAt
+                        ]);
+                    }
+                }
+            }
+
             // Commit transaction
             $this->conn->commit();
-    
+
             return true;
-    
         } catch (PDOException $e) {
             $this->conn->rollBack();
             error_log('Insert failed: ' . $e->getMessage());
@@ -150,7 +170,8 @@ class Member {
         }
     }
 
-    public function update($id = 0) {
+    public function update($id = 0)
+    {
         if ($id <= 0) {
             echo json_encode(['status' => 'error', 'message' => 'Invalid ID']);
             return;
@@ -230,34 +251,33 @@ class Member {
         }
     }
 
-    public function delete($id = 0) {
-    if ($id <= 0) {
-        return ['status' => 'error', 'message' => 'Invalid ID'];
+    public function delete($id = 0)
+    {
+        if ($id <= 0) {
+            return ['status' => 'error', 'message' => 'Invalid ID'];
+        }
+
+        try {
+            $this->conn->beginTransaction();
+
+            $stmt = $this->conn->prepare("DELETE FROM accounts_info WHERE accounts_id = :id");
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $stmt = $this->conn->prepare("DELETE FROM accounts_address WHERE accounts_id = :id");
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $stmt = $this->conn->prepare("DELETE FROM accounts WHERE id = :id");
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $this->conn->commit();
+
+            return ['status' => 'success'];
+        } catch (PDOException $e) {
+            $this->conn->rollBack();
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
     }
-
-    try {
-        $this->conn->beginTransaction();
-
-        $stmt = $this->conn->prepare("DELETE FROM accounts_info WHERE accounts_id = :id");
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
-
-        $stmt = $this->conn->prepare("DELETE FROM accounts_address WHERE accounts_id = :id");
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
-
-        $stmt = $this->conn->prepare("DELETE FROM accounts WHERE id = :id");
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
-
-        $this->conn->commit();
-
-        return ['status' => 'success'];
-    } catch (PDOException $e) {
-        $this->conn->rollBack();
-        return ['status' => 'error', 'message' => $e->getMessage()];
-    }
-}
-
-
 }
