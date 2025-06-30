@@ -1,6 +1,12 @@
 -- UPDATED ALWAYS ON TOP
 
 -- Jeff  06-30-2025
+CREATE TABLE `cbt`.`documents` 
+  (`id` INT(11) NULL , 
+  `accounts_id` INT(11) UNSIGNED NOT NULL , 
+  `file_name` VARCHAR(150) NOT NULL , 
+  `created_at` DATETIME NOT NULL ) ENGINE = InnoDB;
+
 ALTER TABLE `accounts_access` ADD INDEX(`role_id`);
 
 ALTER TABLE `accounts_access` ADD INDEX(`updated_by`);
