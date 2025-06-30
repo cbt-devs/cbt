@@ -1,13 +1,17 @@
 -- UPDATED ALWAYS ON TOP
 
--- Jeff -5-29-2025
+-- Jeff  06-30-2025
+ALTER TABLE `accounts_access` 
+  CHANGE `type` `role_id` TINYINT UNSIGNED NOT NULL;
+
+-- Jeff 06-29-2025
 ALTER TABLE `accounts_info` 
   ADD `contact` VARCHAR(11) NOT NULL DEFAULT '0' AFTER `gender`;
 
 ALTER TABLE `ministries` 
   ADD `auto` TINYINT NOT NULL DEFAULT '0' AFTER `age_end`;
 
--- Jeff 05-28-2025
+-- Jeff 06-28-2025
 CREATE TABLE `attendance` (
   `id` int(11) NOT NULL,
   `accounts_id` int(11) NOT NULL,
