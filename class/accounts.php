@@ -37,4 +37,67 @@ class Accounts
     {
         return self::$access_rights[$role_id] ?? null;
     }
+
+    public function login($data_r = [])
+    {
+        $email = $data_r['email'] ?? 0;
+        $pass = $data_r['pass'] ?? 0;
+
+        if (!$email || !$pass) {
+            return false;
+        }
+
+        $stmt = $this->conn->prepare("
+            SELECT a.id, a.email, a.pass, ai.first_name, ai.last_name
+            FROM accounts a
+            LEFT JOIN accounts_info ai ON a.id = ai.accounts_id
+            WHERE a.email = ?
+        ");
+        $stmt->execute([$email]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$user) {
+            return ['status' => 'error', 'message' => 'Account not found'];
+        }
+
+        if (!password_verify($pass, $user['pass'])) {
+            return ['status' => 'error', 'message' => 'Invalid password'];
+        }
+
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $_SESSION['accounts_id'] = $user['id'];
+        $_SESSION['email'] = $user['email'];
+        $_SESSION['name'] = trim(($user['first_name'] ?? '') . ' ' . ($user['last_name'] ?? ''));
+
+        return ['status' => 'success', 'message' => 'Login successful'];
+    }
+
+    public function logout(): array
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $_SESSION = [];
+
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(
+                session_name(),
+                '',
+                time() - 42000,
+                $params["path"],
+                $params["domain"],
+                $params["secure"],
+                $params["httponly"]
+            );
+        }
+
+        session_destroy();
+
+        return ['status' => 'success', 'message' => 'Logged out successfully'];
+    }
 }

@@ -6,6 +6,7 @@ require_once '../class/events.php';
 require_once '../class/commitments.php';
 require_once '../class/attendance.php';
 require_once '../class/documentation.php';
+require_once '../class/accounts.php';
 
 $pdo = new Database();
 $conn = $pdo->getConnection();
@@ -16,6 +17,7 @@ $event = new Events($conn);
 $commitment = new Commitments($conn);
 $attendance = new Attendance($conn);
 $documentation = new Documentation($conn);
+$accounts = new Accounts($conn);
 
 header('Content-Type: application/json');
 
@@ -30,6 +32,7 @@ $handlers = [
     'commitments' => $commitment,
     'attendance' => $attendance,
     'documentation' => $documentation,
+    'accounts' => $accounts,
 ];
 
 if (!isset($handlers[$type])) {
@@ -72,6 +75,16 @@ switch ($action) {
         } else {
             echo json_encode(['status' => 'error', 'message' => 'ID missing']);
         }
+        break;
+
+    case 'login':
+        $result = $handler->login($_POST);
+        echo json_encode($result);
+        break;
+
+    case 'logout':
+        $result = $handler->logout();
+        echo json_encode($result);
         break;
 
     default:
