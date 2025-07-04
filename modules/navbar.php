@@ -70,5 +70,10 @@ $nav = new Navigation();
                 </ul>
             </div>
         </li>
+        <li class="nav-item rounded">
+            <a href="#" id="logoutBtn" class="nav-link hover-bg-light">
+                <i class="fa-solid fa-door-open me-2"></i>Logout
+            </a>
+        </li>
     </ul>
 </nav>
