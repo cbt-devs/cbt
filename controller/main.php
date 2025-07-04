@@ -5,6 +5,7 @@ require_once '../class/ministries.php';
 require_once '../class/events.php';
 require_once '../class/commitments.php';
 require_once '../class/attendance.php';
+require_once '../class/documentation.php';
 
 $pdo = new Database();
 $conn = $pdo->getConnection();
@@ -14,6 +15,7 @@ $ministry = new Ministries($conn);
 $event = new Events($conn);
 $commitment = new Commitments($conn);
 $attendance = new Attendance($conn);
+$documentation = new Documentation($conn);
 
 header('Content-Type: application/json');
 
@@ -27,6 +29,7 @@ $handlers = [
     'events' => $event,
     'commitments' => $commitment,
     'attendance' => $attendance,
+    'documentation' => $documentation,
 ];
 
 if (!isset($handlers[$type])) {
