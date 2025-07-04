@@ -6,7 +6,12 @@
             <div class="col-md-5">
                 <div class="card shadow-lg border-0 rounded-4">
                     <div class="card-body p-4">
-                        <h2 class="text-center mb-4">Login</h2>
+                        <a href="index.php" class="p-0 m-0 text-decoration-none">
+                            <img src="assets/img/CBT Logo 1.svg" alt="CBT Logo" width="100" class="mx-auto d-block mb-3">
+                        </a>
+
+                        <h3 class="text-center mb-4">Login</h3>
+
                         <form id="loginForm">
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email address</label>
@@ -20,12 +25,14 @@
                                 <button type="submit" class="btn btn-primary btn-lg">Login</button>
                             </div>
                         </form>
+
                         <div class="text-center">
                             <small><a href="#">Forgot password?</a></small>
                         </div>
+
                     </div>
                 </div>
-                <p class="text-center mt-3 text-muted small">© <?= date("Y") ?> YourApp</p>
+                <p class="text-center mt-3 text-muted small">© <?= date("Y") ?> CBT Admin</p>
             </div>
         </div>
     </div>
