@@ -1,5 +1,12 @@
 -- UPDATED ALWAYS ON TOP
 
+-- Jeff 07-04-2025
+ALTER TABLE `documents` 
+  CHANGE `created_at` `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE `documents` 
+  CHANGE `id` `id` INT(11) NULL AUTO_INCREMENT, add PRIMARY KEY (`id`);
+
 -- Jeff  06-30-2025
 CREATE TABLE `cbt`.`documents` 
   (`id` INT(11) NULL , 
