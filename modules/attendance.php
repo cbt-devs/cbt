@@ -1,6 +1,14 @@
 <?php
 require_once __DIR__ . '/../init.php';
-$members_r = $member->show();
+$members_raw = $member->show();
+
+// Convert to simplified array
+$members_r = array_map(function ($m) {
+    return [
+        'id' => $m['id'],
+        'full_name' => $m['name'],
+    ];
+}, $members_raw);
 $commitments_type = $commitments->type_show();
 $ministry_r = $ministry->show();
 
@@ -61,38 +69,7 @@ $type_r = Attendance::TYPE;
     <!-- Present Summary -->
     <div class="col-12">
         <div class="card shadow-sm p-3">
-            <div class="d-flex justify-content-center flex-row flex-nowrap gap-5">
-                <div class="d-flex flex-column gap-1">
-                    <span class="text-secondary">Present (AM)</span>
-                    <h5 class="fw-bold">12</h5>
-                    <span class="text-secondary"><span class="text-primary">+5</span> last week</span>
-                </div>
-                <div class="d-flex flex-column gap-1">
-                    <span class="text-secondary">Absent (AM)</span>
-                    <h5 class="fw-bold">4</h5>
-                    <span class="text-secondary"><span class="text-danger">-2</span> last week</span>
-                </div>
-                <div class="d-flex flex-column gap-1">
-                    <span class="text-secondary">Excused (AM)</span>
-                    <h5 class="fw-bold">2</h5>
-                    <span class="text-secondary"><span class="text-danger">-1</span> last week</span>
-                </div>
-                <div class="d-flex flex-column gap-1">
-                    <span class="text-secondary">Present (PM)</span>
-                    <h5 class="fw-bold">12</h5>
-                    <span class="text-secondary"><span class="text-primary">+5</span> last week</span>
-                </div>
-                <div class="d-flex flex-column gap-1">
-                    <span class="text-secondary">Absent (PM)</span>
-                    <h5 class="fw-bold">4</h5>
-                    <span class="text-secondary"><span class="text-danger">-2</span> last week</span>
-                </div>
-                <div class="d-flex flex-column gap-1">
-                    <span class="text-secondary">Excused (PM)</span>
-                    <h5 class="fw-bold">2</h5>
-                    <span class="text-secondary"><span class="text-danger">-1</span> last week</span>
-                </div>
-            </div>
+            <div id="attendanceSummary" class="d-flex justify-content-center flex-row flex-nowrap gap-5"></div>
         </div>
     </div>
 </div>
@@ -140,7 +117,7 @@ $type_r = Attendance::TYPE;
                                 ?>
                             </select>
                             <input type="text" id="customSearch" class="form-control mb-2 mt-2" placeholder="Search members...">
-                            <table id="memberList" class="table table-striped"></table>
+                            <table id="memberList" class="table"></table>
                         </div>
                     </div>
                 </div>
@@ -155,9 +132,11 @@ $type_r = Attendance::TYPE;
 </div>
 
 <script>
+    window.membersData = <?= json_encode($members_r) ?>;
     var attendanceTable = {
         init: function() {
             this.bindEvents();
+            this.memberShow();
         },
 
         show: function(startDate = null, endDate = null) {
@@ -185,6 +164,8 @@ $type_r = Attendance::TYPE;
                 },
                 success: function(response) {
                     const data = response.data;
+
+                    attendanceTable.attendanceSummary(data);
 
                     if ($.fn.dataTable.isDataTable('#attendanceTable')) {
                         $('#attendanceTable').DataTable().clear().destroy();
@@ -241,75 +222,41 @@ $type_r = Attendance::TYPE;
             });
         },
 
-        bindEvents: function() {
-            // Nice Select init
-            document.querySelectorAll(".nice-select2").forEach(el => {
-                NiceSelect.bind(el);
+        memberShow: function() {
+            $('#addModal').on('shown.bs.modal', function() {
+                if (!$.fn.DataTable.isDataTable('#memberList')) {
+                    $('#memberList').DataTable({
+                        data: window.membersData,
+                        columns: [{
+                                data: null,
+                                render: function(data) {
+                                    return `<input type="checkbox" class="form-check-input row-checkbox" data-id="${data.id}">`;
+                                },
+                                orderable: false,
+                                searchable: false,
+                                width: "20px",
+                                className: 'text-center'
+                            },
+                            {
+                                data: "full_name",
+                                title: "Name"
+                            }
+                        ],
+                        order: [
+                            [1, 'asc']
+                        ],
+                        paging: false,
+                        searching: true,
+                        info: false,
+                        autoWidth: false,
+                        rowCallback: function(row, data) {
+                            // Optional: visually highlight selected rows
+                            const checkbox = $(row).find('.row-checkbox');
+                            $(row).toggleClass('table-active', checkbox.prop('checked'));
+                        }
+                    });
+                }
             });
-
-            $(document).on('click', '.nice-select', function() {
-                const $select = $(this);
-                const $dropdown = $select.find('.list');
-                const selectWidth = $select.outerWidth();
-                $dropdown.css({
-                    'width': selectWidth + 'px',
-                    'min-width': selectWidth + 'px',
-                    'left': 0
-                });
-            });
-
-            // Member search
-            const searchInput = document.getElementById('customSearch');
-            if (searchInput) {
-                searchInput.addEventListener('keyup', function() {
-                    $('#memberList').DataTable().search(this.value).draw();
-                });
-            }
-
-            // WEEK NAVIGATION
-            const dateDisplay = document.getElementById('dateDisplay');
-            let startOfWeek = new Date('<?= $startOfWeek->format('Y-m-d') ?>');
-            let endOfWeek = new Date('<?= $endOfWeek->format('Y-m-d') ?>');
-
-            function formatWeekRange(startDate, endDate) {
-                const options = {
-                    weekday: 'short',
-                    month: 'long',
-                    day: 'numeric',
-                    year: 'numeric'
-                };
-                return `${startDate.toLocaleDateString('en-US', options)} - ${endDate.toLocaleDateString('en-US', options)}`;
-            }
-
-            const updateWeekDisplay = () => {
-                const startStr = startOfWeek.toISOString().split('T')[0];
-                const endStr = endOfWeek.toISOString().split('T')[0];
-                dateDisplay.textContent = formatWeekRange(startOfWeek, endOfWeek);
-                attendanceTable.show(startStr, endStr);
-            };
-
-            document.getElementById('prevDate').addEventListener('click', () => {
-                startOfWeek.setDate(startOfWeek.getDate() - 7);
-                endOfWeek.setDate(endOfWeek.getDate() - 7);
-                updateWeekDisplay();
-            });
-
-            document.getElementById('nextDate').addEventListener('click', () => {
-                startOfWeek.setDate(startOfWeek.getDate() + 7);
-                endOfWeek.setDate(endOfWeek.getDate() + 7);
-                updateWeekDisplay();
-            });
-
-            updateWeekDisplay(); // First load
-
-            // Row checkbox toggle
-            $(document).on('click', '#memberList tbody tr', function(e) {
-                if (e.target.tagName.toLowerCase() === 'input') return;
-                const $checkbox = $(this).find('input.row-checkbox');
-                $checkbox.prop('checked', !$checkbox.prop('checked'));
-            });
-
-            this.validate(); // keep this if you're using form submission
         },
 
         validate: function() {
@@ -370,7 +317,144 @@ $type_r = Attendance::TYPE;
                     alert('Something went wrong while submitting.');
                 }
             });
-        }
+        },
+
+        attendanceSummary: function(data) {
+            const summaryTypes = ['present', 'absent', 'excused'];
+            const periods = ['AM', 'PM'];
+
+            const summary = {};
+
+            // Initialize summary counters
+            summaryTypes.forEach(type => {
+                periods.forEach(period => {
+                    summary[`${type}_${period}`] = 0;
+                });
+            });
+
+            // Count types by AM/PM
+            data.forEach(row => {
+                const hour = new Date(row.raw_date).getHours();
+                const period = hour < 12 ? 'AM' : 'PM';
+                const key = `${row.type}_${period}`;
+                if (summary[key] !== undefined) {
+                    summary[key]++;
+                }
+            });
+
+            // Build HTML
+            const html = summaryTypes.map(type => {
+                return periods.map(period => {
+                    const key = `${type}_${period}`;
+                    const count = summary[key];
+                    const badgeClass = type === 'present' ? 'text-primary' : 'text-danger';
+                    const change = 0; // optional: replace with comparison logic
+                    const changeSign = change >= 0 ? '+' : '-';
+
+                    return `
+                <div class="d-flex flex-column gap-1">
+                    <span class="text-secondary">${this.capitalize(type)} (${period})</span>
+                    <h5 class="fw-bold">${count}</h5>
+                    <span class="text-secondary">
+                        <span class="${badgeClass}">${changeSign}${Math.abs(change)}</span> last week
+                    </span>
+                </div>
+            `;
+                }).join('');
+            }).join('');
+
+            document.getElementById('attendanceSummary').innerHTML = html;
+        },
+
+        capitalize: function(text) {
+            return text.charAt(0).toUpperCase() + text.slice(1);
+        },
+
+        bindEvents: function() {
+            // Nice Select init
+            document.querySelectorAll(".nice-select2").forEach(el => {
+                NiceSelect.bind(el);
+            });
+
+            $(document).on('click', '.nice-select', function() {
+                const $select = $(this);
+                const $dropdown = $select.find('.list');
+                const selectWidth = $select.outerWidth();
+                $dropdown.css({
+                    'width': selectWidth + 'px',
+                    'min-width': selectWidth + 'px',
+                    'left': 0
+                });
+            });
+
+            // Member search input
+            const searchInput = document.getElementById('customSearch');
+            if (searchInput) {
+                searchInput.addEventListener('keyup', function() {
+                    $('#memberList').DataTable().search(this.value).draw();
+                });
+            }
+
+            // Week navigation
+            const dateDisplay = document.getElementById('dateDisplay');
+            let startOfWeek = new Date('<?= $startOfWeek->format('Y-m-d') ?>');
+            let endOfWeek = new Date('<?= $endOfWeek->format('Y-m-d') ?>');
+
+            function formatWeekRange(startDate, endDate) {
+                const options = {
+                    weekday: 'short',
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric'
+                };
+                return `${startDate.toLocaleDateString('en-US', options)} - ${endDate.toLocaleDateString('en-US', options)}`;
+            }
+
+            const updateWeekDisplay = () => {
+                const startStr = startOfWeek.toISOString().split('T')[0];
+                const endStr = endOfWeek.toISOString().split('T')[0];
+                dateDisplay.textContent = formatWeekRange(startOfWeek, endOfWeek);
+                attendanceTable.show(startStr, endStr);
+            };
+
+            document.getElementById('prevDate').addEventListener('click', () => {
+                startOfWeek.setDate(startOfWeek.getDate() - 7);
+                endOfWeek.setDate(endOfWeek.getDate() - 7);
+                updateWeekDisplay();
+            });
+
+            document.getElementById('nextDate').addEventListener('click', () => {
+                startOfWeek.setDate(startOfWeek.getDate() + 7);
+                endOfWeek.setDate(endOfWeek.getDate() + 7);
+                updateWeekDisplay();
+            });
+
+            updateWeekDisplay();
+
+            // ✅ Moved here: Toggle checkbox when clicking row
+            $(document).on('click', '#memberList tbody tr', function(e) {
+                if ($(e.target).is('input, label, .form-check-input')) return;
+
+                const $checkbox = $(this).find('input.row-checkbox');
+                $checkbox.prop('checked', !$checkbox.prop('checked'));
+
+                // Optional visual feedback
+                $(this).toggleClass('table-active', $checkbox.prop('checked'));
+            });
+
+            this.validate();
+
+            $('#addModal').on('hidden.bs.modal', function() {
+                // Move focus away from the modal to avoid accessibility warning
+                document.activeElement.blur();
+
+                // Optional: Set focus to a safe element (e.g. the "Add Attendance" button)
+                $('#addModal').off('hidden.bs.modal'); // ensure no duplicate binding
+                setTimeout(() => {
+                    document.querySelector('[data-bs-target="#addModal"]').focus();
+                }, 100); // slight delay ensures modal is fully closed
+            });
+        },
     };
 
     $(document).ready(function() {
