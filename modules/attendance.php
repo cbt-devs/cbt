@@ -171,7 +171,12 @@ $type_r = Attendance::TYPE;
                                 title: 'Name'
                             },
                             {
-                                data: 'date_attendance',
+                                data: 'raw_date', // hidden column for sorting
+                                visible: false,
+                                searchable: false
+                            },
+                            {
+                                data: 'date',
                                 title: 'Date'
                             },
                             {
