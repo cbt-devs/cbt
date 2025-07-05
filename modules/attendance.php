@@ -5,7 +5,20 @@ $commitments_type = $commitments->type_show();
 $ministry_r = $ministry->show();
 
 $today = new DateTime();
-$formatted_today = $today->format('l d, Y');
+
+// Clone and set to start of the week (Sunday)
+$startOfWeek = clone $today;
+$startOfWeek->modify('Sunday last week');
+if ($today->format('w') == 0) {
+    $startOfWeek = clone $today; // if today is Sunday, it's the start
+}
+
+// End of the week (Saturday)
+$endOfWeek = clone $startOfWeek;
+$endOfWeek->modify('+6 days');
+
+// Format like: Sun, July 6 2025
+$weekRange = $startOfWeek->format('D, F j Y') . ' - ' . $endOfWeek->format('D, F j Y');
 $type_r = Attendance::TYPE;
 ?>
 <style>
@@ -20,24 +33,28 @@ $type_r = Attendance::TYPE;
     }
 </style>
 
-<div class="d-flex justify-content-between align-items-start">
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
     <div>
-        <h2>Attendance</h2>
+        <h2 class="m-0">Attendance</h2>
     </div>
-    <div>
-        <button class="btn border" id="prevDate">
+
+    <div class="d-flex align-items-center justify-content-center flex-grow-1" style="min-width: 250px;">
+        <button class="btn border me-2" id="prevDate">
             <i class="fa-solid fa-chevron-left"></i>
         </button>
-        <span id="dateDisplay" style="display: inline-block; width: 180px; text-align: center; white-space: nowrap; font-weight: bold;">
-            <?= $formatted_today ?>
+        <span id="dateDisplay" class="text-center fw-bold" style="white-space: nowrap;">
+            <?= $weekRange ?>
         </span>
-        <button class="btn border" id="nextDate">
+        <button class="btn border ms-2" id="nextDate">
             <i class="fa-solid fa-chevron-right"></i>
         </button>
     </div>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
-        <i class="fa-solid fa-plus"></i> Add Attendance
-    </button>
+
+    <div>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
+            <i class="fa-solid fa-plus"></i> Add Attendance
+        </button>
+    </div>
 </div>
 
 <div class="row g-3 mt-2">
@@ -140,29 +157,39 @@ $type_r = Attendance::TYPE;
 <script>
     var attendanceTable = {
         init: function() {
-            this.show();
-            this.showMember();
             this.bindEvents();
         },
-        show: function() {
+
+        show: function(startDate = null, endDate = null) {
+            // Fallback to current week if no dates provided
+            if (!startDate || !endDate) {
+                const today = new Date();
+                const sunday = new Date(today);
+                sunday.setDate(today.getDate() - today.getDay()); // Sunday
+
+                const saturday = new Date(sunday);
+                saturday.setDate(sunday.getDate() + 6); // Saturday
+
+                startDate = sunday.toISOString().split('T')[0];
+                endDate = saturday.toISOString().split('T')[0];
+            }
+
             $.ajax({
                 type: "POST",
                 url: "controller/main.php",
                 data: {
                     action: "show",
-                    type: "attendance"
+                    type: "attendance",
+                    start_date: startDate,
+                    end_date: endDate
                 },
                 success: function(response) {
                     const data = response.data;
 
-                    console.log(data);
-
-                    // Destroy existing table if it exists
                     if ($.fn.dataTable.isDataTable('#attendanceTable')) {
                         $('#attendanceTable').DataTable().clear().destroy();
                     }
 
-                    // Initialize DataTable
                     $('#attendanceTable').DataTable({
                         data: data,
                         lengthChange: false,
@@ -171,7 +198,7 @@ $type_r = Attendance::TYPE;
                                 title: 'Name'
                             },
                             {
-                                data: 'raw_date', // hidden column for sorting
+                                data: 'raw_date',
                                 visible: false,
                                 searchable: false
                             },
@@ -182,12 +209,11 @@ $type_r = Attendance::TYPE;
                             {
                                 data: 'type',
                                 title: 'Type',
-                                render: function(data, type, row) {
+                                render: function(data) {
                                     let badgeClass = 'secondary';
                                     if (data === 'present') badgeClass = 'success';
                                     else if (data === 'absent') badgeClass = 'danger';
                                     else if (data === 'excused') badgeClass = 'warning';
-
                                     return `<span class="badge bg-${badgeClass} text-capitalize">${data}</span>`;
                                 }
                             }
@@ -201,7 +227,6 @@ $type_r = Attendance::TYPE;
                             emptyTable: "No attendance records found."
                         },
                         initComplete: function() {
-                            // Bind custom search
                             const table = this.api();
                             $('#attendanceSearch').off('keyup').on('keyup', function() {
                                 table.search(this.value).draw();
@@ -209,7 +234,6 @@ $type_r = Attendance::TYPE;
                             JsLoadingOverlay.hide();
                         }
                     });
-
                 },
                 error: function(xhr, status, error) {
                     console.error("AJAX Error (show):", status, error);
@@ -217,49 +241,75 @@ $type_r = Attendance::TYPE;
             });
         },
 
-        showMember: function() {
-            $.ajax({
-                type: "POST",
-                url: "controller/main.php",
-                data: {
-                    action: "show",
-                    type: "members"
-                },
-                success: function(response) {
-                    const data = response.data;
-
-                    if ($.fn.dataTable.isDataTable('#memberList')) {
-                        $('#memberList').DataTable().clear().destroy();
-                    }
-
-                    $('#memberList').DataTable({
-                        data: data,
-                        info: false,
-                        lengthChange: false,
-                        columns: [{
-                                title: '<input type="checkbox" id="select-all">', // header checkbox
-                                orderable: false,
-                                searchable: false,
-                                className: 'text-center',
-                                render: function(data, type, row, meta) {
-                                    return `<input type="checkbox" class="row-checkbox" data-id="${row.id}">`;
-                                }
-                            },
-                            {
-                                data: 'name',
-                                title: 'name'
-                            },
-                        ],
-                        initComplete: function() {
-                            $('#memberList thead').hide();
-                            $('#dt-search-0').attr('placeholder', 'Search...');
-                        }
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.error("AJAX Error (show):", status, error);
-                }
+        bindEvents: function() {
+            // Nice Select init
+            document.querySelectorAll(".nice-select2").forEach(el => {
+                NiceSelect.bind(el);
             });
+
+            $(document).on('click', '.nice-select', function() {
+                const $select = $(this);
+                const $dropdown = $select.find('.list');
+                const selectWidth = $select.outerWidth();
+                $dropdown.css({
+                    'width': selectWidth + 'px',
+                    'min-width': selectWidth + 'px',
+                    'left': 0
+                });
+            });
+
+            // Member search
+            const searchInput = document.getElementById('customSearch');
+            if (searchInput) {
+                searchInput.addEventListener('keyup', function() {
+                    $('#memberList').DataTable().search(this.value).draw();
+                });
+            }
+
+            // WEEK NAVIGATION
+            const dateDisplay = document.getElementById('dateDisplay');
+            let startOfWeek = new Date('<?= $startOfWeek->format('Y-m-d') ?>');
+            let endOfWeek = new Date('<?= $endOfWeek->format('Y-m-d') ?>');
+
+            function formatWeekRange(startDate, endDate) {
+                const options = {
+                    weekday: 'short',
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric'
+                };
+                return `${startDate.toLocaleDateString('en-US', options)} - ${endDate.toLocaleDateString('en-US', options)}`;
+            }
+
+            const updateWeekDisplay = () => {
+                const startStr = startOfWeek.toISOString().split('T')[0];
+                const endStr = endOfWeek.toISOString().split('T')[0];
+                dateDisplay.textContent = formatWeekRange(startOfWeek, endOfWeek);
+                attendanceTable.show(startStr, endStr);
+            };
+
+            document.getElementById('prevDate').addEventListener('click', () => {
+                startOfWeek.setDate(startOfWeek.getDate() - 7);
+                endOfWeek.setDate(endOfWeek.getDate() - 7);
+                updateWeekDisplay();
+            });
+
+            document.getElementById('nextDate').addEventListener('click', () => {
+                startOfWeek.setDate(startOfWeek.getDate() + 7);
+                endOfWeek.setDate(endOfWeek.getDate() + 7);
+                updateWeekDisplay();
+            });
+
+            updateWeekDisplay(); // First load
+
+            // Row checkbox toggle
+            $(document).on('click', '#memberList tbody tr', function(e) {
+                if (e.target.tagName.toLowerCase() === 'input') return;
+                const $checkbox = $(this).find('input.row-checkbox');
+                $checkbox.prop('checked', !$checkbox.prop('checked'));
+            });
+
+            this.validate(); // keep this if you're using form submission
         },
 
         validate: function() {
@@ -288,33 +338,29 @@ $type_r = Attendance::TYPE;
                     return;
                 }
 
-                // ✅ Prepare FormData
                 const form = document.getElementById('addMemberForm');
                 const formData = new FormData(form);
                 formData.append('action', 'add');
                 formData.append('type', 'attendance');
 
-                // Append selected member IDs
                 checkedCheckboxes.forEach(cb => {
                     formData.append('members[]', cb.dataset.id);
                 });
 
                 try {
                     JsLoadingOverlay.show();
-
                     const response = await fetch('controller/main.php', {
                         method: 'POST',
                         body: formData
                     });
 
                     const result = await response.json();
-
                     if (result.status === 'success') {
                         Swal.fire("Member added", "", "success");
                         $('#addModal').modal('hide');
                         form.reset();
                         $('#memberList').DataTable().search('').draw();
-                        attendanceTable.show();
+                        attendanceTable.show(); // reload table
                     } else {
                         toastr.error('Failed to add attendance');
                         console.error('Failed:', result.message);
@@ -324,68 +370,8 @@ $type_r = Attendance::TYPE;
                     alert('Something went wrong while submitting.');
                 }
             });
-        },
-
-        bindEvents: function() {
-            document.querySelectorAll(".nice-select2").forEach(el => {
-                NiceSelect.bind(el);
-            });
-
-            $(document).on('click', '.nice-select', function() {
-                const $select = $(this);
-                const $dropdown = $select.find('.list');
-
-                // Match the width of the visible .nice-select element
-                const selectWidth = $select.outerWidth();
-
-                $dropdown.css({
-                    'width': selectWidth + 'px',
-                    'min-width': selectWidth + 'px',
-                    'left': 0
-                });
-            });
-
-
-            const searchInput = document.getElementById('customSearch');
-            if (searchInput) {
-                searchInput.addEventListener('keyup', function() {
-                    $('#memberList').DataTable().search(this.value).draw();
-                });
-            }
-
-            const dateDisplay = document.getElementById('dateDisplay');
-            let currentDate = new Date('<?= $today->format('Y-m-d') ?>'); // from PHP
-
-            function formatDate(date) {
-                const options = {
-                    weekday: 'long',
-                    day: 'numeric',
-                    year: 'numeric'
-                };
-                return date.toLocaleDateString('en-US', options);
-            }
-
-            document.getElementById('prevDate').addEventListener('click', () => {
-                currentDate.setDate(currentDate.getDate() - 1);
-                dateDisplay.textContent = formatDate(currentDate);
-            });
-
-            document.getElementById('nextDate').addEventListener('click', () => {
-                currentDate.setDate(currentDate.getDate() + 1);
-                dateDisplay.textContent = formatDate(currentDate);
-            });
-
-            // Row click toggles checkbox
-            $(document).on('click', '#memberList tbody tr', function(e) {
-                if (e.target.tagName.toLowerCase() === 'input') return;
-                const $checkbox = $(this).find('input.row-checkbox');
-                $checkbox.prop('checked', !$checkbox.prop('checked'));
-            });
-
-            this.validate();
-        },
-
-    }
+        }
+    };
 
     $(document).ready(function() {
         attendanceTable.init();

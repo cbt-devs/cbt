@@ -19,7 +19,10 @@ class Attendance
         try {
             $this->conn->beginTransaction();
 
-            $stmt = $this->conn->prepare("
+            $startDate = $_POST['start_date'] ?? null;
+            $endDate = $_POST['end_date'] ?? null;
+
+            $query = "
             SELECT 
                 att.id,
                 att.accounts_id,
@@ -32,9 +35,20 @@ class Attendance
             INNER JOIN accounts a ON a.id = att.accounts_id
             LEFT JOIN accounts_info ai ON ai.accounts_id = att.accounts_id
             WHERE a.status = 'active'
-            ORDER BY att.date DESC
-        ");
-            $stmt->execute();
+        ";
+
+            $params = [];
+
+            if ($startDate && $endDate) {
+                $query .= " AND att.date BETWEEN :start_date AND :end_date";
+                $params[':start_date'] = $startDate . ' 00:00:00';
+                $params[':end_date'] = $endDate . ' 23:59:59';
+            }
+
+            $query .= " ORDER BY att.date DESC";
+
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute($params);
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             $this->conn->commit();
