@@ -31,14 +31,14 @@ $ministry_r = $ministry->show();
     </button>
 </div>
 
-<table id="memberTable" class="table table-striped" style="width:100%">
+<table id="memberTable" class="table" style="width:100%">
     <thead>
         <tr>
             <th>Name</th>
             <th>Email</th>
             <th>Birthdate</th>
             <th>Address</th>
-            <th>Baptism Date</th>
+            <th>Baptism</th>
             <th>action</th>
         </tr>
     </thead>
