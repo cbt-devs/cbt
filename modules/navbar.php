@@ -8,68 +8,73 @@ $nav = new Navigation();
     </a>
 
     <ul class="nav flex-column flex-grow-1 mt-3">
+        <!-- Dashboard -->
         <li class="nav-item bg-info-subtle rounded">
             <a href="#" class="nav-link load-content hover-bg-light" data-page="<?= $nav->getLink('main') ?>">
                 <i class="fa-solid fa-chart-simple me-2"></i>Dashboard
             </a>
         </li>
 
-        <!-- Management Dropdown (Always Open) -->
+        <!-- Management Dropdown -->
         <li class="nav-item">
-            <div class="nav-link d-flex justify-content-between align-items-center">
+            <div class="nav-link d-flex justify-content-between align-items-center dropdown-toggle"
+                data-bs-toggle="collapse"
+                data-bs-target="#managementMenu"
+                role="button"
+                aria-expanded="true"
+                aria-controls="managementMenu">
                 <span><i class="fa-solid fa-table me-2"></i>Management</span>
             </div>
-            <div>
+            <div class="collapse show" id="managementMenu">
                 <ul class="nav flex-column ms-3">
                     <li class="nav-item">
-                        <a href="#" class="nav-link load-content"
-                            data-page="<?= $nav->getLink('attendance') ?>">Attendance</a>
+                        <a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('attendance') ?>">Attendance</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link load-content"
-                            data-page="<?= $nav->getLink('missions') ?>">Missions</a>
+                        <a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('missions') ?>">Missions</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link load-content"
-                            data-page="<?= $nav->getLink('members') ?>">Members</a>
+                        <a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('members') ?>">Members</a>
                     </li>
                     <li class="nav-item">
                         <a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('events') ?>">Events</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link load-content"
-                            data-page="<?= $nav->getLink('ministries') ?>">Ministries</a>
+                        <a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('ministries') ?>">Ministries</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link load-content"
-                            data-page="<?= $nav->getLink('commitments') ?>">Commitments</a>
+                        <a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('commitments') ?>">Commitments</a>
                     </li>
                 </ul>
             </div>
         </li>
 
-        <!-- Tools Dropdown (Always Open) -->
+        <!-- Tools Dropdown -->
         <li class="nav-item">
-            <div class="nav-link d-flex justify-content-between align-items-center">
+            <div class="nav-link d-flex justify-content-between align-items-center dropdown-toggle"
+                data-bs-toggle="collapse"
+                data-bs-target="#toolsMenu"
+                role="button"
+                aria-expanded="true"
+                aria-controls="toolsMenu">
                 <span><i class="fa-solid fa-screwdriver-wrench me-2"></i>Tools</span>
             </div>
-            <div>
+            <div class="collapse show" id="toolsMenu">
                 <ul class="nav flex-column ms-3">
                     <li class="nav-item">
-                        <a href="#" class="nav-link load-content"
-                            data-page="<?= $nav->getLink('pp_generator') ?>">Create PowerPoint</a>
+                        <a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('pp_generator') ?>">Create PowerPoint</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link load-content"
-                            data-page="<?= $nav->getLink('schedule') ?>">Schedule</a>
+                        <a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('schedule') ?>">Schedule</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link load-content"
-                            data-page="<?= $nav->getLink('documentation') ?>">Documentation</a>
+                        <a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('documentation') ?>">Documentation</a>
                     </li>
                 </ul>
             </div>
         </li>
+
+        <!-- Logout -->
         <li class="nav-item rounded">
             <a href="#" id="logoutBtn" class="nav-link hover-bg-light">
                 <i class="fa-solid fa-door-open me-2"></i>Logout
