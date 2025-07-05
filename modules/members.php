@@ -31,14 +31,14 @@ $ministry_r = $ministry->show();
     </button>
 </div>
 
-<table id="memberTable" class="table table-striped" style="width:100%">
+<table id="memberTable" class="table" style="width:100%">
     <thead>
         <tr>
             <th>Name</th>
             <th>Email</th>
             <th>Birthdate</th>
             <th>Address</th>
-            <th>Baptism Date</th>
+            <th>Baptism</th>
             <th>action</th>
         </tr>
     </thead>
@@ -60,6 +60,7 @@ $ministry_r = $ministry->show();
                             <li><a class="nav-link" href="#step-1">Step 1<br /><small>Personal Info</small></a></li>
                             <li><a class="nav-link" href="#step-2">Step 2<br /><small>Address</small></a></li>
                             <li><a class="nav-link" href="#step-3">Step 3<br /><small>Ministry</small></a></li>
+                            <li><a class="nav-link" href="#step-4">Step 4<br /><small>Review</small></a></li>
                         </ul>
 
                         <div class="tab-content mt-3">
@@ -94,7 +95,7 @@ $ministry_r = $ministry->show();
 
                                     <div class="col-md-6">
                                         <label for="contact" class="form-label">Contact #</label>
-                                        <input type="text" class="form-control" id="contact" name="contact" value="" placeholder="09123456789">
+                                        <input type="text" class="form-control" id="contact" name="contact" value="" placeholder="ex.09123456789">
                                     </div>
                                 </div>
                             </div>
@@ -108,15 +109,15 @@ $ministry_r = $ministry->show();
                                     </div>
                                     <div class="col-md-4">
                                         <label for="city" class="form-label">City</label>
-                                        <input type="text" class="form-control" id="city" name="city" value="" required>
+                                        <input type="text" class="form-control" id="city" name="city" value="Olongapo City" required>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="state" class="form-label">State</label>
-                                        <input type="text" class="form-control" id="state" name="state" value="" required>
+                                        <label for="state" class="form-label">Province</label>
+                                        <input type="text" class="form-control" id="state" name="state" value="Zambales" required>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="postalCode" class="form-label">Postal Code</label>
-                                        <input type="number" class="form-control" id="postalCode" name="postalCode" value="1100" required>
+                                        <input type="number" class="form-control" id="postalCode" name="postalCode" value="2200" required>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-check">
@@ -151,7 +152,13 @@ $ministry_r = $ministry->show();
                                         <?php endif; ?>
                                     </div>
                                 </div>
+                            </div>
 
+                            <div id="step-4" class="tab-pane" role="tabpanel">
+                                <h6>Review Information</h6>
+                                <div id="reviewSummary">
+                                    <!-- Content will be injected by JavaScript -->
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -215,7 +222,7 @@ $ministry_r = $ministry->show();
                                 data: null,
                                 render: function(data, type, row) {
                                     return `
-                                    <button class="btn btn-warning btn-sm edit-btn" data-id="${row.id}">
+                                    <button class="btn btn-warning btn-sm edit-btn" data-id="${row.id}" hidden>
                                         <i class="fa-solid fa-pen"></i>
                                     </button>
                                     <button class="btn btn-danger btn-sm delete-btn" data-id="${row.id}">
@@ -242,9 +249,14 @@ $ministry_r = $ministry->show();
             formElement.addEventListener('submit', async function(event) {
                 event.preventDefault();
 
-                const step = memberTable.validate();
+                // Determine current step
+                const stepIndex = parseInt($('#smartwizard .nav .nav-link.active').attr('href').match(/\d+/)[0], 10);
 
-                if (!step) return;
+                // Only validate on steps 1–3
+                if (stepIndex >= 1 && stepIndex <= 3) {
+                    const isValid = memberTable.validate();
+                    if (!isValid) return;
+                }
 
                 const formData = new FormData(formElement);
                 formData.append('action', 'add');
@@ -262,6 +274,9 @@ $ministry_r = $ministry->show();
                         Swal.fire("Member added", "", "success");
                         formElement.reset();
                         memberTable.showMember();
+
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('addMemberModal'));
+                        modal.hide();
                     } else {
                         toastr.error('Failed to add the member');
                         console.error('Failed:', result.message);
@@ -270,10 +285,6 @@ $ministry_r = $ministry->show();
                     if (document.activeElement instanceof HTMLElement) {
                         document.activeElement.blur();
                     }
-
-                    const modal = bootstrap.Modal.getInstance(document.getElementById(
-                        'addMemberModal'));
-                    modal.hide();
 
                 } catch (error) {
                     console.error('Error (add):', error);
@@ -356,6 +367,7 @@ $ministry_r = $ministry->show();
                     } else if (stepPosition === 'last') {
                         $prevBtn.show();
                         $submitBtn.show();
+                        memberTable.populateReview();
                     }
                 });
 
@@ -376,6 +388,45 @@ $ministry_r = $ministry->show();
                     $('#smartwizard').smartWizard("reset"); // Go back to step 0
                 });
             });
+        },
+
+        populateReview: function() {
+            const ministries = [];
+            document.querySelectorAll('input[name="ministry[]"]:checked').forEach(input => {
+                const label = document.querySelector(`label[for="${input.id}"]`);
+                if (label) ministries.push(label.innerText.trim());
+            });
+
+            const firstName = $('#firstName').val() || '';
+            const middleName = $('#middleName').val() || '';
+            const lastName = $('#lastName').val() || '';
+            const gender = $('#gender').val() || '';
+            const birthdate = $('#birthdate').val() || '';
+            const contact = $('#contact').val() || '';
+            const addressLine = $('#addressLine').val() || '';
+            const city = $('#city').val() || '';
+            const state = $('#state').val() || '';
+            const postalCode = $('#postalCode').val() || '';
+            const isPrimary = $('#primary').is(':checked') ? 'Yes' : 'No';
+
+            const summaryHtml = `
+        <ul class="list-group">
+            <li class="list-group-item"><strong>Name:</strong> ${firstName} ${middleName} ${lastName}</li>
+            <li class="list-group-item"><strong>Gender:</strong> ${gender}</li>
+            <li class="list-group-item"><strong>Birthdate:</strong> ${birthdate}</li>
+            <li class="list-group-item"><strong>Contact:</strong> ${contact}</li>
+            <li class="list-group-item"><strong>Address:</strong> ${addressLine}, ${city}, ${state}, ${postalCode}</li>
+            <li class="list-group-item"><strong>Primary Address:</strong> ${isPrimary}</li>
+            <li class="list-group-item">
+                <strong>Ministries:</strong>
+                ${ministries.length > 0
+                    ? `<ul class="mb-0 mt-2">${ministries.map(m => `<li>${m}</li>`).join('')}</ul>`
+                    : 'None'}
+            </li>
+        </ul>
+    `;
+
+            $('#reviewSummary').html(summaryHtml);
         },
 
         validate: function() {
@@ -432,10 +483,13 @@ $ministry_r = $ministry->show();
                     ]);
                     break;
                 case 3:
-                    isValid = validate.requiredfields([{
-                        element: document.querySelector('input[name="ministry"]'),
-                        message: 'Ministry missing.'
-                    }]);
+                    const ministryChecked = document.querySelectorAll('input[name="ministry[]"]:checked').length > 0;
+                    if (!ministryChecked) {
+                        toastr.error("Please select at least one ministry.");
+                        isValid = false;
+                    } else {
+                        isValid = true;
+                    }
                     break;
             }
 

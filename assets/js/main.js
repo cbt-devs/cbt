@@ -118,3 +118,113 @@ var validate = {
     }, 3000);
   },
 };
+
+var accounts = {
+  init: function () {
+    this.bindLogin();
+    this.bindLogout();
+  },
+
+  bindLogin: function () {
+    const form = document.querySelector('#loginForm');
+    if (!form) return;
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      loader.init();
+
+      const formData = new URLSearchParams(new FormData(form));
+      formData.append('action', 'login');
+      formData.append('type', 'accounts');
+
+      fetch('controller/main.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          JsLoadingOverlay.hide();
+          if (data.status === 'success') {
+            Swal.fire({
+              icon: 'success',
+              title: 'Login successful',
+              showConfirmButton: false,
+              timer: 1000,
+            }).then(() => {
+              window.location.href = 'index.php';
+            });
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Login Failed',
+              text: data.message || 'Invalid credentials',
+            });
+          }
+        })
+        .catch(() => {
+          JsLoadingOverlay.hide();
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops!',
+            text: 'Something went wrong.',
+          });
+        });
+    });
+  },
+
+  bindLogout: function () {
+    const logoutBtn = document.querySelector('#logoutBtn');
+    if (!logoutBtn) return;
+
+    logoutBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+
+      Swal.fire({
+        title: 'Are you sure you want to logout?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, logout',
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch('controller/main.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+              action: 'logout',
+              type: 'accounts',
+            }),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.status === 'success') {
+                window.location.href = 'login.php';
+              } else {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Logout Failed',
+                  text: data.message || 'Unable to logout.',
+                });
+              }
+            })
+            .catch(() => {
+              Swal.fire({
+                icon: 'error',
+                title: 'Oops!',
+                text: 'Logout request failed.',
+              });
+            });
+        }
+      });
+    });
+  },
+};
+
+document.addEventListener('DOMContentLoaded', function () {
+  accounts.init();
+});
