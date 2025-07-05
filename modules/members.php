@@ -222,7 +222,7 @@ $ministry_r = $ministry->show();
                                 data: null,
                                 render: function(data, type, row) {
                                     return `
-                                    <button class="btn btn-warning btn-sm edit-btn" data-id="${row.id}">
+                                    <button class="btn btn-warning btn-sm edit-btn" data-id="${row.id}" hidden>
                                         <i class="fa-solid fa-pen"></i>
                                     </button>
                                     <button class="btn btn-danger btn-sm delete-btn" data-id="${row.id}">
