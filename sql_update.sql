@@ -1,6 +1,18 @@
 -- UPDATED ALWAYS ON TOP
 
 -- Jeff 07-24-2025
+CREATE TABLE `attendance` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `accounts_id` INT UNSIGNED NOT NULL,
+    `type` TINYINT UNSIGNED NOT NULL COMMENT '1=present, 2=absent, 3=excused',
+    `description` TEXT NULL,
+    `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    CONSTRAINT `fk_attendance_account` FOREIGN KEY (`accounts_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 ALTER TABLE `accounts_access` 
   CHANGE `type` `role_id` VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;
 
