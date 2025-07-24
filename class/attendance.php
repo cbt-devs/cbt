@@ -19,65 +19,59 @@ class Attendance
         try {
             $this->conn->beginTransaction();
 
-            // Get all active members
-            $stmt = $this->conn->prepare("SELECT id FROM accounts WHERE status = 'active'");
-            $stmt->execute();
-            $acc_r = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $startDate = $_POST['start_date'] ?? null;
+            $endDate = $_POST['end_date'] ?? null;
 
-            if (empty($acc_r)) {
-                $this->conn->commit();
-                return [];
+            $query = "
+            SELECT 
+                att.id,
+                att.accounts_id,
+                att.type,
+                att.date,
+                ai.first_name,
+                ai.middle_name,
+                ai.last_name
+            FROM attendance att
+            INNER JOIN accounts a ON a.id = att.accounts_id
+            LEFT JOIN accounts_info ai ON ai.accounts_id = att.accounts_id
+            WHERE a.status = 'active'
+        ";
+
+            $params = [];
+
+            if ($startDate && $endDate) {
+                $query .= " AND att.date BETWEEN :start_date AND :end_date";
+                $params[':start_date'] = $startDate . ' 00:00:00';
+                $params[':end_date'] = $endDate . ' 23:59:59';
             }
 
-            $ids = array_column($acc_r, 'id');
-            $acc_r_txt = implode(',', $ids);
+            $query .= " ORDER BY att.date DESC";
 
-            // Get names
-            $stmt = $this->conn->prepare("
-            SELECT accounts_id, first_name, middle_name, last_name
-            FROM accounts_info
-            WHERE accounts_id IN ($acc_r_txt)
-        ");
-            $stmt->execute();
-            $info_r = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            // Get latest attendance
-            $stmt = $this->conn->prepare("
-            SELECT a1.accounts_id, a1.type, a1.date
-            FROM attendance a1
-            INNER JOIN (
-                SELECT accounts_id, MAX(date) AS max_date
-                FROM attendance
-                GROUP BY accounts_id
-            ) a2 ON a1.accounts_id = a2.accounts_id AND a1.date = a2.max_date
-            WHERE a1.accounts_id IN ($acc_r_txt)
-        ");
-            $stmt->execute();
-            $att_r = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute($params);
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             $this->conn->commit();
 
-            // Combine data
             $data_r = [];
-            foreach ($att_r as $att) {
-                $id = $att['accounts_id'];
-                $type = self::TYPE[$att['type']] ?? 'unknown';
-                $date = $att['date'];
-
-                $name = '';
-                foreach ($info_r as $info) {
-                    if ($info['accounts_id'] == $id) {
-                        $name = trim($info['first_name'] . ' ' . $info['middle_name'] . ' ' . $info['last_name']);
-                        break;
-                    }
-                }
+            foreach ($rows as $row) {
+                $id = $row['id'];
+                $name = trim($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']);
+                $type = self::TYPE[(int)$row['type']] ?? 'unknown';
+                $date = $_origdate ? $row['date'] : date('M d, Y h:i A', strtotime($row['date']));
 
                 $data_r[] = [
+                    'id' => $id,
                     'name' => $name,
-                    'date_attendance' => $_origdate ? $date : date('M d, Y h:i A', strtotime($date)),
+                    'date' => $date,
+                    'raw_date' => $row['date'],
                     'type' => $type
                 ];
             }
+
+            usort($data_r, function ($a, $b) {
+                return strtotime($b['date']) - strtotime($a['date']);
+            });
 
             return $data_r;
         } catch (PDOException $e) {
