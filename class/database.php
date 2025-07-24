@@ -1,18 +1,21 @@
 <?php
-class Database {
-    private $host = "localhost";
+class Database
+{
+    private $host = "db";
     private $db_name = "cbt";
     private $username = "cbt";
     private $password = "cbt2024";
     private $conn;
 
-    public function getConnection() {
+    public function getConnection()
+    {
         $this->conn = null;
 
         try {
             $this->conn = new PDO(
                 "mysql:host=" . $this->host . ";dbname=" . $this->db_name,
-                $this->username, $this->password
+                $this->username,
+                $this->password
             );
             $this->conn->exec("set names utf8mb4");
         } catch (PDOException $exception) {

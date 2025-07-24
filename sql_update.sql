@@ -1,5 +1,9 @@
 -- UPDATED ALWAYS ON TOP
 
+-- Jeff 07-24-2025
+ALTER TABLE `accounts_access` 
+  CHANGE `type` `role_id` VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;
+
 -- Jeff 07-04-2025
 ALTER TABLE `documents` 
   CHANGE `created_at` `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP;
