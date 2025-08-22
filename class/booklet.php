@@ -2,6 +2,12 @@
 class Booklet {
     private $conn;
 
+    private static array $type = [
+        1 => 'weekly',
+        2 => 'funeral',
+        3 => 'event',
+    ];
+
     public function __construct($db) {
         $this->conn = $db;
     }
