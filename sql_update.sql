@@ -1,5 +1,16 @@
 -- UPDATED ALWAYS ON TOP
 
+-- Jeff 08-22-2025
+CREATE TABLE `cbt`.`booklet` (
+  `id` INT NOT NULL AUTO_INCREMENT , 
+  `type` INT(1) NOT NULL , 
+  `page_type` INT(1) NOT NULL DEFAULT '1' , 
+  `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+  PRIMARY KEY (`id`), 
+  INDEX `type` (`type`), 
+  INDEX `page_type` (`page_type`)
+) ENGINE = InnoDB;
+
 -- Jeff 07-24-2025
 CREATE TABLE `attendance` (
     `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
