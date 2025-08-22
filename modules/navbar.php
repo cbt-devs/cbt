@@ -42,6 +42,7 @@ $nav = new Navigation();
                     <li class="nav-item"><a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('events') ?>">Events</a></li>
                     <li class="nav-item"><a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('ministries') ?>">Ministries</a></li>
                     <li class="nav-item"><a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('commitments') ?>">Commitments</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('booklet') ?>">Booklet</a></li>
                 </ul>
             </div>
         </li>

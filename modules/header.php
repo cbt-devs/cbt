@@ -45,6 +45,9 @@
     <link href="assets/dropzone/dropzone.min.css" rel="stylesheet" />
     <script src="assets/dropzone/dropzone.min.js"></script>
 
+    <!-- TurnJS -->
+    <script src="assets/turnjs/turn.min.js"></script>
+
     <script src="assets/js/main.js"></script>
     <link href="assets/css/main.css" rel="stylesheet">
     <link href="assets/css/fonts.css" rel="stylesheet">

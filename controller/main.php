@@ -7,6 +7,7 @@ require_once '../class/commitments.php';
 require_once '../class/attendance.php';
 require_once '../class/documentation.php';
 require_once '../class/accounts.php';
+require_once '../class/booklet.php';
 
 $pdo = new Database();
 $conn = $pdo->getConnection();
@@ -18,6 +19,7 @@ $commitment = new Commitments($conn);
 $attendance = new Attendance($conn);
 $documentation = new Documentation($conn);
 $accounts = new Accounts($conn);
+$booklet = new Booklet($conn);
 
 header('Content-Type: application/json');
 
@@ -33,6 +35,7 @@ $handlers = [
     'attendance' => $attendance,
     'documentation' => $documentation,
     'accounts' => $accounts,
+    'booklet' => $booklet,
 ];
 
 if (!isset($handlers[$type])) {
@@ -44,7 +47,7 @@ $handler = $handlers[$type];
 
 switch ($action) {
     case 'show':
-        $result = $handler->show($table_name);
+        $result = $handler->show($table_name );
         echo json_encode([
             'status' => $result ? 'success' : 'error',
             'data' => $result
