@@ -30,7 +30,7 @@ class Member
             $stmt->execute();
             $acc_address_r = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            $stmt = $this->conn->prepare("SELECT accounts_id, first_name, middle_name, last_name, bday, gender, baptist_date FROM accounts_info WHERE accounts_id IN ( $acc_r_txt ) $sql");
+            $stmt = $this->conn->prepare("SELECT accounts_id, first_name, middle_name, last_name, birthdate, gender, date_baptized FROM accounts_info WHERE accounts_id IN ( $acc_r_txt ) $sql");
             $stmt->execute();
             $acc_info_r = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -40,7 +40,7 @@ class Member
             foreach ($acc_r as $acc) {
                 $id = $acc['id'];
 
-                $name = $address = $bday = $gender = $baptist_date = '';
+                $name = $address = $birthdate = $gender = $date_baptized = '';
                 foreach ($acc_address_r as $address_r) {
                     if ($id == $address_r['accounts_id']) {
                         $address = $address_r['address_line'] . ' ' . $address_r['city'] . ' ' . $address_r['state'];
@@ -51,9 +51,9 @@ class Member
                 foreach ($acc_info_r as $info_r) {
                     if ($id == $info_r['accounts_id']) {
                         $name = $info_r['first_name'] . ' ' . $info_r['middle_name'] . ' ' . $info_r['last_name'];
-                        $bday = $info_r['bday'];
+                        $birthdate = $info_r['birthdate'];
                         $gender = $info_r['gender'];
-                        $baptist_date = $info_r['baptist_date'];
+                        $date_baptized = $info_r['date_baptized'];
                         break;
                     }
                 }
@@ -64,9 +64,9 @@ class Member
                     'status' => $acc['status'],
                     'name' => $name,
                     'gender' => $gender,
-                    'bday' => !$_origdate ? date('M d, Y', strtotime($bday)) : $bday,
+                    'birthdate' => !$_origdate ? date('M d, Y', strtotime($birthdate)) : $birthdate,
                     'address' => $address,
-                    'baptism_date' => !$_origdate ? date('M d, Y', strtotime($baptist_date)) : $baptist_date
+                    'baptism_date' => !$_origdate ? date('M d, Y', strtotime($date_baptized)) : $date_baptized
                 ];
             }
 
@@ -80,23 +80,22 @@ class Member
         }
     }
 
-
     public function add($data)
     {
         try {
             // Start transaction
             $this->conn->beginTransaction();
 
-            // 1. Insert into accounts
+            // 1. Insert into accounts (login info)
             $createdAt = date('Y-m-d H:i:s');
             $status = 'active';
-            $email = strtolower($data['firstName'] . '.' . $data['middleName'] . '.' . $data['lastName']) . '@example.com'; // placeholder email
-            $password = password_hash('default123', PASSWORD_DEFAULT); // placeholder password
+            $email = strtolower($data['firstName'] . '.' . $data['middleName'] . '.' . $data['lastName']) . '@example.com'; // placeholder
+            $password = password_hash('default123', PASSWORD_DEFAULT); // placeholder
 
             $stmt1 = $this->conn->prepare("
-                INSERT INTO accounts (email, pass, created_at, updated_at, status)
-                VALUES (:email, :pass, :created_at, :updated_at, :status)
-            ");
+            INSERT INTO accounts (email, pass, created_at, updated_at, status)
+            VALUES (:email, :pass, :created_at, :updated_at, :status)
+        ");
             $stmt1->execute([
                 ':email' => $email,
                 ':pass' => $password,
@@ -107,37 +106,63 @@ class Member
 
             $accountId = $this->conn->lastInsertId();
 
-            // 2. Insert into accounts_info
-            $baptistDate = $createdAt; // use current timestamp as placeholder
-            $inviterId = 0; // placeholder or default
-
+            // 2. Insert into accounts_info (personal, family, baptism info)
             $stmt2 = $this->conn->prepare("
-                INSERT INTO accounts_info (
-                    accounts_id, first_name, middle_name, last_name, bday, gender, baptist_date, inviter_id, updated_at
-                ) VALUES (
-                    :accounts_id, :first_name, :middle_name, :last_name, :bday, :gender, :baptist_date, :inviter_id, :updated_at
-                )
-            ");
+    INSERT INTO accounts_info (
+        accounts_id, first_name, middle_name, last_name, birthdate, gender, 
+        birthplace, contact, occupation, occupation_place, occupation_position, 
+        marital_status, anniv_date, partner_name, partner_occupation,
+        father_name, mother_name, father_occupation, mother_occupation,
+        date_saved, witness_by, date_baptized, baptized_by, place_of_baptism,
+        inviter_id, updated_at
+    ) VALUES (
+        :accounts_id, :first_name, :middle_name, :last_name, :birthdate, :gender, 
+        :birthplace, :contact, :occupation, :occupation_place, :occupation_position, 
+        :marital_status, :anniv_date, :partner_name, :partner_occupation,
+        :father_name, :mother_name, :father_occupation, :mother_occupation,
+        :date_saved, :witness_by, :date_baptized, :baptized_by, :place_of_baptism,
+        :inviter_id, :updated_at
+    )
+");
+
             $stmt2->execute([
                 ':accounts_id' => $accountId,
                 ':first_name' => $data['firstName'],
                 ':middle_name' => $data['middleName'],
                 ':last_name' => $data['lastName'],
-                ':bday' => $data['birthdate'],
+                ':birthdate' => $data['birthdate'],   // fixed from :birthdate
                 ':gender' => $data['gender'],
-                ':baptist_date' => $baptistDate,
-                ':inviter_id' => $inviterId,
+                ':birthplace' => $data['birthplace'],
+                ':contact' => $data['contact'],
+                ':occupation' => $data['occupation'],
+                ':occupation_place' => $data['occupation_place'],
+                ':occupation_position' => $data['occupation_position'],
+                ':marital_status' => $data['status'],
+                ':anniv_date' => ($data['status'] === 'married') ? $data['anniversarydate'] : null,
+                ':partner_name' => ($data['status'] === 'married') ? $data['partner_name'] : null,
+                ':partner_occupation' => ($data['status'] === 'married') ? $data['partner_occupation'] : null,
+                ':father_name' => $data['father_name'],
+                ':mother_name' => $data['mother_name'],
+                ':father_occupation' => $data['father_occupation'],
+                ':mother_occupation' => $data['mother_occupation'],
+                ':date_saved' => $data['date_saved'],
+                ':witness_by' => $data['witness_by'],
+                ':date_baptized' => $data['date_baptized'],
+                ':baptized_by' => $data['baptized_by'],
+                ':place_of_baptism' => $data['place_of_baptism'],
+                ':inviter_id' => 0,
                 ':updated_at' => $createdAt
             ]);
 
-            // 3. Insert into accounts_address
+            // 3. Insert into accounts_address (separate table)
             $stmt3 = $this->conn->prepare("
-                INSERT INTO accounts_address (
-                    accounts_id, address_line, city, state, postal, is_primary
-                ) VALUES (
-                    :accounts_id, :address_line, :city, :state, :postal, :is_primary
-                )
-            ");
+            INSERT INTO accounts_address (
+                accounts_id, address_line, city, state, postal, is_primary
+            ) VALUES (
+                :accounts_id, :address_line, :city, :state, :postal, :is_primary
+            )
+        ");
+
             $stmt3->execute([
                 ':accounts_id' => $accountId,
                 ':address_line' => $data['addressLine'],
@@ -147,13 +172,12 @@ class Member
                 ':is_primary' => isset($data['primary']) ? 1 : 0
             ]);
 
-            // 4. Insert into accounts_ministry
+            // 4. Insert into accounts_ministry (many-to-many)
             if (!empty($data['ministry']) && is_array($data['ministry'])) {
                 $stmt4 = $this->conn->prepare("
-                    INSERT INTO accounts_ministry (accounts_id, ministry_id, date)
-                    VALUES (:accounts_id, :ministry_id, :date)
-                ");
-
+                INSERT INTO accounts_ministry (accounts_id, ministry_id, date)
+                VALUES (:accounts_id, :ministry_id, :date)
+            ");
                 foreach ($data['ministry'] as $ministryId) {
                     if (is_numeric($ministryId)) {
                         $stmt4->execute([
@@ -167,12 +191,11 @@ class Member
 
             // Commit transaction
             $this->conn->commit();
-
             return true;
+
         } catch (PDOException $e) {
             $this->conn->rollBack();
-            error_log('Insert failed: ' . $e->getMessage());
-            return false;
+            die('Insert failed: ' . $e->getMessage());
         }
     }
 
@@ -190,9 +213,9 @@ class Member
             $firstName = $_POST['firstName'] ?? '';
             $middleName = $_POST['middleName'] ?? '';
             $lastName = $_POST['lastName'] ?? '';
-            $bday = $_POST['bday'] ?? '';
+            $birthdate = $_POST['birthdate'] ?? '';
             $gender = $_POST['gender'] ?? '';
-            $baptist_date = $_POST['baptist_date'] ?? '';
+            $date_baptized = $_POST['date_baptized'] ?? '';
             $email = $_POST['email'] ?? '';
 
             $addressLine = $_POST['addressLine'] ?? '';
@@ -215,9 +238,9 @@ class Member
                 first_name = :first_name,
                 middle_name = :middle_name,
                 last_name = :last_name,
-                bday = :bday,
+                birthdate = :birthdate,
                 gender = :gender,
-                baptist_date = :baptist_date,
+                date_baptized = :date_baptized,
                 updated_at = :updated_at
                 WHERE accounts_id = :id
             ");
@@ -225,9 +248,9 @@ class Member
                 ':first_name' => $firstName,
                 ':middle_name' => $middleName,
                 ':last_name' => $lastName,
-                ':bday' => $bday,
+                ':birthdate' => $birthdate,
                 ':gender' => $gender,
-                ':baptist_date' => $baptist_date,
+                ':date_baptized' => $date_baptized,
                 ':updated_at' => $updatedAt,
                 ':id' => $id
             ]);
