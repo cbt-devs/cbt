@@ -11,6 +11,8 @@ CREATE TABLE `cbt`.`booklet` (
   INDEX `page_type` (`page_type`)
 ) ENGINE = InnoDB;
 
+ALTER TABLE `booklet` ADD `value` TEXT NOT NULL AFTER `page_type`; 
+
 -- Jeff 07-24-2025
 CREATE TABLE `attendance` (
     `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

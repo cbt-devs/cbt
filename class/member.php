@@ -1,4 +1,5 @@
 <?php
+
 class Member
 {
     private $conn;
@@ -8,10 +9,15 @@ class Member
         $this->conn = $db;
     }
 
-    public function show($_origdate = false)
+    public function show($_origdate = false, $_gender = '')
     {
         try {
             $this->conn->beginTransaction();
+
+            $sql = '';
+            if ($_gender) {
+                $sql = " AND gender = '$_gender'";
+            }
 
             $stmt = $this->conn->prepare("SELECT id, email, status FROM accounts WHERE status = 'active'");
             $stmt->execute();
@@ -24,7 +30,7 @@ class Member
             $stmt->execute();
             $acc_address_r = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            $stmt = $this->conn->prepare("SELECT accounts_id, first_name, middle_name, last_name, bday, gender, baptist_date FROM accounts_info WHERE accounts_id IN ( $acc_r_txt )");
+            $stmt = $this->conn->prepare("SELECT accounts_id, first_name, middle_name, last_name, bday, gender, baptist_date FROM accounts_info WHERE accounts_id IN ( $acc_r_txt ) $sql");
             $stmt->execute();
             $acc_info_r = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

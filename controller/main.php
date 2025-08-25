@@ -1,4 +1,5 @@
 <?php
+
 require_once '../class/database.php';
 require_once '../class/member.php';
 require_once '../class/ministries.php';
@@ -26,6 +27,7 @@ header('Content-Type: application/json');
 $action = $_POST['action'] ?? '';
 $type = $_POST['type'] ?? '';
 $table_name = ($table_name = ($_POST['table_name'] ?? '')) ? $table_name : '';
+$gender = $_POST['gender'] ?? '';
 
 $handlers = [
     'members' => $member,
@@ -47,7 +49,7 @@ $handler = $handlers[$type];
 
 switch ($action) {
     case 'show':
-        $result = $handler->show($table_name );
+        $result = $handler->show($table_name, $gender);
         echo json_encode([
             'status' => $result ? 'success' : 'error',
             'data' => $result
