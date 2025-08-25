@@ -104,6 +104,36 @@ $ministry_r = $ministry->show();
                                         <input type="text" class="form-control" id="contact" name="contact" value=""
                                             placeholder="ex.09123456789">
                                     </div>
+
+                                    <div class="col-md-6">
+                                        <label for="birthplace" class="form-label">Birth Place</label>
+                                        <input type="text" class="form-control" id="birthplace" name="birthplace"
+                                            value="Olongapo City" placeholder="ex.Olongapo City">
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label for="occupation" class="form-label">Occupation</label>
+                                        <select class="form-control" id="occupation" name="occupation" required>
+                                            <option value="student" selected>Student</option>
+                                            <option value="working">Working</option>
+                                            <option value="unemployed">Unemployed</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label for="occupation_place" class="form-label">School/Company</label>
+                                        <input type="text" class="form-control" id="occupation_place"
+                                            name="occupation_place"
+                                            placeholder="ex. Gordon Heights National High School">
+                                        </input>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label for="occupation_position" class="form-label">Grade/Position</label>
+                                        <input type="text" class="form-control" id="occupation_position"
+                                            name="occupation_position" placeholder="ex. Grade 11, Manager">
+                                        </input>
+                                    </div>
                                 </div>
                             </div>
 
