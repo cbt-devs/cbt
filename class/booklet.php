@@ -1,14 +1,17 @@
 <?php
-class Booklet {
+
+class Booklet
+{
     private $conn;
 
     private static array $type = [
         1 => 'weekly',
-        2 => 'funeral',
-        3 => 'event',
+        2 => 'birthday',
+        3 => 'funeral',
     ];
 
-    public function __construct($db) {
+    public function __construct($db)
+    {
         $this->conn = $db;
     }
 
@@ -16,7 +19,8 @@ class Booklet {
     * Fetches all booklet records from the database, ordered by date in descending order.
     * Each row is returned as an associative array.
     */
-    public function show() {
+    public function show()
+    {
         $stmt = $this->conn->prepare("SELECT * FROM booklet ORDER BY date DESC");
         if ($stmt->execute()) {
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -25,10 +29,11 @@ class Booklet {
         return [];
     }
 
-    /* 
+    /*
     * Fetches the latest booklet entry (one row).
     */
-    public function get_latest() {
+    public function get_latest()
+    {
         $stmt = $this->conn->prepare("SELECT * FROM booklet ORDER BY date DESC LIMIT 1");
         if ($stmt->execute()) {
             return $stmt->fetch(PDO::FETCH_NUM);
