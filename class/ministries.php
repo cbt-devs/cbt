@@ -12,17 +12,29 @@ class Ministries
     public function show($_data_r = [])
     {
         try {
-
             $sql = "";
             $params = [];
 
-            if ($ministries_r = ($_data_r[ 'ministries_r' ] ?? 0)) {
+            // Case 1: Get ministries by account_id
+            if (!empty($_data_r['accounts_id'])) {
+                $ministries_r = $this->account_ministries($_data_r['accounts_id']);
 
+                if (!empty($ministries_r)) {
+                    $placeholders = implode(',', array_fill(0, count($ministries_r), '?'));
+                    $sql = " WHERE id IN ($placeholders)";
+                    $params = $ministries_r;
+                }
+            }
+
+            // Case 2: Get ministries by explicit ministries_r
+            if (!empty($_data_r['ministries_r'])) {
                 $ministries_r = $_data_r['ministries_r'];
-                $placeholders = implode(',', array_fill(0, count($ministries_r), '?'));
 
-                $sql = " WHERE id IN ($placeholders)";
-                $params = $ministries_r;
+                if (!empty($ministries_r)) {
+                    $placeholders = implode(',', array_fill(0, count($ministries_r), '?'));
+                    $sql = " WHERE id IN ($placeholders)";
+                    $params = $ministries_r;
+                }
             }
 
             $stmt = $this->conn->prepare("SELECT * FROM ministries $sql ORDER BY name ASC");

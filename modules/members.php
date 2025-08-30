@@ -538,9 +538,7 @@ var memberTable = {
     },
 
     personalInfoTables: function(accounts_id = 0) {
-        const type_r = ['attendance', 'events', //'ministries', 'commitments'
-
-        ];
+        const type_r = ['attendance', 'events', 'ministries', 'commitments'];
 
         type_r.forEach(type => {
             $.ajax({
@@ -555,6 +553,26 @@ var memberTable = {
                 success: function(response) {
                     const data = response.data;
                     const table = `#${type}Table`;
+
+                    if (!data || data.length === 0) {
+                        // Map each type to a descriptive message
+                        const noDataMessages = {
+                            attendance: "No attendance records found.",
+                            events: "No upcoming or past events available.",
+                            ministries: "No ministry information available.",
+                            commitments: "No commitments recorded."
+                        };
+
+                        // Replace table content with a friendly message
+                        $(table).html(`
+            <div class="text-center text-muted p-3">
+                <em>${noDataMessages[type] || "No data available."}</em>
+            </div>
+        `);
+
+                        console.log(`No data for ${type}, showing message.`);
+                        return;
+                    }
 
                     if ($.fn.dataTable.isDataTable(table)) {
                         $(table).DataTable().clear().destroy();
@@ -624,13 +642,13 @@ var memberTable = {
                     $(table).DataTable({
                         data: data,
                         columns: columns,
-                        paging: false, // hide pagination
-                        searching: false, // hide search box
-                        info: false, // hide "Showing 1 of N"
+                        paging: false,
+                        searching: false,
+                        info: false,
                         ordering: true,
                         order: [
                             [0, 'asc']
-                        ] // default sort (adjust per type if needed)
+                        ]
                     });
                 },
                 error: function(xhr, status, error) {
