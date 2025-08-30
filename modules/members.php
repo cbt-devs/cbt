@@ -104,6 +104,64 @@ $ministry_r = $ministry->show();
                                         <input type="text" class="form-control" id="contact" name="contact" value=""
                                             placeholder="ex.09123456789">
                                     </div>
+
+                                    <div class="col-md-6">
+                                        <label for="birthplace" class="form-label">Birth Place</label>
+                                        <input type="text" class="form-control" id="birthplace" name="birthplace"
+                                            value="Olongapo City" placeholder="ex.Olongapo City">
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label for="occupation" class="form-label">Occupation</label>
+                                        <select class="form-control" id="occupation" name="occupation" required>
+                                            <option value="student" selected>Student</option>
+                                            <option value="working">Working</option>
+                                            <option value="unemployed">Unemployed</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label for="occupation_place" class="form-label">School/Company</label>
+                                        <input type="text" class="form-control" id="occupation_place"
+                                            name="occupation_place"
+                                            placeholder="ex. Gordon Heights National High School">
+                                        </input>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label for="occupation_position" class="form-label">Grade/Position</label>
+                                        <input type="text" class="form-control" id="occupation_position"
+                                            name="occupation_position" placeholder="ex. Grade 11, Manager">
+                                        </input>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label for="status" class="form-label">Marital Status</label>
+                                        <select class="form-control" id="status" name="status" required>
+                                            <option value="" disabled>Select status</option>
+                                            <option value="single" selected>Single</option>
+                                            <option value="married">Married</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-4 married_inputs" hidden>
+                                        <label for="anniversarydate" class="form-label">Anniversary Date</label>
+                                        <input type="date" class="form-control" id="anniversarydate"
+                                            name="anniversarydate" required>
+                                    </div>
+
+                                    <div class="col-md-8 married_inputs" hidden>
+                                        <label for="partner_name" class="form-label">Spouse/Husband Name</label>
+                                        <input type="text" class="form-control" id="partner_name" name="partner_name">
+                                        </input>
+                                    </div>
+
+                                    <div class="col-md-4 married_inputs" hidden>
+                                        <label for="partner_occupation" class="form-label">Occupation</label>
+                                        <input type="text" class="form-control" id="partner_occupation"
+                                            name="partner_occupation">
+                                        </input>
+                                    </div>
                                 </div>
                             </div>
 
@@ -130,19 +188,73 @@ $ministry_r = $ministry->show();
                                         <input type="number" class="form-control" id="postalCode" name="postalCode"
                                             value="2200" required>
                                     </div>
-                                    <div class="col-12">
+                                    <div class="col-12" hidden>
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" id="primary" name="primary"
                                                 value="1">
                                             <label class="form-check-label" for="primary">Primary Address</label>
                                         </div>
                                     </div>
+
+                                    <div class="col-md-6 mt-3">
+                                        <label for="father_name" class="form-label">Father Name</label>
+                                        <input type="text" class="form-control" id="father_name" name="father_name"
+                                            value="" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="mother_name" class="form-label">Mother Name</label>
+                                        <input type="text" class="form-control" id="mother_name" name="mother_name"
+                                            value="" required>
+                                    </div>
+                                    <div class="col-md-6 mt-3">
+                                        <label for="father_occupation" class="form-label">Father Occupation</label>
+                                        <input type="text" class="form-control" id="father_occupation"
+                                            name="father_occupation" value="" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="mother_occupation" class="form-label">Mother Occupation</label>
+                                        <input type="text" class="form-control" id="mother_occupation"
+                                            name="mother_occupation" value="" required>
+                                    </div>
                                 </div>
                             </div>
 
                             <!-- Step 3 -->
                             <div id="step-3" class="tab-pane" role="tabpanel">
-                                <div class="mb-3">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for="date_saved" class="form-label">Date Saved</label>
+                                        <input type="date" class="form-control" id="date_saved" name="date_saved"
+                                            required>
+                                    </div>
+
+                                    <div class="col-md-8">
+                                        <label for="witness_by" class="form-label">Witnessed By</label>
+                                        <input type="text" class="form-control" id="witness_by" name="witness_by"
+                                            value="" required>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label for="date_baptized" class="form-label">Date Baptized</label>
+                                        <input type="date" class="form-control" id="date_baptized" name="date_baptized"
+                                            required>
+
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label for="baptized_by" class="form-label">Baptized By</label>
+                                        <input type="text" class="form-control" id="baptized_by" name="baptized_by"
+                                            value="" required>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label for="place_of_baptism" class="form-label">Place of Baptism</label>
+                                        <input type="text" class="form-control" id="place_of_baptism"
+                                            name="place_of_baptism" value="" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-mb-12 mb-3 mt-3">
                                     <label class="form-label">Select Ministry</label>
                                     <div class="row">
                                         <?php if (!empty($ministry_r)) : ?>
@@ -194,6 +306,82 @@ $ministry_r = $ministry->show();
     </div>
 </div>
 
+<div class="modal fade" id="informationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content shadow-lg rounded-3">
+
+            <!-- Header -->
+            <div class="modal-header bg-light">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center"
+                        style="width:50px; height:50px;">
+                        <i class="bi bi-person fs-3"></i>
+                    </div>
+                    <div class="ms-3">
+                        <h5 class="mb-0" id="infoName"></h5>
+                        <small class="text-muted" id="infoAddress"></small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body">
+                <!-- Personal Info Row -->
+                <div class="row text-muted mb-3">
+                    <div class="col-md-3"><strong>Birthday:</strong><br><span id="infoBday"></span></div>
+                    <div class="col-md-3"><strong>Contact #:</strong><br><span id="infoContact"></span><i
+                            class="bi bi-check-circle-fill text-success"></i></div>
+                    <div class="col-md-3"><strong>Baptized Date:</strong><br><span id="infoBaptized"></span>
+                    </div>
+                    <div class="col-md-3 text-capitalize"><strong>Marital Status:</strong><br><span
+                            id="infoStatus"></span></div>
+                </div>
+
+                <!-- <div class="alert alert-danger py-2" role="alert">
+                    This Donor is <strong>Temporarily Deferred</strong> for 15 Days
+                </div> -->
+
+                <!-- Tabs -->
+                <ul class="nav nav-tabs mb-3 mt-4" id="infoTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="attendance-tab" data-bs-toggle="tab"
+                            data-bs-target="#attendance" type="button" role="tab">Attendance</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="card-tab" data-bs-toggle="tab" data-bs-target="#card" type="button"
+                            role="tab">Card/Credit</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="requests-tab" data-bs-toggle="tab" data-bs-target="#requests"
+                            type="button" role="tab">Requests</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="logs-tab" data-bs-toggle="tab" data-bs-target="#logs" type="button"
+                            role="tab">Logs</button>
+                    </li>
+                </ul>
+
+                <!-- Tab Contents -->
+                <div class="tab-content" id="infoTabsContent">
+                    <div class="tab-pane fade show active" id="attendance" role="tabpanel">
+                        <div class="table-responsive">
+                            <table id="attendanceTable" class="table table-sm table-bordered align-middle">
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="card" role="tabpanel">Card/Credit content...</div>
+                    <div class="tab-pane fade" id="requests" role="tabpanel">Requests content...</div>
+                    <div class="tab-pane fade" id="logs" role="tabpanel">Logs content...</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
 <script>
 var memberTable = {
     init: function() {
@@ -222,7 +410,7 @@ var memberTable = {
                             data: 'name'
                         },
                         {
-                            data: 'bday'
+                            data: 'birthdate'
                         },
                         {
                             data: 'address'
@@ -261,11 +449,9 @@ var memberTable = {
         formElement.addEventListener('submit', async function(event) {
             event.preventDefault();
 
-            // Determine current step
             const stepIndex = parseInt($('#smartwizard .nav .nav-link.active').attr('href').match(
                 /\d+/)[0], 10);
 
-            // Only validate on steps 1–3
             if (stepIndex >= 1 && stepIndex <= 3) {
                 const isValid = memberTable.validate();
                 if (!isValid) return;
@@ -280,7 +466,6 @@ var memberTable = {
                     method: 'POST',
                     body: formData
                 });
-
                 const result = await response.json();
 
                 if (result.status === 'success') {
@@ -333,7 +518,84 @@ var memberTable = {
         });
     },
 
+    personalInfoTables: function(accounts_id = 0, type = 'attendance') {
+        $.ajax({
+            type: "POST",
+            url: "controller/main.php",
+            data: {
+                action: "show",
+                type: type,
+                accounts_id: accounts_id
+            },
+            dataType: 'json',
+            success: function(response) {
+                const data = response.data;
+
+                if ($.fn.dataTable.isDataTable('#attendanceTable')) {
+                    $('#attendanceTable').DataTable().clear().destroy();
+                }
+
+                // Initialize DataTable
+                $('#attendanceTable').DataTable({
+                    data: data,
+                    columns: [{
+                            data: 'date',
+                            title: 'Date'
+                        },
+                        {
+                            data: 'type',
+                            title: 'Status',
+                            render: function(data) {
+                                let badgeClass = 'secondary';
+                                if (data === 'present') badgeClass = 'success';
+                                else if (data === 'absent') badgeClass = 'danger';
+                                else if (data === 'excused') badgeClass = 'warning';
+                                return `<span class="badge bg-${badgeClass} text-capitalize">${data}</span>`;
+                            }
+                        }
+                    ],
+                    paging: false, // ❌ hide pagination
+                    searching: false, // ❌ hide search box
+                    info: false, // ❌ hide "Showing 1 of N" text
+                    ordering: true,
+                    order: [
+                        [3, 'desc']
+                    ] // sort by date column (latest first)
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error("Error loading data:", error);
+            }
+        });
+    },
+
     bindEvents: function() {
+        $('#memberTable').on('click', 'tr', function() {
+            const table = $('#memberTable').DataTable();
+            const data = table.row(this).data();
+
+            if (data) {
+                $('#infoName').text(data.name);
+                $('#infoContact').text(data.contact);
+                $('#infoBday').text(data.birthdate);
+                $('#infoAddress').text(data.address);
+                $('#infoBaptized').text(data.baptism_date);
+                // $('#infoEmail').text(data.email);
+                // $('#infoGender').text(data.gender);
+                $('#infoStatus').text(data.marital_status);
+
+                // Optionally store ID for later update/delete
+                $('#informationModal').attr('data-id', data.id);
+
+                // Show the modal
+                $('#informationModal').modal('show');
+
+                // populate tables
+                // attendance data
+                memberTable.personalInfoTables(data.id);
+            }
+        });
+
         $('#memberTable').on('click', '.edit-btn', function() {
             const id = $(this).data('id');
             memberTable.editMember(id);
@@ -343,6 +605,17 @@ var memberTable = {
             const id = $(this).data('id');
             memberTable.deleteMember(id);
         });
+
+        // marital status toggle
+        $('#status').on('change', function() {
+            if ($(this).val() === 'married') {
+                $('.married_inputs').prop('hidden', false);
+                $('#anniversarydate, #partner_name, #partner_occupation').attr('required', true);
+            } else {
+                $('.married_inputs').prop('hidden', true);
+                $('#anniversarydate, #partner_name, #partner_occupation').removeAttr('required');
+            }
+        }).trigger('change');
 
         const form = document.getElementById('addMemberForm');
         if (form) {
@@ -368,7 +641,6 @@ var memberTable = {
                 const $prevBtn = $('#prevBtn');
                 const $submitBtn = $('#submitBtn');
 
-                // Hide all buttons by default
                 $prevBtn.hide();
                 $nextBtn.hide();
                 $submitBtn.hide();
@@ -385,12 +657,9 @@ var memberTable = {
                 }
             });
 
-            // Manual wizard navigation
             $('#nextBtn').on('click', function() {
                 const step = memberTable.validate();
-
                 if (!step) return;
-
                 $('#smartwizard').smartWizard("next");
             });
 
@@ -399,7 +668,7 @@ var memberTable = {
             });
 
             $('#addMemberModal').on('hidden.bs.modal', function() {
-                $('#smartwizard').smartWizard("reset"); // Go back to step 0
+                $('#smartwizard').smartWizard("reset");
             });
         });
     },
@@ -411,50 +680,90 @@ var memberTable = {
             if (label) ministries.push(label.innerText.trim());
         });
 
+        // Step 1 - Personal Info
         const firstName = $('#firstName').val() || '';
         const middleName = $('#middleName').val() || '';
         const lastName = $('#lastName').val() || '';
         const gender = $('#gender').val() || '';
         const birthdate = $('#birthdate').val() || '';
         const contact = $('#contact').val() || '';
+        const birthplace = $('#birthplace').val() || '';
+        const occupation = $('#occupation').val() || '';
+        const occupation_place = $('#occupation_place').val() || '';
+        const occupation_position = $('#occupation_position').val() || '';
+        const status = $('#status').val() || '';
+
+        // Married only
+        let spouseHtml = '';
+        if (status === 'married') {
+            spouseHtml = `
+            <li class="list-group-item"><strong>Anniversary:</strong> ${$('#anniversarydate').val()}</li>
+            <li class="list-group-item"><strong>Spouse:</strong> ${$('#partner_name').val()} (${ $('#partner_occupation').val() })</li>
+        `;
+        }
+
+        // Step 2 - Address + Parents
         const addressLine = $('#addressLine').val() || '';
         const city = $('#city').val() || '';
         const state = $('#state').val() || '';
         const postalCode = $('#postalCode').val() || '';
         const isPrimary = $('#primary').is(':checked') ? 'Yes' : 'No';
 
-        const summaryHtml = `
-        <ul class="list-group">
-            <li class="list-group-item"><strong>Name:</strong> ${firstName} ${middleName} ${lastName}</li>
-            <li class="list-group-item"><strong>Gender:</strong> ${gender}</li>
-            <li class="list-group-item"><strong>Birthdate:</strong> ${birthdate}</li>
-            <li class="list-group-item"><strong>Contact:</strong> ${contact}</li>
-            <li class="list-group-item"><strong>Address:</strong> ${addressLine}, ${city}, ${state}, ${postalCode}</li>
-            <li class="list-group-item"><strong>Primary Address:</strong> ${isPrimary}</li>
-            <li class="list-group-item">
-                <strong>Ministries:</strong>
-                ${ministries.length > 0
-                    ? `<ul class="mb-0 mt-2">${ministries.map(m => `<li>${m}</li>`).join('')}</ul>`
-                    : 'None'}
-            </li>
-        </ul>
-    `;
+        const father_name = $('#father_name').val() || '';
+        const mother_name = $('#mother_name').val() || '';
+        const father_occupation = $('#father_occupation').val() || '';
+        const mother_occupation = $('#mother_occupation').val() || '';
 
+        // Step 3 - Salvation & Baptism
+        const date_saved = $('#date_saved').val() || '';
+        const witness_by = $('#witness_by').val() || '';
+        const date_baptized = $('#date_baptized').val() || '';
+        const baptized_by = $('#baptized_by').val() || '';
+        const place_of_baptism = $('#place_of_baptism').val() || '';
+
+        const summaryHtml = `
+    <ul class="list-group">
+        <li class="list-group-item"><strong>Name:</strong> ${firstName} ${middleName} ${lastName}</li>
+        <li class="list-group-item"><strong>Gender:</strong> ${gender}</li>
+        <li class="list-group-item"><strong>Birthdate:</strong> ${birthdate}</li>
+        <li class="list-group-item"><strong>Birth Place:</strong> ${birthplace}</li>
+        <li class="list-group-item"><strong>Contact:</strong> ${contact}</li>
+        <li class="list-group-item"><strong>Occupation:</strong> ${occupation} - ${occupation_place} (${occupation_position})</li>
+        <li class="list-group-item"><strong>Marital Status:</strong> ${status}</li>
+        ${spouseHtml}
+
+        <li class="list-group-item"><strong>Address:</strong> ${addressLine}, ${city}, ${state}, ${postalCode}</li>
+        <li class="list-group-item"><strong>Primary Address:</strong> ${isPrimary}</li>
+
+        <li class="list-group-item"><strong>Father:</strong> ${father_name} (${father_occupation})</li>
+        <li class="list-group-item"><strong>Mother:</strong> ${mother_name} (${mother_occupation})</li>
+
+        <li class="list-group-item"><strong>Date Saved:</strong> ${date_saved}</li>
+        <li class="list-group-item"><strong>Witnessed By:</strong> ${witness_by}</li>
+        <li class="list-group-item"><strong>Date Baptized:</strong> ${date_baptized}</li>
+        <li class="list-group-item"><strong>Baptized By:</strong> ${baptized_by}</li>
+        <li class="list-group-item"><strong>Place of Baptism:</strong> ${place_of_baptism}</li>
+
+        <li class="list-group-item">
+            <strong>Ministries:</strong>
+            ${ministries.length > 0
+                ? `<ul class="mb-0 mt-2">${ministries.map(m => `<li>${m}</li>`).join('')}</ul>`
+                : 'None'}
+        </li>
+    </ul>
+    `;
         $('#reviewSummary').html(summaryHtml);
     },
 
     validate: function() {
         let isValid = false;
         let stepIndex = parseInt($('#smartwizard .nav .nav-link.active').attr('href').match(/\d+/)[0], 10);
+
         switch (stepIndex) {
-            case 1:
+            case 1: // Personal Info
                 isValid = validate.requiredfields([{
                         element: document.querySelector('input[name="firstName"]'),
                         message: 'First name missing.'
-                    },
-                    {
-                        element: document.querySelector('input[name="middleName"]'),
-                        message: 'Middle name missing.'
                     },
                     {
                         element: document.querySelector('input[name="lastName"]'),
@@ -469,18 +778,52 @@ var memberTable = {
                         message: 'Birth date missing.'
                     },
                     {
+                        element: document.querySelector('input[name="birthplace"]'),
+                        message: 'Birth place missing.'
+                    },
+                    {
                         element: document.querySelector('input[name="contact"]'),
                         message: 'Contact missing.'
                     },
+                    {
+                        element: document.querySelector('select[name="occupation"]'),
+                        message: 'Occupation missing.'
+                    },
+                    {
+                        element: document.querySelector('input[name="occupation_place"]'),
+                        message: 'School/Company missing.'
+                    },
+                    {
+                        element: document.querySelector('input[name="occupation_position"]'),
+                        message: 'Grade/Position missing.'
+                    },
+                    {
+                        element: document.querySelector('select[name="status"]'),
+                        message: 'Marital status missing.'
+                    }
                 ]);
 
-                console.log(isValid);
-
+                if ($('#status').val() === 'married') {
+                    isValid = validate.requiredfields([{
+                            element: document.querySelector('input[name="anniversarydate"]'),
+                            message: 'Anniversary date missing.'
+                        },
+                        {
+                            element: document.querySelector('input[name="partner_name"]'),
+                            message: 'Spouse name missing.'
+                        },
+                        {
+                            element: document.querySelector('input[name="partner_occupation"]'),
+                            message: 'Spouse occupation missing.'
+                        }
+                    ]) && isValid;
+                }
                 break;
-            case 2:
+
+            case 2: // Address + Parents
                 isValid = validate.requiredfields([{
                         element: document.querySelector('input[name="addressLine"]'),
-                        message: 'House #, Street name missing.'
+                        message: 'Address line missing.'
                     },
                     {
                         element: document.querySelector('input[name="city"]'),
@@ -488,22 +831,59 @@ var memberTable = {
                     },
                     {
                         element: document.querySelector('input[name="state"]'),
-                        message: 'State missing.'
+                        message: 'Province missing.'
                     },
                     {
                         element: document.querySelector('input[name="postalCode"]'),
                         message: 'Postal code missing.'
                     },
+                    {
+                        element: document.querySelector('input[name="father_name"]'),
+                        message: 'Father name missing.'
+                    },
+                    {
+                        element: document.querySelector('input[name="mother_name"]'),
+                        message: 'Mother name missing.'
+                    },
+                    {
+                        element: document.querySelector('input[name="father_occupation"]'),
+                        message: 'Father occupation missing.'
+                    },
+                    {
+                        element: document.querySelector('input[name="mother_occupation"]'),
+                        message: 'Mother occupation missing.'
+                    }
                 ]);
                 break;
-            case 3:
+
+            case 3: // Baptism + Ministries
+                isValid = validate.requiredfields([{
+                        element: document.querySelector('input[name="date_saved"]'),
+                        message: 'Date saved missing.'
+                    },
+                    {
+                        element: document.querySelector('input[name="witness_by"]'),
+                        message: 'Witnessed by missing.'
+                    },
+                    {
+                        element: document.querySelector('input[name="date_baptized"]'),
+                        message: 'Date baptized missing.'
+                    },
+                    {
+                        element: document.querySelector('input[name="baptized_by"]'),
+                        message: 'Baptized by missing.'
+                    },
+                    {
+                        element: document.querySelector('input[name="place_of_baptism"]'),
+                        message: 'Place of baptism missing.'
+                    }
+                ]);
+
                 const ministryChecked = document.querySelectorAll('input[name="ministry[]"]:checked').length >
                     0;
                 if (!ministryChecked) {
                     toastr.error("Please select at least one ministry.");
                     isValid = false;
-                } else {
-                    isValid = true;
                 }
                 break;
         }

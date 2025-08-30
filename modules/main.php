@@ -15,8 +15,8 @@ $logs = new Logs($conn);
 
 $event_ctr = count($event->show());
 $ministry_ctr = count($ministry->show());
-$member_ctr = count($member_r = $member->show(_origdate: true));
-$logs_r = $logs->show(_limit: 20);
+$member_ctr = count($member_r = $member->show(['origdate' => 1]));
+$logs_r = $logs->show(_data_r: ['limit' => 20]);
 
 $newly_baptist_ctr = 0;
 foreach ($member_r as $member) {
@@ -34,14 +34,14 @@ foreach ($member_r as $member) {
 ?>
 
 <style>
-    .timeline .dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        position: absolute;
-        left: -1.25rem;
-        top: 0.4rem;
-    }
+.timeline .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: absolute;
+    left: -1.25rem;
+    top: 0.4rem;
+}
 </style>
 
 <div class="container-fluid px-3">
@@ -119,11 +119,12 @@ foreach ($member_r as $member) {
                 <div class="card-body" style="max-height: 300px; overflow-y: auto;">
                     <ul class="timeline list-unstyled position-relative ps-4">
                         <?php foreach ($logs_r as $row): ?>
-                            <li class="mb-4 position-relative">
-                                <span class="dot bg-<?= ['primary', 'success', 'danger', 'info', 'warning', 'secondary'][$row['id'] % 6] ?>"></span>
-                                <small class="text-muted"><?= $logs->time_elapsed_string($row['date']) ?></small>
-                                <p class="mb-0"><?= htmlspecialchars($row['text']) ?></p>
-                            </li>
+                        <li class="mb-4 position-relative">
+                            <span
+                                class="dot bg-<?= ['primary', 'success', 'danger', 'info', 'warning', 'secondary'][$row['id'] % 6] ?>"></span>
+                            <small class="text-muted"><?= $logs->time_elapsed_string($row['date']) ?></small>
+                            <p class="mb-0"><?= htmlspecialchars($row['text']) ?></p>
+                        </li>
                         <?php endforeach; ?>
                     </ul>
                 </div>
@@ -153,84 +154,84 @@ foreach ($member_r as $member) {
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    var labels = ['Red', 'Blue', 'Yellow'];
-    var data = [12, 19, 3];
+var labels = ['Red', 'Blue', 'Yellow'];
+var data = [12, 19, 3];
 
-    const chartjs = {
-        init: () => {
-            chartjs.bar();
-            chartjs.doughnut();
-            chartjs.line();
-        },
-        bar: () => {
-            const ctx = document.getElementById('barChart');
-            if (!ctx) return;
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Sample Data',
-                        data: data,
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.7)',
-                            'rgba(54, 162, 235, 0.7)',
-                            'rgba(255, 206, 86, 0.7)',
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                }
-            });
-        },
-        doughnut: () => {
-            const ctx = document.getElementById('doughnutChart');
-            if (!ctx) return;
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Sample Data',
-                        data: data,
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.7)',
-                            'rgba(54, 162, 235, 0.7)',
-                            'rgba(255, 206, 86, 0.7)',
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                }
-            });
-        },
-        line: () => {
-            const ctx = document.getElementById('lineChart');
-            if (!ctx) return;
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar'],
-                    datasets: [{
-                        label: 'Sample Data',
-                        data: data,
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                }
-            });
-        }
-    };
+const chartjs = {
+    init: () => {
+        chartjs.bar();
+        chartjs.doughnut();
+        chartjs.line();
+    },
+    bar: () => {
+        const ctx = document.getElementById('barChart');
+        if (!ctx) return;
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Sample Data',
+                    data: data,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+            }
+        });
+    },
+    doughnut: () => {
+        const ctx = document.getElementById('doughnutChart');
+        if (!ctx) return;
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Sample Data',
+                    data: data,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+            }
+        });
+    },
+    line: () => {
+        const ctx = document.getElementById('lineChart');
+        if (!ctx) return;
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar'],
+                datasets: [{
+                    label: 'Sample Data',
+                    data: data,
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+            }
+        });
+    }
+};
 
-    document.addEventListener('DOMContentLoaded', chartjs.init);
+document.addEventListener('DOMContentLoaded', chartjs.init);
 </script>

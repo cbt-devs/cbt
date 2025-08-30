@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['accounts_id'])) {
+if (!($_SESSION['accounts_id'] ?? 0)) {
     header('Location: login.php');
     exit;
 }
