@@ -348,12 +348,16 @@ $ministry_r = $ministry->show();
                             data-bs-target="#attendance" type="button" role="tab">Attendance</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="card-tab" data-bs-toggle="tab" data-bs-target="#card" type="button"
-                            role="tab">Card/Credit</button>
+                        <button class="nav-link" id="card-tab" data-bs-toggle="tab" data-bs-target="#events"
+                            type="button" role="tab">Events</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="requests-tab" data-bs-toggle="tab" data-bs-target="#requests"
-                            type="button" role="tab">Requests</button>
+                        <button class="nav-link" id="requests-tab" data-bs-toggle="tab" data-bs-target="#ministries"
+                            type="button" role="tab">Ministries</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="logs-tab" data-bs-toggle="tab" data-bs-target="#commitments"
+                            type="button" role="tab">Commitments</button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="logs-tab" data-bs-toggle="tab" data-bs-target="#logs" type="button"
@@ -370,9 +374,24 @@ $ministry_r = $ministry->show();
                         </div>
                     </div>
 
-                    <div class="tab-pane fade" id="card" role="tabpanel">Card/Credit content...</div>
-                    <div class="tab-pane fade" id="requests" role="tabpanel">Requests content...</div>
-                    <div class="tab-pane fade" id="logs" role="tabpanel">Logs content...</div>
+                    <div class="tab-pane fade" id="events" role="tabpanel">
+                        <div class="table-responsive">
+                            <table id="eventsTable" class="table table-sm table-bordered align-middle">
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="ministries" role="tabpanel">
+                        <div class="table-responsive">
+                            <table id="ministriesTable" class="table table-sm table-bordered align-middle">
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="commitments" role="tabpanel">
+                        <div class="table-responsive">
+                            <table id="commitmentsTable" class="table table-sm table-bordered align-middle">
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -518,54 +537,62 @@ var memberTable = {
         });
     },
 
-    personalInfoTables: function(accounts_id = 0, type = 'attendance') {
-        $.ajax({
-            type: "POST",
-            url: "controller/main.php",
-            data: {
-                action: "show",
-                type: type,
-                accounts_id: accounts_id
-            },
-            dataType: 'json',
-            success: function(response) {
-                const data = response.data;
+    personalInfoTables: function(accounts_id = 0) {
+        const type_r = ['attendance', 'events', 'ministries', 'commitments'];
 
-                if ($.fn.dataTable.isDataTable('#attendanceTable')) {
-                    $('#attendanceTable').DataTable().clear().destroy();
-                }
+        type_r.forEach(type => {
+            $.ajax({
+                type: "POST",
+                url: "controller/main.php",
+                data: {
+                    action: "show",
+                    type: type,
+                    accounts_id: accounts_id
+                },
+                dataType: 'json',
+                success: function(response) {
+                    const data = response.data;
+                    const table = `#${type}Table`;
 
-                // Initialize DataTable
-                $('#attendanceTable').DataTable({
-                    data: data,
-                    columns: [{
-                            data: 'date',
-                            title: 'Date'
-                        },
-                        {
-                            data: 'type',
-                            title: 'Status',
-                            render: function(data) {
-                                let badgeClass = 'secondary';
-                                if (data === 'present') badgeClass = 'success';
-                                else if (data === 'absent') badgeClass = 'danger';
-                                else if (data === 'excused') badgeClass = 'warning';
-                                return `<span class="badge bg-${badgeClass} text-capitalize">${data}</span>`;
+                    if ($.fn.dataTable.isDataTable(table)) {
+                        $(table).DataTable().clear().destroy();
+                    }
+
+                    // Initialize DataTable
+                    $(table).DataTable({
+                        data: data,
+                        columns: [{
+                                data: 'date',
+                                title: 'Date'
+                            },
+                            {
+                                data: 'type',
+                                title: 'Status',
+                                render: function(data) {
+                                    let badgeClass = 'secondary';
+                                    if (data === 'present') badgeClass =
+                                        'success';
+                                    else if (data === 'absent') badgeClass =
+                                        'danger';
+                                    else if (data === 'excused')
+                                        badgeClass = 'warning';
+                                    return `<span class="badge bg-${badgeClass} text-capitalize">${data}</span>`;
+                                }
                             }
-                        }
-                    ],
-                    paging: false, // ❌ hide pagination
-                    searching: false, // ❌ hide search box
-                    info: false, // ❌ hide "Showing 1 of N" text
-                    ordering: true,
-                    order: [
-                        [3, 'desc']
-                    ] // sort by date column (latest first)
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error("Error loading data:", error);
-            }
+                        ],
+                        paging: false, // ❌ hide pagination
+                        searching: false, // ❌ hide search box
+                        info: false, // ❌ hide "Showing 1 of N" text
+                        ordering: true,
+                        order: [
+                            [3, 'desc']
+                        ] // sort by date column (latest first)
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error loading data:", error);
+                }
+            });
         });
     },
 
