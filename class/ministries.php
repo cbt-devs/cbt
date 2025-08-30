@@ -1,28 +1,83 @@
 <?php
-class Ministries {
+
+class Ministries
+{
     private $conn;
 
-    public function __construct($db) {
+    public function __construct($db)
+    {
         $this->conn = $db;
     }
 
-    public function show() {
-    try {
-        $stmt = $this->conn->prepare("SELECT * FROM ministries ORDER BY name ASC");
-        $stmt->execute();
-        $ministries = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function show($_data_r = [])
+    {
+        try {
+            $sql = "";
+            $params = [];
 
-        return $ministries;
-    } catch (PDOException $e) {
-        return [
-            'status' => 'error',
-            'message' => 'Failed to fetch ministries: ' . $e->getMessage()
-        ];
+            // Case 1: Get ministries by account_id
+            if (!empty($_data_r['accounts_id'])) {
+                $ministries_r = $this->account_ministries($_data_r['accounts_id']);
+
+                if (!empty($ministries_r)) {
+                    $placeholders = implode(',', array_fill(0, count($ministries_r), '?'));
+                    $sql = " WHERE id IN ($placeholders)";
+                    $params = $ministries_r;
+                }
+            }
+
+            // Case 2: Get ministries by explicit ministries_r
+            if (!empty($_data_r['ministries_r'])) {
+                $ministries_r = $_data_r['ministries_r'];
+
+                if (!empty($ministries_r)) {
+                    $placeholders = implode(',', array_fill(0, count($ministries_r), '?'));
+                    $sql = " WHERE id IN ($placeholders)";
+                    $params = $ministries_r;
+                }
+            }
+
+            $stmt = $this->conn->prepare("SELECT * FROM ministries $sql ORDER BY name ASC");
+            $stmt->execute($params);
+            $ministries = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $ministries;
+        } catch (PDOException $e) {
+            return [
+                'status' => 'error',
+                'message' => 'Failed to fetch ministries: ' . $e->getMessage()
+            ];
+        }
     }
-}
+
+    public function account_ministries($_accounts_id = 0)
+    {
+        try {
+            $sql = "";
+            $params = [];
+
+            if ($_accounts_id) {
+                $sql = " WHERE accounts_id = :accounts_id";
+                $params[':accounts_id'] = $_accounts_id;
+            }
+
+            $stmt = $this->conn->prepare("SELECT ministry_id FROM accounts_ministry $sql");
+            $stmt->execute($params);
+            $ministries = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+            return $ministries;
+        } catch (PDOException $e) {
+            return [
+                'status' => 'error',
+                'message' => 'Failed to fetch account ministries: ' . $e->getMessage()
+            ];
+        }
+
+    }
 
 
-    public function add($data) {
+    public function add($data)
+    {
         try {
             $stmt = $this->conn->prepare("
                 INSERT INTO ministries (name, age_start, age_end)
@@ -43,36 +98,37 @@ class Ministries {
         }
     }
 
-    public function update($data_r = []) {
-    try {
-        if (empty($data_r)) {
-            return ['status' => 'error', 'message' => 'No data provided for update'];
-        }
+    public function update($data_r = [])
+    {
+        try {
+            if (empty($data_r)) {
+                return ['status' => 'error', 'message' => 'No data provided for update'];
+            }
 
-        $id = $data_r['id'] ?? null;
-        $name = $data_r['ministryName'] ?? null;
-        $ageStart = $data_r['startAge'] ?? null;
-        $ageEnd = $data_r['endAge'] ?? null;
-        // Handle active status, default to 0 if not set or falsy
-        $active = isset($data_r['active']) && ($data_r['active'] == 1 || $data_r['active'] === '1') ? 1 : 0;
+            $id = $data_r['id'] ?? null;
+            $name = $data_r['ministryName'] ?? null;
+            $ageStart = $data_r['startAge'] ?? null;
+            $ageEnd = $data_r['endAge'] ?? null;
+            // Handle active status, default to 0 if not set or falsy
+            $active = isset($data_r['active']) && ($data_r['active'] == 1 || $data_r['active'] === '1') ? 1 : 0;
 
-        if (!$id || !$name) {
-            return ['status' => 'error', 'message' => 'ID and Ministry Name are required'];
-        }
+            if (!$id || !$name) {
+                return ['status' => 'error', 'message' => 'ID and Ministry Name are required'];
+            }
 
-        $sql = "UPDATE ministries SET name = :name, age_start = :age_start, age_end = :age_end, active = :active WHERE id = :id";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([
-            ':name' => $name,
-            ':age_start' => $ageStart,
-            ':age_end' => $ageEnd,
-            ':active' => $active,
-            ':id' => $id
-        ]);
+            $sql = "UPDATE ministries SET name = :name, age_start = :age_start, age_end = :age_end, active = :active WHERE id = :id";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([
+                ':name' => $name,
+                ':age_start' => $ageStart,
+                ':age_end' => $ageEnd,
+                ':active' => $active,
+                ':id' => $id
+            ]);
 
-        if ($stmt->rowCount() === 0) {
-            return ['status' => 'error', 'message' => 'No ministry updated. Please check the ID.'];
-        }
+            if ($stmt->rowCount() === 0) {
+                return ['status' => 'error', 'message' => 'No ministry updated. Please check the ID.'];
+            }
 
             return ['status' => 'success'];
         } catch (PDOException $e) {
@@ -82,7 +138,8 @@ class Ministries {
 
 
 
-    public function delete($id = 0) {
+    public function delete($id = 0)
+    {
         if ($id <= 0) {
             return ['status' => 'error', 'message' => 'Invalid ID'];
         }
