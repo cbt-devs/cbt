@@ -538,7 +538,9 @@ var memberTable = {
     },
 
     personalInfoTables: function(accounts_id = 0) {
-        const type_r = ['attendance', 'events', 'ministries', 'commitments'];
+        const type_r = ['attendance', 'events', //'ministries', 'commitments'
+
+        ];
 
         type_r.forEach(type => {
             $.ajax({
@@ -558,10 +560,11 @@ var memberTable = {
                         $(table).DataTable().clear().destroy();
                     }
 
-                    // Initialize DataTable
-                    $(table).DataTable({
-                        data: data,
-                        columns: [{
+                    // Define columns dynamically based on type
+                    let columns = [];
+
+                    if (type === "attendance") {
+                        columns = [{
                                 data: 'date',
                                 title: 'Date'
                             },
@@ -570,23 +573,64 @@ var memberTable = {
                                 title: 'Status',
                                 render: function(data) {
                                     let badgeClass = 'secondary';
-                                    if (data === 'present') badgeClass =
-                                        'success';
+                                    if (data === 'present') badgeClass = 'success';
                                     else if (data === 'absent') badgeClass =
                                         'danger';
-                                    else if (data === 'excused')
-                                        badgeClass = 'warning';
+                                    else if (data === 'excused') badgeClass =
+                                        'warning';
                                     return `<span class="badge bg-${badgeClass} text-capitalize">${data}</span>`;
                                 }
                             }
-                        ],
-                        paging: false, // ❌ hide pagination
-                        searching: false, // ❌ hide search box
-                        info: false, // ❌ hide "Showing 1 of N" text
+                        ];
+                    } else if (type === "events") {
+                        columns = [{
+                                data: 'event_name',
+                                title: 'Event'
+                            },
+                            {
+                                data: 'event_location',
+                                title: 'Location'
+                            },
+                            {
+                                data: 'start_date',
+                                title: 'Start Date'
+                            },
+                            {
+                                data: 'end_date',
+                                title: 'End Date'
+                            },
+                            {
+                                data: 'ministries',
+                                title: 'Ministries'
+                            }
+                        ];
+                    } else if (type === "ministries") {
+                        columns = [{
+                                data: 'name',
+                                title: 'Ministry Name'
+                            },
+                            {
+                                data: 'age_start',
+                                title: 'Age Start'
+                            },
+                            {
+                                data: 'age_end',
+                                title: 'Age End'
+                            }
+                        ];
+                    }
+
+                    // Initialize DataTable
+                    $(table).DataTable({
+                        data: data,
+                        columns: columns,
+                        paging: false, // hide pagination
+                        searching: false, // hide search box
+                        info: false, // hide "Showing 1 of N"
                         ordering: true,
                         order: [
-                            [3, 'desc']
-                        ] // sort by date column (latest first)
+                            [0, 'asc']
+                        ] // default sort (adjust per type if needed)
                     });
                 },
                 error: function(xhr, status, error) {
