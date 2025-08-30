@@ -1,9 +1,10 @@
 <?php
+
 class Attendance
 {
     private $conn;
 
-    const TYPE = [
+    public const TYPE = [
         1 => 'present',
         2 => 'absent',
         3 => 'excused'
@@ -14,10 +15,13 @@ class Attendance
         $this->conn = $db;
     }
 
-    public function show($_origdate = false)
+    public function show($_data_r = [])
     {
         try {
             $this->conn->beginTransaction();
+
+
+            $orig_date = $_data_r['origdate'] ?? 0;
 
             $startDate = $_POST['start_date'] ?? null;
             $endDate = $_POST['end_date'] ?? null;
@@ -45,7 +49,16 @@ class Attendance
                 $params[':end_date'] = $endDate . ' 23:59:59';
             }
 
+            if ($accounts_id = $_data_r['accounts_id'] ?? 0) {
+                $query .= " AND att.accounts_id = :accounts_id";
+                $params[':accounts_id'] = $accounts_id;
+            }
+
             $query .= " ORDER BY att.date DESC";
+
+            if ($accounts_id) {
+                $query .= " LIMIT 30";
+            }
 
             $stmt = $this->conn->prepare($query);
             $stmt->execute($params);
@@ -58,14 +71,15 @@ class Attendance
                 $id = $row['id'];
                 $name = trim($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']);
                 $type = self::TYPE[(int)$row['type']] ?? 'unknown';
-                $date = $_origdate ? $row['date'] : date('M d, Y h:i A', strtotime($row['date']));
+                $date = $orig_date ? $row['date'] : date('M d, Y h:i A', strtotime($row['date']));
 
                 $data_r[] = [
                     'id' => $id,
                     'name' => $name,
                     'date' => $date,
                     'raw_date' => $row['date'],
-                    'type' => $type
+                    'type' => $type,
+                    'accounts_id' => $accounts_id
                 ];
             }
 

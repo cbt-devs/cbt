@@ -1,14 +1,18 @@
 <?php
-class Commitments {
+
+class Commitments
+{
     private $conn;
 
-    public function __construct($db) {
+    public function __construct($db)
+    {
         $this->conn = $db;
     }
 
-    public function show( $table_name = '' ) {
+    public function show($_data_r = [])
+    {
         try {
-            if( $table_name ) {
+            if ($_data_r[ 'table_name' ] ?? 0) {
                 return Commitments::type_show();
             }
 
@@ -19,8 +23,9 @@ class Commitments {
             $stmt->execute();
             $commitments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            if( empty( $commitments ))
+            if (empty($commitments)) {
                 return false;
+            }
 
             // Extract unique account and type IDs
             $account_ids = array_unique(array_column($commitments, 'accounts_id'));
@@ -75,7 +80,8 @@ class Commitments {
         }
     }
 
-    public function type_show() {
+    public function type_show()
+    {
         $stmt = $this->conn->prepare("SELECT * FROM commitments_type ORDER BY name ASC");
         if ($stmt->execute()) {
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -84,7 +90,8 @@ class Commitments {
         }
     }
 
-    public function add($data_r) {
+    public function add($data_r)
+    {
         $startDateTime = $data_r['eventDate'] . ' ' . $data_r['eventTime'] . ':00';
         $endDateTime = $data_r['eventEndDate'] . ' ' . $data_r['eventEndTime'] . ':00';
 
@@ -124,7 +131,8 @@ class Commitments {
         }
     }
 
-    public function delete($data_r) {
+    public function delete($data_r)
+    {
         try {
             $this->conn->beginTransaction();
 

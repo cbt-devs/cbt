@@ -306,6 +306,82 @@ $ministry_r = $ministry->show();
     </div>
 </div>
 
+<div class="modal fade" id="informationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content shadow-lg rounded-3">
+
+            <!-- Header -->
+            <div class="modal-header bg-light">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center"
+                        style="width:50px; height:50px;">
+                        <i class="bi bi-person fs-3"></i>
+                    </div>
+                    <div class="ms-3">
+                        <h5 class="mb-0" id="infoName"></h5>
+                        <small class="text-muted" id="infoAddress"></small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body">
+                <!-- Personal Info Row -->
+                <div class="row text-muted mb-3">
+                    <div class="col-md-3"><strong>Birthday:</strong><br><span id="infoBday"></span></div>
+                    <div class="col-md-3"><strong>Contact #:</strong><br><span id="infoContact"></span><i
+                            class="bi bi-check-circle-fill text-success"></i></div>
+                    <div class="col-md-3"><strong>Baptized Date:</strong><br><span id="infoBaptized"></span>
+                    </div>
+                    <div class="col-md-3 text-capitalize"><strong>Marital Status:</strong><br><span
+                            id="infoStatus"></span></div>
+                </div>
+
+                <!-- <div class="alert alert-danger py-2" role="alert">
+                    This Donor is <strong>Temporarily Deferred</strong> for 15 Days
+                </div> -->
+
+                <!-- Tabs -->
+                <ul class="nav nav-tabs mb-3 mt-4" id="infoTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="attendance-tab" data-bs-toggle="tab"
+                            data-bs-target="#attendance" type="button" role="tab">Attendance</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="card-tab" data-bs-toggle="tab" data-bs-target="#card" type="button"
+                            role="tab">Card/Credit</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="requests-tab" data-bs-toggle="tab" data-bs-target="#requests"
+                            type="button" role="tab">Requests</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="logs-tab" data-bs-toggle="tab" data-bs-target="#logs" type="button"
+                            role="tab">Logs</button>
+                    </li>
+                </ul>
+
+                <!-- Tab Contents -->
+                <div class="tab-content" id="infoTabsContent">
+                    <div class="tab-pane fade show active" id="attendance" role="tabpanel">
+                        <div class="table-responsive">
+                            <table id="attendanceTable" class="table table-sm table-bordered align-middle">
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="card" role="tabpanel">Card/Credit content...</div>
+                    <div class="tab-pane fade" id="requests" role="tabpanel">Requests content...</div>
+                    <div class="tab-pane fade" id="logs" role="tabpanel">Logs content...</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
 <script>
 var memberTable = {
     init: function() {
@@ -442,7 +518,84 @@ var memberTable = {
         });
     },
 
+    personalInfoTables: function(accounts_id = 0, type = 'attendance') {
+        $.ajax({
+            type: "POST",
+            url: "controller/main.php",
+            data: {
+                action: "show",
+                type: type,
+                accounts_id: accounts_id
+            },
+            dataType: 'json',
+            success: function(response) {
+                const data = response.data;
+
+                if ($.fn.dataTable.isDataTable('#attendanceTable')) {
+                    $('#attendanceTable').DataTable().clear().destroy();
+                }
+
+                // Initialize DataTable
+                $('#attendanceTable').DataTable({
+                    data: data,
+                    columns: [{
+                            data: 'date',
+                            title: 'Date'
+                        },
+                        {
+                            data: 'type',
+                            title: 'Status',
+                            render: function(data) {
+                                let badgeClass = 'secondary';
+                                if (data === 'present') badgeClass = 'success';
+                                else if (data === 'absent') badgeClass = 'danger';
+                                else if (data === 'excused') badgeClass = 'warning';
+                                return `<span class="badge bg-${badgeClass} text-capitalize">${data}</span>`;
+                            }
+                        }
+                    ],
+                    paging: false, // ❌ hide pagination
+                    searching: false, // ❌ hide search box
+                    info: false, // ❌ hide "Showing 1 of N" text
+                    ordering: true,
+                    order: [
+                        [3, 'desc']
+                    ] // sort by date column (latest first)
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error("Error loading data:", error);
+            }
+        });
+    },
+
     bindEvents: function() {
+        $('#memberTable').on('click', 'tr', function() {
+            const table = $('#memberTable').DataTable();
+            const data = table.row(this).data();
+
+            if (data) {
+                $('#infoName').text(data.name);
+                $('#infoContact').text(data.contact);
+                $('#infoBday').text(data.birthdate);
+                $('#infoAddress').text(data.address);
+                $('#infoBaptized').text(data.baptism_date);
+                // $('#infoEmail').text(data.email);
+                // $('#infoGender').text(data.gender);
+                $('#infoStatus').text(data.marital_status);
+
+                // Optionally store ID for later update/delete
+                $('#informationModal').attr('data-id', data.id);
+
+                // Show the modal
+                $('#informationModal').modal('show');
+
+                // populate tables
+                // attendance data
+                memberTable.personalInfoTables(data.id);
+            }
+        });
+
         $('#memberTable').on('click', '.edit-btn', function() {
             const id = $(this).data('id');
             memberTable.editMember(id);
@@ -737,6 +890,7 @@ var memberTable = {
 
         return isValid;
     },
+
     action: function(actionType, id) {
         $.ajax({
             type: "POST",

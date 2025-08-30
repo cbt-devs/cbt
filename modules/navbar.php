@@ -4,7 +4,8 @@ $nav = new Navigation();
 
 <!-- ✅ Top Navbar (mobile only) -->
 <header class="navbar navbar-light bg-light px-3 shadow-sm d-md-none">
-    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar">
+    <button class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar"
+        aria-controls="mobileSidebar">
         <i class="fa-solid fa-bars"></i>
     </button>
     <span class="ms-3 fw-bold">CBT Dashboard</span>
@@ -27,22 +28,26 @@ $nav = new Navigation();
         <!-- Management -->
         <li class="nav-item">
             <div class="nav-link d-flex justify-content-between align-items-center dropdown-toggle"
-                data-bs-toggle="collapse"
-                data-bs-target="#managementMenu"
-                role="button"
-                aria-expanded="true"
+                data-bs-toggle="collapse" data-bs-target="#managementMenu" role="button" aria-expanded="true"
                 aria-controls="managementMenu">
                 <span><i class="fa-solid fa-table me-2"></i>Management</span>
             </div>
             <div class="collapse show" id="managementMenu">
                 <ul class="nav flex-column ms-3">
-                    <li class="nav-item"><a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('attendance') ?>">Attendance</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('missions') ?>">Missions</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('members') ?>">Members</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('events') ?>">Events</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('ministries') ?>">Ministries</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('commitments') ?>">Commitments</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('booklet') ?>">Booklet</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link load-content"
+                            data-page="<?= $nav->getLink('attendance') ?>">Attendance</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link load-content"
+                            data-page="<?= $nav->getLink('missions') ?>">Missions</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link load-content"
+                            data-page="<?= $nav->getLink('members') ?>">Members</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link load-content"
+                            data-page="<?= $nav->getLink('events') ?>">Events</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link load-content"
+                            data-page="<?= $nav->getLink('ministries') ?>">Ministries</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link load-content"
+                            data-page="<?= $nav->getLink('commitments') ?>">Commitments</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link load-content"
+                            data-page="<?= $nav->getLink('booklet') ?>">Booklet</a></li>
                 </ul>
             </div>
         </li>
@@ -50,18 +55,18 @@ $nav = new Navigation();
         <!-- Tools -->
         <li class="nav-item">
             <div class="nav-link d-flex justify-content-between align-items-center dropdown-toggle"
-                data-bs-toggle="collapse"
-                data-bs-target="#toolsMenu"
-                role="button"
-                aria-expanded="true"
+                data-bs-toggle="collapse" data-bs-target="#toolsMenu" role="button" aria-expanded="true"
                 aria-controls="toolsMenu">
                 <span><i class="fa-solid fa-screwdriver-wrench me-2"></i>Tools</span>
             </div>
             <div class="collapse show" id="toolsMenu">
                 <ul class="nav flex-column ms-3">
-                    <li class="nav-item"><a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('pp_generator') ?>">Create PowerPoint</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('schedule') ?>">Schedule</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('documentation') ?>">Documentation</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link load-content"
+                            data-page="<?= $nav->getLink('pp_generator') ?>">Create PowerPoint</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link load-content"
+                            data-page="<?= $nav->getLink('schedule') ?>">Schedule</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link load-content"
+                            data-page="<?= $nav->getLink('documentation') ?>">Documentation</a></li>
                 </ul>
             </div>
         </li>
@@ -98,21 +103,24 @@ $nav = new Navigation();
                 <!-- Management -->
                 <li class="nav-item">
                     <div class="nav-link d-flex justify-content-between align-items-center dropdown-toggle"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#managementMenuMobile"
-                        role="button"
-                        aria-expanded="true"
-                        aria-controls="managementMenuMobile">
+                        data-bs-toggle="collapse" data-bs-target="#managementMenuMobile" role="button"
+                        aria-expanded="true" aria-controls="managementMenuMobile">
                         <span><i class="fa-solid fa-table me-2"></i>Management</span>
                     </div>
                     <div class="collapse show" id="managementMenuMobile">
                         <ul class="nav flex-column ms-3">
-                            <li class="nav-item"><a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('attendance') ?>">Attendance</a></li>
-                            <li class="nav-item"><a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('missions') ?>">Missions</a></li>
-                            <li class="nav-item"><a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('members') ?>">Members</a></li>
-                            <li class="nav-item"><a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('events') ?>">Events</a></li>
-                            <li class="nav-item"><a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('ministries') ?>">Ministries</a></li>
-                            <li class="nav-item"><a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('commitments') ?>">Commitments</a></li>
+                            <li class="nav-item"><a href="#" class="nav-link load-content"
+                                    data-page="<?= $nav->getLink('attendance') ?>">Attendance</a></li>
+                            <li class="nav-item"><a href="#" class="nav-link load-content"
+                                    data-page="<?= $nav->getLink('missions') ?>">Missions</a></li>
+                            <li class="nav-item"><a href="#" class="nav-link load-content"
+                                    data-page="<?= $nav->getLink('members') ?>">Members</a></li>
+                            <li class="nav-item"><a href="#" class="nav-link load-content"
+                                    data-page="<?= $nav->getLink('events') ?>">Events</a></li>
+                            <li class="nav-item"><a href="#" class="nav-link load-content"
+                                    data-page="<?= $nav->getLink('ministries') ?>">Ministries</a></li>
+                            <li class="nav-item"><a href="#" class="nav-link load-content"
+                                    data-page="<?= $nav->getLink('commitments') ?>">Commitments</a></li>
                         </ul>
                     </div>
                 </li>
@@ -120,18 +128,18 @@ $nav = new Navigation();
                 <!-- Tools -->
                 <li class="nav-item">
                     <div class="nav-link d-flex justify-content-between align-items-center dropdown-toggle"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#toolsMenuMobile"
-                        role="button"
-                        aria-expanded="true"
+                        data-bs-toggle="collapse" data-bs-target="#toolsMenuMobile" role="button" aria-expanded="true"
                         aria-controls="toolsMenuMobile">
                         <span><i class="fa-solid fa-screwdriver-wrench me-2"></i>Tools</span>
                     </div>
                     <div class="collapse show" id="toolsMenuMobile">
                         <ul class="nav flex-column ms-3">
-                            <li class="nav-item"><a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('pp_generator') ?>">Create PowerPoint</a></li>
-                            <li class="nav-item"><a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('schedule') ?>">Schedule</a></li>
-                            <li class="nav-item"><a href="#" class="nav-link load-content" data-page="<?= $nav->getLink('documentation') ?>">Documentation</a></li>
+                            <li class="nav-item"><a href="#" class="nav-link load-content"
+                                    data-page="<?= $nav->getLink('pp_generator') ?>">Create PowerPoint</a></li>
+                            <li class="nav-item"><a href="#" class="nav-link load-content"
+                                    data-page="<?= $nav->getLink('schedule') ?>">Schedule</a></li>
+                            <li class="nav-item"><a href="#" class="nav-link load-content"
+                                    data-page="<?= $nav->getLink('documentation') ?>">Documentation</a></li>
                         </ul>
                     </div>
                 </li>

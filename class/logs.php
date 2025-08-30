@@ -1,13 +1,18 @@
 <?php
-class Logs {
+
+class Logs
+{
     private $conn;
 
-    public function __construct($db) {
+    public function __construct($db)
+    {
         $this->conn = $db;
     }
 
-    public function show($_limit = 0) {
+    public function show($_data_r = [])
+    {
         try {
+            $_limit = $_data_r['limit'] ?? 0;
             $sql = "SELECT * FROM logs ORDER BY id DESC";
             if ($_limit > 0) {
                 $sql .= " LIMIT :limit";
@@ -30,14 +35,15 @@ class Logs {
         }
     }
 
-    public function time_elapsed_string($datetime, $full = false) {
-        $now = new DateTime;
+    public function time_elapsed_string($datetime, $full = false)
+    {
+        $now = new DateTime();
         $ago = new DateTime($datetime);
         $diff = $now->diff($ago);
-        
+
         $diff->w = floor($diff->d / 7);
         $diff->d -= $diff->w * 7;
-        
+
         $string = [
             'y' => 'year',
             'm' => 'month',
@@ -55,7 +61,9 @@ class Logs {
             }
         }
 
-        if (!$full) $string = array_slice($string, 0, 1);
+        if (!$full) {
+            $string = array_slice($string, 0, 1);
+        }
         return $string ? implode(', ', $string) . ' ago' : 'just now';
     }
 }

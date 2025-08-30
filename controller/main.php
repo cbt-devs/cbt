@@ -26,8 +26,6 @@ header('Content-Type: application/json');
 
 $action = $_POST['action'] ?? '';
 $type = $_POST['type'] ?? '';
-$table_name = ($table_name = ($_POST['table_name'] ?? '')) ? $table_name : '';
-$gender = $_POST['gender'] ?? '';
 
 $handlers = [
     'members' => $member,
@@ -49,7 +47,7 @@ $handler = $handlers[$type];
 
 switch ($action) {
     case 'show':
-        $result = $handler->show($table_name, $gender);
+        $result = $handler->show($_POST);
         echo json_encode([
             'status' => $result ? 'success' : 'error',
             'data' => $result

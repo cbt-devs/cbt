@@ -9,14 +9,16 @@ class Member
         $this->conn = $db;
     }
 
-    public function show($_origdate = false, $_gender = '')
+    public function show($_data_r = [])
     {
         try {
             $this->conn->beginTransaction();
 
+            $orig_date = $_data_r['origdate'] ?? 0;
+
             $sql = '';
-            if ($_gender) {
-                $sql = " AND gender = '$_gender'";
+            if ($gender = $_data_r[ 'gender' ] ?? 0) {
+                $sql = " AND gender = '$gender'";
             }
 
             $stmt = $this->conn->prepare("SELECT id, email, status FROM accounts WHERE status = 'active'");
@@ -30,17 +32,20 @@ class Member
             $stmt->execute();
             $acc_address_r = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            $stmt = $this->conn->prepare("SELECT accounts_id, first_name, middle_name, last_name, birthdate, gender, date_baptized FROM accounts_info WHERE accounts_id IN ( $acc_r_txt ) $sql");
+            $stmt = $this->conn->prepare("SELECT accounts_id, first_name, middle_name, last_name, birthdate, gender, date_baptized, contact, occupation, occupation_place, marital_status, anniv_date, partner_name FROM accounts_info WHERE accounts_id IN ( $acc_r_txt ) $sql");
             $stmt->execute();
             $acc_info_r = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             $this->conn->commit();
 
             $data_r = [];
+
             foreach ($acc_r as $acc) {
                 $id = $acc['id'];
 
                 $name = $address = $birthdate = $gender = $date_baptized = '';
+                $contact = $occupation = $occupation_place = $marital_status = $partner_name = $anniv_date = '';
+
                 foreach ($acc_address_r as $address_r) {
                     if ($id == $address_r['accounts_id']) {
                         $address = $address_r['address_line'] . ' ' . $address_r['city'] . ' ' . $address_r['state'];
@@ -50,10 +55,16 @@ class Member
 
                 foreach ($acc_info_r as $info_r) {
                     if ($id == $info_r['accounts_id']) {
-                        $name = $info_r['first_name'] . ' ' . $info_r['middle_name'] . ' ' . $info_r['last_name'];
+                        $name = trim($info_r['first_name'] . ' ' . $info_r['middle_name'] . ' ' . $info_r['last_name']);
                         $birthdate = $info_r['birthdate'];
                         $gender = $info_r['gender'];
                         $date_baptized = $info_r['date_baptized'];
+                        $contact = $info_r['contact'];
+                        $occupation = $info_r['occupation'];
+                        $occupation_place = $info_r['occupation_place'];
+                        $marital_status = $info_r['marital_status'];
+                        $partner_name = $info_r['partner_name'];
+                        $anniv_date = $info_r['anniv_date'];
                         break;
                     }
                 }
@@ -64,9 +75,15 @@ class Member
                     'status' => $acc['status'],
                     'name' => $name,
                     'gender' => $gender,
-                    'birthdate' => !$_origdate ? date('M d, Y', strtotime($birthdate)) : $birthdate,
+                    'birthdate' => !$orig_date ? date('M d, Y', strtotime($birthdate)) : $birthdate,
                     'address' => $address,
-                    'baptism_date' => !$_origdate ? date('M d, Y', strtotime($date_baptized)) : $date_baptized
+                    'baptism_date' => !$orig_date ? date('M d, Y', strtotime($date_baptized)) : $date_baptized,
+                    'contact' => $contact,
+                    'occupation' => $occupation,
+                    'occupation_place' => $occupation_place,
+                    'marital_status' => $marital_status,
+                    'partner_name' => $partner_name,
+                    'anniv_date' => $anniv_date,
                 ];
             }
 
