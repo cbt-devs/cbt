@@ -1,6 +1,6 @@
 <?php
 
-require_once 'ministries.php';
+require_once __DIR__ . '/ministries.php';
 
 class Events
 {
