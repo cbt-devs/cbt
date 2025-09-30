@@ -26,14 +26,14 @@
     <script src="assets/PptxGenJS-4.0.0/dist/pptxgen.min.js"></script>
 
     <!-- FullCalendar CSS -->
-    <script src="assets/fullcalendar/dist/index.global.min.js"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js'></script>
 
     <!-- ChartJS -->
     <script src="assets/chartjs/dist/chart.umd.js"></script>
 
     <!-- Nice-Select2 -->
-    <script src="assets/nice-select2/nice-select2.js"></script>
-    <link href="assets/nice-select2/nice-select2.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script src="assets/js-loading-overlay/js-loading-overlay.min.js"></script>
 
