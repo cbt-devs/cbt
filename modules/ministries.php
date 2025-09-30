@@ -11,7 +11,7 @@
 <table id="ministryTable" class="table table-striped" style="width:100%"></table>
 
 <!-- Add Ministry Modal -->
-<div class="modal fade" id="addMinistryModal" tabindex="-1" aria-labelledby="addMinistryModalLabel" aria-hidden="true">
+<div class="modal fade" id="addMinistryModal" tabindex="-1" aria-labelledby="addMinistryModalLabel">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header pb-0" style="border-bottom: none;">

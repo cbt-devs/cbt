@@ -23,7 +23,7 @@ $ministryData = $ministry->show();
 
 <div id="calendar"></div>
 
-<div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
+<div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header pb-0" style="border-bottom: none;">

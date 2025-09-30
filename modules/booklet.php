@@ -30,7 +30,7 @@ $member_male_r = $member->show(_gender: 'male');
 
 <table id="bookletTable" class="table table-striped" style="width:100%"></table>
 
-<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header pb-0" style="border-bottom: none;">

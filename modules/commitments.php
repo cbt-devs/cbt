@@ -33,7 +33,7 @@ $commitments_type = $commitments->type_show();
     </div>
 </div>
 
-<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header pb-0" style="border-bottom: none;">
