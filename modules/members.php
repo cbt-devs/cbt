@@ -306,7 +306,7 @@ $ministry_r = $ministry->show();
     </div>
 </div>
 
-<div class="modal fade" id="informationModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="informationModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content shadow-lg rounded-3">
 
